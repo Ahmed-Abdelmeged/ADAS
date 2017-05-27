@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- main theme colors -->
+    <color name="colorPrimary">#1cc0bd</color>
+    <color name="colorPrimaryDark">#379dac</color>
+    <color name="colorAccent">#02b3e4</color>
+
+    <!-- background  color -->
+    <color name="background_dark">#374049</color>
+
+    <!-- square color for the progress -->
+    <color name="square_progress">#4a5866</color>
+
+    <!-- off color -->
+    <color name="off">#e63176</color>
+
+    <!-- color show when the value of the sensors reach a certain value -->
+    <color name="red">#d01010</color>
+
+    <!-- color for the text in the details fragments video and accident -->
+    <color name="open_white">#c9c9c9</color>
+
+</resources>

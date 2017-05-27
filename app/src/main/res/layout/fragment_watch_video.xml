@@ -1,0 +1,76 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:paddingLeft="6dp"
+    android:paddingRight="6dp"
+    android:paddingTop="64dp"
+    tools:context="com.example.mego.adas.ui.WatchVideoFragment">
+
+    <FrameLayout
+        android:id="@+id/watch_video_player"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/watf_main_video" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/watch_video_player"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:paddingBottom="6dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="6dp">
+
+        <ImageView
+            android:id="@+id/image2"
+            android:layout_width="@dimen/watf_channel_logo_size"
+            android:layout_height="@dimen/watf_channel_logo_size"
+            android:src="@drawable/car_profile_icon" />
+
+
+        <TextView
+            android:id="@+id/video_title_text_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:textSize="@dimen/watf_video_label"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            tools:text="Car Record 1 " />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/video_date_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:textColor="@color/open_white"
+                android:textSize="@dimen/watf_video_info"
+                tools:text="Jan22,2017" />
+
+            <TextView
+                android:id="@+id/video_time_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                tools:text="6:30pm"
+                android:textColor="@color/open_white"
+                tools:textSize="@dimen/watf_video_info" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

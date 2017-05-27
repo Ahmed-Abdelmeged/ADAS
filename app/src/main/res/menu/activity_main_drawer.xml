@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/main_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_connect"
+            android:icon="@drawable/ic_action_device_access_bluetooth_searching"
+            android:title="@string/label_connect" />
+        <item
+            android:id="@+id/nav_car"
+            android:icon="@drawable/ic_car"
+            android:title="@string/label_car" />
+        <item
+            android:id="@+id/nav_user"
+            android:icon="@drawable/ic_user"
+            android:title="@string/label_user" />
+    </group>
+
+
+    <group
+        android:id="@+id/services_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_directions"
+            android:icon="@drawable/ic_directions"
+            android:title="@string/label_directions" />
+
+        <item
+            android:id="@+id/nav_live_streaming"
+            android:icon="@drawable/ic_live_streaming"
+            android:title="@string/label_live_streaming" />
+
+        <item
+            android:id="@+id/nav_videos"
+            android:icon="@drawable/ic_videos"
+            android:title="@string/label_videos" />
+
+        <item
+            android:id="@+id/nav_accidents"
+            android:icon="@drawable/ic_accident"
+            android:title="@string/label_accidents" />
+    </group>
+
+    <group
+        android:id="@+id/setting_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/label_setting" />
+        <item
+            android:id="@+id/nav_help"
+            android:icon="@drawable/ic_help"
+            android:title="@string/label_help" />
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_about"
+            android:title="@string/label_about" />
+    </group>
+
+
+</menu>

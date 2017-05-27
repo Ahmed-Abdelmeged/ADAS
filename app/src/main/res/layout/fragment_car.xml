@@ -1,0 +1,280 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:orientation="vertical"
+    android:paddingTop="64dp"
+    tools:context="com.example.mego.adas.ui.CarFragment">
+
+    <LinearLayout
+        android:id="@+id/car_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".7"
+        android:background="@color/background_dark"
+        android:elevation="12dp"
+        android:orientation="vertical"
+        android:paddingBottom="6dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="6dp"
+            android:layout_weight="3"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:background="@color/square_progress"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/LDR_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/ldr_label"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/carf_sensors_label_text_size" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true">
+
+                    <TextView
+                        android:id="@+id/sensor2_value_LDR_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/carf_sensors_text_size"
+                        tools:text="1023" />
+
+                    <ProgressBar
+                        android:id="@+id/ldr_progress_bar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="@dimen/carf_progress_bar_size"
+                        android:layout_height="@dimen/carf_progress_bar_size"
+                        android:layout_centerInParent="true"
+                        android:indeterminate="false"
+                        android:max="1025"
+                        android:progressDrawable="@drawable/progressbarblue" />
+
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:background="@color/square_progress"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/temp_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/temp_label"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/carf_sensors_label_text_size" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true">
+
+                    <TextView
+                        android:id="@+id/sensor1_value_temp_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/carf_sensors_text_size"
+                        tools:text="25.3 C" />
+
+                    <ProgressBar
+                        android:id="@+id/temp_progress_bar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="@dimen/carf_progress_bar_size"
+                        android:layout_height="@dimen/carf_progress_bar_size"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:indeterminate="false"
+                        android:max="200"
+                        android:progressDrawable="@drawable/progressbarblue" />
+
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/square_progress"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/pot_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/pot_label"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/carf_sensors_label_text_size" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true">
+
+                    <TextView
+                        android:id="@+id/sensor3_value_pot_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/carf_sensors_text_size"
+                        tools:text="622" />
+
+                    <ProgressBar
+                        android:id="@+id/pot_progress_bar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="@dimen/carf_progress_bar_size"
+                        android:layout_height="@dimen/carf_progress_bar_size"
+                        android:layout_centerInParent="true"
+                        android:indeterminate="false"
+                        android:max="1025"
+                        android:progressDrawable="@drawable/progressbarblue" />
+
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/square_progress"
+            android:orientation="horizontal"
+            android:paddingBottom="6dp"
+            android:paddingTop="6dp">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/lock_car_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:scaleType="center"
+                    android:src="@drawable/lock_outline"
+                    app:backgroundTint="@color/colorPrimary"
+                    app:fabSize="normal" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/start_car_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:scaleType="center"
+                    android:src="@drawable/power"
+                    app:backgroundTint="@color/colorPrimary"
+                    app:fabSize="normal" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/lights_on_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:scaleType="center"
+                    android:src="@drawable/spotlight_beam"
+                    app:backgroundTint="@color/colorPrimary"
+                    app:fabSize="normal" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/disconnect_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:scaleType="center"
+                    android:src="@drawable/bluetooth_off"
+                    app:backgroundTint="@color/off"
+                    app:fabSize="normal" />
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <fragment
+        android:id="@+id/my_location_fragment_car"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

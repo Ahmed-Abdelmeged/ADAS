@@ -1,0 +1,19 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/setting_frag"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="60dp"
+    tools:context="com.example.mego.adas.ui.SettingsFragment">
+
+
+
+    <fragment xmlns:tools="http://schemas.android.com/tools"
+        android:name="com.example.mego.adas.ui.SettingsFragment$adasPreferenceFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+</LinearLayout>
+

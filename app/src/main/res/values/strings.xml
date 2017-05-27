@@ -1,0 +1,195 @@
+<resources>
+    <string name="app_name">ADAS</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Navigation Drawer Labels -->
+    <string name="label_connect">Connect</string>
+    <string name="label_car">Car</string>
+    <string name="label_user">User</string>
+
+    <string name="label_services">Services</string>
+    <string name="label_directions">Directions</string>
+    <string name="label_live_streaming">Live Streaming</string>
+    <string name="label_videos">Videos</string>
+    <string name="label_accidents">Accidents</string>
+
+    <string name="label_setting">Setting</string>
+    <string name="label_help">Help</string>
+    <string name="label_about">About</string>
+    <string name="label_more">More</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="hint_enter_location">Enter a Location</string>
+
+    <!-- warning -->
+    <string name="no_internet_connection">No Internet Connection</string>
+    <string name="can_not_initialize_youtube_player">Failed To Initialize Youtube Player</string>
+    <string name="no_live_streaming_video_now">No Live Streaming Video Now</string>
+
+    <string name="does_not_have_bluetooth">This Device Does not Support Bluetooth</string>
+    <string name="no_paired_devices">No Paired Bluetooth Devices Found</string>
+    <string name="none_found">No devices found</string>
+
+    <string name="car_not_connected">The Car is not Connected </string>
+    <string name="car_is_connected">The Car is Connected</string>
+
+
+    <!-- settings videos keys , label and default -->
+    <string name="settings_videos_key">videos</string>
+
+    <string name="settings_playlist_id_title">Playlist ID</string>
+    <string name="settings_playlist_id_key">playlist_id</string>
+    <string name="settings_playlist_id_default">PLepuF70ZiWWmo8fSJ1yDAHt0qizWX6HRr</string>
+
+
+    <!-- Connect Devices Fragment -->
+    <string name="text_view_paired_devices">Paired devices</string>
+    <string name="text_view_new_devices">Available devices</string>
+    <string name="button_scan_for_new_devices">Scan for new devices</string>
+
+    <!-- Car Fragment -->
+    <string name="ldr_label">LDR</string>
+    <string name="temp_label">Temperature</string>
+    <string name="pot_label">POT</string>
+
+    <!-- AlertDialog strings -->
+    <string name="are_you_sure_to_lose_connection">Are You Sure You Want to lose connection</string>
+    <string name="are_you_sure_to_close_the_app">Are You Sure You Want to Close the App and Lose Connection</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- - - - - - - - - - - - - - - -
+      - Car General settings -
+      - - - - - - - - - - - - - - - -->
+
+
+    <!-- settings directions  key,label and default -->
+    <string name="settings_map_key">map</string>
+    <string name="settings_map_title">Map</string>
+
+
+    <string name="settings_map_zoom_title">Camera Zoom</string>
+    <string name="settings_map_zoom_key" translatable="false">camera_zoom</string>
+    <string name="settings_map_zoom_default">17</string>
+
+    <string name="settings_map_bearing_title">Camera Bearing</string>
+    <string name="settings_map_bearing_key" translatable="false">camera_bearing</string>
+    <string name="settings_map_bearing_default">0</string>
+
+    <string name="settings_map_tilt_title">Camera Tilt</string>
+    <string name="settings_map_tilt_key" translatable="false">camera_tilt</string>
+    <string name="settings_map_tilt_default">45</string>
+
+
+    <!-- settings general  key,label and default -->
+    <string name="settings_general_key" translatable="false">general</string>
+    <string name="settings_general_label">General</string>
+
+    <string name="sign_out">Sign out</string>
+
+    <!-- Notification settings -->
+    <string name="settings_enable_notification_key" translatable="false">enable_notification</string>
+    <string name="settings_enable_notification_title">Car Advice Assistant</string>
+    <string name="settings_enable_notification_summary_on">Enabled</string>
+    <string name="settings_enable_notification_summary_off">Not Enabled</string>
+
+    <!-- Temperature Settings -->
+    <string name="settings_temp_units_key" translatable="false">units</string>
+    <string name="settings_temp_units_title">Temperature Units</string>
+
+    <string name="settings_temp_units_metric_key" translatable="false">metric</string>
+    <string name="settings_temp_units_imperial_key" translatable="false">imperial</string>
+
+    <string name="settings_temp_units_metric_label">Metric</string>
+    <string name="settings_temp_units_imperial_label">Imperial</string>
+
+    <!-- About Fragment -->
+    <string name="this_app_developed_by">Designed and Developed by: Ahmed Abd-Elmeged</string>
+    <string name="all_right">all right reserved</string>
+    <string name="app_developed_for">This App Is Developed For ADAS Project</string>
+    <string name="team">Team</string>
+    <string name="project_leader">Project Leader: Hussam Mostafa</string>
+    <string name="android_developer">Android Developer: Ahmed Abd-Elmeged</string>
+    <string name="computer_vision">Computer Vision: Doaa Elshazly</string>
+
+
+    <!-- Accident AlertDialog strings -->
+    <string name="an_accident_happen">The Car had Made an Accident</string>
+    <string name="ok">OK</string>
+    <string name="call_emergency">Call Emergency</string>
+
+
+    <!-- - - - - - - - - - - - - - - -
+      - Car Notification -
+      - - - - - - - - - - - - - - - -->
+
+    <string name="notification_remind_user_advices_title">Car Advice Assistant</string>
+    <string name="notification_waring">Warning</string>
+    <string name="notification_accident">Accident</string>
+
+    <!-- Car Advices -->
+    <string name="car_advice_0_help">Car advices Assistant will provide with good tips and advices for better and safety driving</string>
+    <string name="car_advice_1_check_battery">Always check you battery before start driving</string>
+    <string name="car_advice_2_check_temperature">Always check your car temperature, High Temperature can damage your car</string>
+    <string name="car_advice_3_check_internet_connection">It\'s better to keep your car always connected to the internet to get updates and reports</string>
+    <string name="car_advice_4_check_camera">Always check your car camera before drive to get the better self driving experience</string>
+    <string name="car_advice_5_check_problem">If you see any red lights or waring sounds stop your car and call the help center to make sure from you car safety</string>
+    <string name="car_advice_6_settings">You can adjust your car settings , measurement units and map settings. Go to car settings and add you preferred settings</string>
+    <string name="car_advice_7_help">You can find a user manual to the ADAS App in the help menu, check it out</string>
+    <string name="car_advice_8_accident">After any accident go to the repair to check car sensors to get the better self driving experience </string>
+    <string name="car_advice_9_behavior">If you see any unexpected behavior in the self driving mode, change it to manual mode and call the help center</string>
+    <string name="car_advice_10_directions">Determine you distention and let the car go there it self from the direction menu</string>
+    <string name="car_advice_11_videos">You can view your old driving state and ways from the videos menu</string>
+
+    <!-- Car Warning -->
+    <string name="car_warning_high_temp">Your car temperature is too high, stop and try to cool it down</string>
+    <string name="car_waring_high_pot">Your car speed is high, please slow down</string>
+    <string name="car_warning_high_ldr">It\'s night now, open the lights</string>
+    <string name="car_accident">Your car had an accident open the app to check the accident location and call emergency</string>
+    <string name="no_videos">No videos</string>
+    <string name="no_accidents">No accidents</string>
+
+    <!-- Auth Activity -->
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="drive_smart">Drive smart</string>
+    <string name="adas">ADAS</string>
+
+    <!-- Sign in activity -->
+    <string name="image_view_logo_image">Logo Image</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forget_password">Forgot password?</string>
+    <string name="sign_in_loading">Signing in</string>
+
+
+    <!-- Error Messages -->
+    <string name="error_message_failed_sign_in_no_network">There was a problem with the network connection.\nAre you sure you\'re connected to the internet?</string>
+    <string name="error_message_required">Required.</string>
+    <string name="error_message_valid_email">Enter a valid email</string>
+    <string name="error_message_password_wrong_or_valid_email">The password is invalid or the user does not have an email</string>
+    <string name="error_message_valid_number">Enter a valid phone number</string>
+
+    <!-- Reset password activity -->
+    <string name="reset_password_label">Reset Password</string>
+    <string name="send_new_password">Send me a new Password</string>
+    <string name="send_reset_request">Sending request..</string>
+    <string name="error">Error</string>
+    <string name="unable_sending_request">We were unable to process the request</string>
+    <string name="sent_reset_link">We have sent a link to reset your password</string>
+
+    <!-- Sign up Activity -->
+    <string name="full_name">Full name</string>
+    <string name="mobile_number">Mobile number</string>
+    <string name="location">Location</string>
+    <string name="by_signing_in">By signing up with ADAS you agree</string>
+    <string name="to_our">to our</string>
+    <string name="terms_and_conditions">terms and conditions</string>
+    <string name="terms_conditions_label">Terms and Conditions</string>
+    <string name="password_not_strong">Password not strong enough. Use at least 6 characters and a mix of letters and numbers</string>
+    <string name="sign_up_loading">Create an account</string>
+
+
+</resources>

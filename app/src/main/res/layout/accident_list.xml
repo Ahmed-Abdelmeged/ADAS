@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="76dp"
+    android:background="#fff"
+    android:clipToPadding="false"
+    android:elevation="8dp"
+    android:orientation="horizontal"
+    android:paddingBottom="6dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="6dp">
+
+    <ImageView
+        android:id="@+id/image2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/car_profile_icon" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/accident_name_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:text="Accident 1" />
+
+        <TextView
+            android:id="@+id/accident_position_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="12sp"
+            tools:text="lng: 23.15105 ,lat:35.24045" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/accident_date_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textSize="12sp"
+            tools:text="Jan22,2017" />
+
+        <TextView
+            android:id="@+id/accident_time_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            tools:text="6:30pm"
+            tools:textSize="12sp" />
+    </LinearLayout>
+
+</LinearLayout>

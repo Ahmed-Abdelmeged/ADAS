@@ -1,0 +1,59 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.example.mego.adas"
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.1"
+        multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
+    testCompile 'junit:junit:4.12'
+
+    //Displaying and downloading images
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+
+    //google play services
+    compile 'com.google.android.gms:play-services:10.2.1'
+    compile 'com.google.maps.android:android-maps-utils:0.4+'
+
+    //to enable multidex
+    compile 'com.android.support:multidex:1.0.1'
+
+    //Firebase dependencies
+    compile 'com.google.firebase:firebase-database:10.2.0'
+    compile 'com.google.firebase:firebase-messaging:10.2.0'
+    compile group: 'com.google.firebase', name:'firebase-auth', version: '10.2.0'
+    compile 'com.firebaseui:firebase-ui-auth:1.2.0'
+    compile 'com.google.firebase:firebase-core:10.2.0'
+
+    //convert ios8601 date format to date object
+    compile files('libs/jackson-databind-2.8.6.jar')
+
+    //youtube player library
+    compile files('libs/YouTubeAndroidPlayerApi.jar')
+
+    //to schedule jobs
+    compile 'com.firebase:firebase-jobdispatcher:0.5.2'
+}
+apply plugin: 'com.google.gms.google-services'

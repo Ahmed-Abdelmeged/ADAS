@@ -1,0 +1,80 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+
+    <!-- - - - - - - - - - - - -
+    Connect Devices fragment
+   - - - - - - - - - - - - - - - -->
+    <dimen name="conf_title_text_size">20sp</dimen>
+    <dimen name="conf_button_height">50dp</dimen>
+    <dimen name="conf_button_text_size">16sp</dimen>
+
+    <!-- - - - - - - - - - - - -
+    Car and User fragment
+   - - - - - - - - - - - - - - - -->
+    <dimen name="carf_sensors_text_size">18sp</dimen>
+    <dimen name="carf_sensors_label_text_size">16sp</dimen>
+    <dimen name="carf_progress_bar_size">120dp</dimen>
+
+    <!-- - - - - - - - - - - - -
+        Directions fragment
+    - - - - - - - - - - - - - - - -->
+    <dimen name="dirf_main_frame">160dp</dimen>
+    <dimen name="dirf_steps_details_layout">30dp</dimen>
+    <dimen name="dirf_main_image">100dp</dimen>
+    <dimen name="dirf_second_frame">130dp</dimen>
+
+    <!-- - - - - - - - - - - - -
+     Watch video fragment
+       - - - - - - - - - - - - - - - -->
+    <dimen name="watf_main_video">200dp</dimen>
+    <dimen name="watf_channel_logo_size">40dp</dimen>
+    <dimen name="watf_video_label">14sp</dimen>
+    <dimen name="watf_video_info">12sp</dimen>
+
+    <!-- - - - - - - - - - - - -
+        Accident Details Fragment
+   - - - - - - - - - - - - - - - -->
+    <dimen name="accf_logo_photo_size">60dp</dimen>
+    <dimen name="accf_accident_name_text_size">16sp</dimen>
+    <dimen name="accf_accident_location_text_size">12sp</dimen>
+    <dimen name="accf_accident_date_text_size">12sp</dimen>
+
+
+    <!-- - - - - - - - - - - - -
+        About Fragment
+    - - - - - - - - - - - - - - - -->
+    <dimen name="aboutf_team_member_text_size">16sp</dimen>
+    <dimen name="aboutf_team_text_size">20sp</dimen>
+    <dimen name="aboutf_designed_developed_text_size">14sp</dimen>
+    <dimen name="aboutf_app_logo_size">150dp</dimen>
+    <dimen name="aboutf_this_app_developed_for_text_size">18sp</dimen>
+    <dimen name="aboutf_all_right">12sp</dimen>
+
+
+    <!-- - - - - - - - - - - - -
+        Authentication
+    - - - - - - - - - - - - - - - -->
+    <dimen name="icon_drawable">24dp</dimen>
+    <dimen name="button_auth_main">60dp</dimen>
+    <dimen name="editText_auth_main">18sp</dimen>
+    <dimen name="button_text_auth_main">20sp</dimen>
+    <dimen name="adas_textView">48sp</dimen>
+    <dimen name="drive_smart_textView">20sp</dimen>
+    <dimen name="sign_in_not_auth">18sp</dimen>
+    <dimen name="logo_image_size">100dp</dimen>
+    <dimen name="forget_password_textView">16sp</dimen>
+    <dimen name="by_signing_up_textSize">14sp</dimen>
+    <dimen name="terms_conditions_textSize">16sp</dimen>
+
+
+
+
+
+</resources>

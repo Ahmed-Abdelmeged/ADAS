@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dp">
+
+    <ImageView
+        android:id="@+id/step_imageView_dir"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/distance" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toRightOf="@+id/step_imageView_dir"
+        android:layout_toEndOf="@+id/step_imageView_dir"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/instructions_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            tools:text="Turn right into mansoura street" />
+
+        <TextView
+            android:id="@+id/step_distance_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textSize="12sp"
+            android:textColor="#e0dada"
+            tools:text="30 meters" />
+
+
+    </LinearLayout>
+</RelativeLayout>

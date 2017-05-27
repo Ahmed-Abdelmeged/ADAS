@@ -1,0 +1,101 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:fillViewport="true"
+    android:paddingBottom="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="64dp"
+    tools:context="com.example.mego.adas.ui.AboutFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_developed_for"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/aboutf_this_app_developed_for_text_size" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/all_right"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/aboutf_all_right" />
+
+        <ImageView
+            android:layout_width="@dimen/aboutf_app_logo_size"
+            android:layout_height="@dimen/aboutf_app_logo_size"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/app_logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/this_app_developed_by"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/aboutf_designed_developed_text_size" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/team"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/aboutf_team_text_size" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/project_leader_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@color/square_progress"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="@string/project_leader"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/aboutf_team_member_text_size" />
+
+        <TextView
+            android:id="@+id/android_developer_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@color/square_progress"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="@string/android_developer"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/aboutf_team_member_text_size" />
+
+        <TextView
+            android:id="@+id/computer_vision_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@color/square_progress"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="@string/computer_vision"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/aboutf_team_member_text_size" />
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/self_driving_background"
+    android:paddingBottom="28dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    tools:context="com.example.mego.adas.auth.NotAuthEntryActivity">
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:id="@+id/adas_name_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/adas"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/adas_textView" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/adas_name_textView"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="@string/drive_smart"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/drive_smart_textView" />
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/sign_in_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/sign_in"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/sign_in_not_auth" />
+
+    <Button
+        android:id="@+id/sign_up_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_auth_main"
+        android:layout_above="@+id/sign_in_textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="12dp"
+        android:text="@string/sign_up"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/button_text_auth_main" />
+
+
+</RelativeLayout>

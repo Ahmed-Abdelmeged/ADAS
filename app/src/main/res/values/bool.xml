@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- default value for displaying  notification in the app -->
+    <bool name="show_notifications_by_default">true</bool>
+</resources>

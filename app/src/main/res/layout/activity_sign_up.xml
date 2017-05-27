@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:fillViewport="true"
+    tools:context=".auth.SignUpActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:layout_width="@dimen/logo_image_size"
+            android:layout_height="@dimen/logo_image_size"
+            android:layout_marginBottom="13dp"
+            android:contentDescription="@string/image_view_logo_image"
+            android:src="@drawable/app_logo" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/icon_drawable"
+                android:layout_height="@dimen/icon_drawable"
+                android:layout_gravity="center"
+                android:contentDescription="@string/full_name"
+                android:src="@drawable/account_outline" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/full_name_wrapper_sign_up_activity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1">
+
+                <EditText
+                    android:id="@+id/full_name_editText_sign_up_activity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/full_name"
+                    android:inputType="text"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"
+                    android:textSize="@dimen/editText_auth_main" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/icon_drawable"
+                android:layout_height="@dimen/icon_drawable"
+                android:layout_gravity="center"
+                android:contentDescription="@string/email"
+                android:src="@drawable/email_outline" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/email_wrapper_sign_up_activity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1">
+
+                <EditText
+                    android:id="@+id/email_editText_sign_up_activity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/email"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"
+                    android:textSize="@dimen/editText_auth_main" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/icon_drawable"
+                android:layout_height="@dimen/icon_drawable"
+                android:layout_gravity="center"
+                android:contentDescription="@string/password"
+                android:src="@drawable/lock_outline_cyan" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/password_wrapper_sign_up_activity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                app:passwordToggleEnabled="true">
+
+                <EditText
+                    android:id="@+id/password_editText_sign_up_activity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/editText_auth_main" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/icon_drawable"
+                android:layout_height="@dimen/icon_drawable"
+                android:layout_gravity="center"
+                android:contentDescription="@string/mobile_number"
+                android:src="@drawable/cellphone_iphone" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/phone_number_wrapper_sign_up_activity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1">
+
+                <EditText
+                    android:id="@+id/phone_number_editText_sign_up_activity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/mobile_number"
+                    android:inputType="phone"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"
+                    android:textSize="@dimen/editText_auth_main" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/icon_drawable"
+                android:layout_height="@dimen/icon_drawable"
+                android:layout_gravity="center"
+                android:contentDescription="@string/location"
+                android:src="@drawable/map_marker_cyan" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/location_wrapper_sign_up_activity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1">
+
+                <EditText
+                    android:id="@+id/location_editText_sign_up_activity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/location"
+                    android:inputType="text"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"
+                    android:textSize="@dimen/editText_auth_main" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/sign_up_Button_sign_up_activity"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_auth_main"
+            android:layout_marginTop="24dp"
+            android:text="@string/sign_up"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/button_text_auth_main" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/by_signing_in"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/by_signing_up_textSize" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/to_our"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/by_signing_up_textSize" />
+
+            <TextView
+                android:id="@+id/terms_conditions_textView_sign_up_activity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:text="@string/terms_and_conditions"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/terms_conditions_textSize" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</ScrollView>

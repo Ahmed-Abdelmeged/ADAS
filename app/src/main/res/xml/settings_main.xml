@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="set">
+
+
+    <!-- Car Settings -->
+    <PreferenceCategory
+        android:icon="@drawable/ic_blue_car"
+        android:key="@string/settings_general_key"
+        android:title="@string/settings_general_label">
+
+
+        <ListPreference
+            android:defaultValue="@string/settings_temp_units_metric_key"
+            android:entries="@array/settings_units_options"
+            android:entryValues="@array/settings_units_values"
+            android:key="@string/settings_temp_units_key"
+            android:title="@string/settings_temp_units_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/show_notifications_by_default"
+            android:key="@string/settings_enable_notification_key"
+            android:summaryOff="@string/settings_enable_notification_summary_off"
+            android:summaryOn="@string/settings_enable_notification_summary_on"
+            android:title="@string/settings_enable_notification_title" />
+
+
+    </PreferenceCategory>
+
+    <!-- Directions settings-->
+    <PreferenceCategory
+        android:icon="@drawable/ic_blue_directions"
+        android:key="@string/settings_map_key"
+        android:title="@string/settings_map_title">
+
+        <!-- Zoom of the camera setting -->
+        <EditTextPreference
+            android:defaultValue="@string/settings_map_zoom_default"
+            android:inputType="numberDecimal"
+            android:key="@string/settings_map_zoom_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/settings_map_zoom_title" />
+
+        <!-- Bearing the direction of the camera from the north setting-->
+        <EditTextPreference
+            android:defaultValue="@string/settings_map_bearing_default"
+            android:inputType="numberDecimal"
+            android:key="@string/settings_map_bearing_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/settings_map_bearing_title" />
+
+        <!-- Tilt of the camera setting -->
+        <EditTextPreference
+            android:defaultValue="@string/settings_map_tilt_default"
+            android:inputType="numberDecimal"
+            android:key="@string/settings_map_tilt_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/settings_map_tilt_title" />
+
+    </PreferenceCategory>
+
+
+    <!-- Video settings-->
+    <PreferenceCategory
+        android:icon="@drawable/ic_blue_videos"
+        android:key="@string/settings_videos_key"
+        android:title="@string/label_videos">
+
+        <EditTextPreference
+            android:defaultValue="@string/settings_playlist_id_default"
+            android:key="@string/settings_playlist_id_key"
+            android:selectAllOnFocus="true"
+            android:title="@string/settings_playlist_id_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

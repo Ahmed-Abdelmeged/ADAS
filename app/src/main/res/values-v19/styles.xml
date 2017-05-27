@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Entry activity style for the authentication flow -->
+    <style name="entryActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="colorButtonNormal">@color/colorPrimary</item>
+    </style>
+</resources>

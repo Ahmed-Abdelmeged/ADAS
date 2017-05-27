@@ -1,0 +1,141 @@
+package com.example.mego.adas.utils;
+
+/**
+ * Created by Mego on 2/20/2017.
+ */
+
+/**
+ * hold all the program constant
+ */
+public class constant {
+
+    /**
+     * key for get the video id key bundle extra
+     */
+    public static final String VIDEO_KEY = "video";
+
+    /**
+     * key for get the video published date key bundle extra
+     */
+    public static final String PUBLISHED_AT__KEY = "publishedAt";
+
+    /**
+     * key for get the video title key bundle extra
+     */
+    public static final String TITLE_KEY = "title";
+
+    /**
+     * key for get the accident  title key bundle extra
+     */
+    public static final String ACCIDENT_TITLE_KEY = "accident_title";
+
+    /**
+     * key for get the accident  longitude key bundle extra
+     */
+    public static final String ACCIDENT_LONGITUDE_KEY = "accident_longitude";
+
+    /**
+     * key for get the accident  latitude key bundle extra
+     */
+    public static final String ACCIDENT_LATITUDE_KEY = "accident_latitude";
+
+    /**
+     * key for get the accident  time key bundle extra
+     */
+    public static final String ACCIDENT_TIME_KEY = "accident_time";
+
+    /**
+     * key for get the accident  date key bundle extra
+     */
+    public static final String ACCIDENT_DATE_KEY = "accident_date";
+
+    /**
+     * Google Client API Key
+     */
+    public static final String API_KEY = "AIzaSyDzUFC3PRm7vehzlCZdhoCxq2awhEY3sZ0";
+
+    /**
+     * directions constant that get from the html instructions
+     * to determine the photo that will show in the list
+     * and send the car direction vay bluetooth
+     */
+    public static final String DIRECTION_TURN_RIGHT = "Turn right";
+    public static final String DIRECTION_TURN_LEFT = "Turn left";
+    public static final String DIRECTION_HEAD = "Head";
+    public static final String DIRECTION_SLIGHT_RIGHT = "Slight right";
+    public static final String DIRECTION_SLIGHT_LEFT = "Slight right";
+    public static final String DIRECTION_KEEP_LEFT = "Keep left";
+    public static final String DIRECTION_KEEP_RIGHT = "Keep right";
+    public static final String DIRECTION_MAKE_U_TURN = "Make a U-turn";
+    public static final String DIRECTION_MERGE = "Merge";
+    public static final String DIRECTION_ROUNDABOUT = "roundabout";
+    public static final String DIRECTION_SHARP_RIGHT = "Sharp right";
+    public static final String DIRECTION_SHARP_LEFT = "Sharp left";
+
+    /**
+     * Firebase database reference constant for the directions
+     */
+    public static final String FIREBASE_DIRECTIONS = "directions";
+
+    public static final String FIREBASE_START_LOCATION = "startLocation";
+    public static final String FIREBASE_GOING_LOCATION = "goingLocation";
+    public static final String FIREBASE_CURRENT_LOCATION = "currentLocation";
+
+    public static final String FIREBASE_LEG_DISTANCE_TEXT = "legDistance";
+    public static final String FIREBASE_LEG_DURATION_TEXT = "legDuration";
+
+    public static final String FIREBASE_LEG_OVERVIEW_POLYLINE = "legOverViewPolyline";
+
+    public static final String FIREBASE_STEPS = "steps";
+
+    /**
+     * Firebase database reference constant for the videos
+     */
+    public static final String FIREBASE_LIVE_STREAMING_VIDEO_ID = "liveStreamingVideoID";
+
+
+    /**
+     * constant to determine if there is a current streaming or not
+     */
+    public static final String LIVE_STREAMING_NO_LIVE_VIDEO = "no live video";
+
+    /**
+     * Firebase database reference constant for the car
+     */
+    public static final String FIREBASE_CAR = "car";
+
+    public static final String FIREBASE_CONNECTION_STATE = "connectionState";
+    public static final String FIREBASE_ACCIDENT_STATE = "accidentState";
+    public static final String FIREBASE_START_STATE = "startState";
+    public static final String FIREBASE_LOCK_STATE = "lockState";
+    public static final String FIREBASE_LIGHTS_STATE = "lightsState";
+
+    public static final String FIREBASE_MAPPING_SERVICES = "mappingServices";
+
+    public static final String FIREBASE_ACCIDENTS = "accidents";
+
+    public static final String FIREBASE_SENSORES_VALUES = "sensorsValues";
+
+    public static final String FIREBASE_USERS = "users";
+    public static final String FIREBASE_USER_INFO = "userInfo";
+
+
+    /**
+     * Facebook Uri for the team
+     */
+    public static final String FACEBOOK_URI_AHMED_ABD_ELMEGED = "https://www.facebook.com/ven.rto";
+    public static final String FACEBOOK_URI_HUSSAM_MOSTAFA = "https://www.facebook.com/hussam.mostafa.1994";
+    public static final String FACEBOOK_URI_DOAA_ELSHAZLY = "https://www.facebook.com/doaa.elshazly.12";
+
+    /**
+     * Constant for the user uid that will store in the sharped preference to load user data in each fragment
+     */
+    public static final String USER_UID = "user_uid";
+
+
+    /**
+     * Constant for no live video
+     */
+    public static final String NO_LIVE_VIDEO = "no live video";
+
+}

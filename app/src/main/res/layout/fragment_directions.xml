@@ -1,0 +1,194 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:orientation="vertical"
+    android:paddingTop="55dp"
+    tools:context="com.example.mego.adas.ui.DirectionsFragment">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dirf_main_frame"
+        android:background="#fff"
+        android:elevation="12dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/loading_indicator_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="invisible" />
+
+
+            <ImageView
+                android:id="@+id/locationImageView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dirf_main_image"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/locations" />
+
+
+            <LinearLayout
+                android:id="@+id/edit_text_holder"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dirf_second_frame">
+
+                <EditText
+                    android:id="@+id/location_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:hint="@string/hint_enter_location" />
+
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dirf_steps_details_layout"
+                android:layout_alignParentBottom="true"
+                android:background="@color/colorPrimary">
+
+                <ImageView
+                    android:id="@+id/down_page_Image_View"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:src="@drawable/ic_down_page" />
+
+            </RelativeLayout>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/add_new_location_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/fab_plus"
+                app:backgroundTint="@color/colorAccent" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/detail_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dirf_second_frame"
+            android:layout_margin="8dp"
+            android:orientation="vertical"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:visibility="invisible">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/distantion" />
+
+                <TextView
+                    android:id="@+id/destination_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@android:color/black"
+                    tools:text="Mansoura" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/distance" />
+
+                <TextView
+                    android:id="@+id/distance_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@android:color/black"
+                    tools:text="1.7 km" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/duration" />
+
+                <TextView
+                    android:id="@+id/duration_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@android:color/black"
+                    tools:text="25 mins" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <fragment
+            android:id="@+id/google_map_location"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_dark"
+            android:visibility="gone">
+
+            <ListView
+                android:id="@+id/steps_listView"
+                android:layout_width="match_parent"
+                tools:listitem="@layout/step_list"
+                android:layout_height="match_parent" />
+
+
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

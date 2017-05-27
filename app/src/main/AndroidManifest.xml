@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.mego.adas">
+
+    <!-- Internet  Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Mapping  Permissions -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- Bluetooth Permissions -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- this give the ability to use OpenGl(Open graphics library) -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <application
+        android:name="android.support.multidex.MultiDexApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/splashScreenTheme">
+
+        <!-- This mean you use the play services library -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <!-- The meta DataSend for the api key -->
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyDzUFC3PRm7vehzlCZdhoCxq2awhEY3sZ0" />
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name=".sync.CarAdviceAssistantFirebaseJobService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".auth.SplashActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".auth.NotAuthEntryActivity"
+            android:screenOrientation="portrait" />
+
+
+        <activity
+            android:name=".auth.SignInActivity"
+            android:label="@string/sign_in"
+            android:parentActivityName=".auth.NotAuthEntryActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".auth.NotAuthEntryActivity" />
+        </activity>
+
+
+        <activity
+            android:name=".auth.SignUpActivity"
+            android:label="@string/sign_up"
+            android:parentActivityName=".auth.NotAuthEntryActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".auth.NotAuthEntryActivity" />
+        </activity>
+
+
+        <activity
+            android:name=".auth.ResetPasswordActivity"
+            android:label="@string/reset_password_label"
+            android:parentActivityName=".auth.SignInActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".auth.SignInActivity" />
+        </activity>
+
+
+        <activity
+            android:name=".auth.TermsAndConditionsActivity"
+            android:label="@string/terms_conditions_label"
+            android:parentActivityName=".auth.SignUpActivity"
+            android:screenOrientation="portrait">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".auth.SignUpActivity" />
+
+        </activity>
+
+    </application>
+
+</manifest>
