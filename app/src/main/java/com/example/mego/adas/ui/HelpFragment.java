@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.adapter.HelpPageViewerAdapter;
+import com.viewpagerindicator.CirclePageIndicator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,6 +56,10 @@ public class HelpFragment extends Fragment {
         HelpPageViewerAdapter adapter = new HelpPageViewerAdapter(getContext());
         ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.helpViewpager);
         viewPager.setAdapter(adapter);
+
+        //Circle indicator for photos
+        CirclePageIndicator indicator = (CirclePageIndicator) rootView.findViewById(R.id.circle_indicator);
+        indicator.setViewPager(viewPager);
 
         // Inflate the layout for this fragment
         return rootView;

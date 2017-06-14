@@ -55,5 +55,8 @@ dependencies {
 
     //to schedule jobs
     compile 'com.firebase:firebase-jobdispatcher:0.5.2'
+
+    //Circle Indicator
+    compile 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
 }
 apply plugin: 'com.google.gms.google-services'
