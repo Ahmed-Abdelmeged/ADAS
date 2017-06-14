@@ -43,7 +43,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * The adapter to get all bluetooth services
      */
-    private BluetoothAdapter mBluetoothAdapter;
+    BluetoothAdapter mBluetoothAdapter;
 
     /**
      * Tag for the log (Debugging)
@@ -186,6 +185,7 @@ public class MainActivity extends AppCompatActivity
         //set up the firebase
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity
 
 
         } else {
-            Toast.makeText(MainActivity.this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
         }
 
         bluetoothHandler = new Handler() {
@@ -242,10 +242,9 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
-        verifyUserAndDisplayData();
-
+        displayUserData();
+        verifyUserData();
         AdasSyncUtils.scheduleAdvices(this);
-
     }
 
 
@@ -331,7 +330,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.sign_out_item:
                 //sign out from the current user and start the not auth activity
                 mFirebaseAuth.signOut();
-                AuthenticationUtilities.setCurrentUser(null, MainActivity.this);
+                AuthenticationUtilities.clearCurrentUser(this);
                 Intent notAuthIntent = new Intent(MainActivity.this, NotAuthEntryActivity.class);
                 startActivity(notAuthIntent);
                 finish();
@@ -477,7 +476,6 @@ public class MainActivity extends AppCompatActivity
 
                     //create a RFCOMM (SPP) connection
                     btSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(myUUID);
-                    Log.e(LOG_TAG, btSocket + "");
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
 
                     //start connection
@@ -630,39 +628,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Helper method Verify authentication and display user data
-     */
-    private void verifyUserAndDisplayData() {
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-                if (currentUser != null) {
-                    String uid = currentUser.getUid();
-                    AuthenticationUtilities.setCurrentUser(uid, MainActivity.this);
-                    mUsersDatabaseReference = mFirebaseDatabase.getReference().
-                            child(constant.FIREBASE_USERS).child(uid);
-
-                    if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
-                        showProgressDialog("Loading user data");
-                        getDataAndDisplayIt();
-                        mUsersDatabaseReference.addValueEventListener(mUserValueEventListener);
-                    } else {
-                        Toast.makeText(MainActivity.this, R.string.error_message_failed_sign_in_no_network,
-                                Toast.LENGTH_LONG).show();
-                    }
-
-
-                } else {
-                    Intent authIntent = new Intent(MainActivity.this, NotAuthEntryActivity.class);
-                    startActivity(authIntent);
-                    finish();
-                }
-            }
-        };
-    }
-
-    /**
      * Helper method to show progress dialog
      */
     public void showProgressDialog(String message) {
@@ -684,24 +649,47 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    /**
+     * Helper method Verify authentication and display user data
+     */
+    private void verifyUserData() {
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                if (currentUser != null) {
+                    String uid = currentUser.getUid();
+                    mUsersDatabaseReference = mFirebaseDatabase.getReference().
+                            child(constant.FIREBASE_USERS).child(uid);
+                    if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
+                        getUserData(uid);
+                        mUsersDatabaseReference.addValueEventListener(mUserValueEventListener);
+                    }
+
+                } else {
+                    Intent authIntent = new Intent(MainActivity.this, NotAuthEntryActivity.class);
+                    startActivity(authIntent);
+                    finish();
+                }
+            }
+        };
+    }
+
     /**
      * Helper method to get the data from the database and display it
      */
-    private void getDataAndDisplayIt() {
+    private void getUserData(final String uid) {
         mUserValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     User currentUser = dataSnapshot.getValue(User.class);
 
-                    //get the user name
-                    String name = currentUser.getFullName();
-                    userNameTextView.setText(name);
-
-                    //get the user email
-                    String email = currentUser.getEmail();
-                    userEmailTextView.setText(email);
-                    hideProgressDialog();
+                    AuthenticationUtilities.setCurrentUser(uid, currentUser.getFullName()
+                            , currentUser.getEmail(), currentUser.getPhoneNumber()
+                            , currentUser.getLocation(), MainActivity.this);
+                    displayUserData();
                 }
             }
 
@@ -712,5 +700,28 @@ public class MainActivity extends AppCompatActivity
         };
     }
 
+    /**
+     * Helper method to display user data
+     */
+    private void displayUserData() {
+        User currentUser = AuthenticationUtilities.getCurrentUser(MainActivity.this);
 
+        // check if is a data in the user if not show dialog and wait for the data to load
+        if (currentUser.getUserUid() == null) {
+            showProgressDialog(getString(R.string.load_user_data));
+        } else {
+            hideProgressDialog();
+        }
+
+        //get the user name
+        String name = currentUser.getFullName();
+        if (name != null) {
+            userNameTextView.setText(name);
+        }
+        //get the user email
+        String email = currentUser.getEmail();
+        if (email != null) {
+            userEmailTextView.setText(email);
+        }
+    }
 }

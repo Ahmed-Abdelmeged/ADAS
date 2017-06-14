@@ -20,7 +20,6 @@
  */
 
 
-
 package com.example.mego.adas.utils;
 
 /**
@@ -36,7 +35,7 @@ public class constant {
     /**
      * key for get the video published date key bundle extra
      */
-    public static final String PUBLISHED_AT__KEY = "publishedAt";
+    public static final String PUBLISHED_AT_KEY = "publishedAt";
 
     /**
      * key for get the video title key bundle extra
@@ -71,7 +70,7 @@ public class constant {
     /**
      * Google Client API Key
      */
-    public static final String API_KEY = "YOUR_API_KEY";
+    public static final String API_KEY = "AIzaSyBKyxvJIHYfhjsvINFgF3fwvCiViQ5Ie7c";
 
     /**
      * directions constant that get from the html instructions
@@ -145,11 +144,6 @@ public class constant {
     public static final String FACEBOOK_URI_AHMED_ABD_ELMEGED = "https://www.facebook.com/ven.rto";
     public static final String FACEBOOK_URI_HUSSAM_MOSTAFA = "https://www.facebook.com/hussam.mostafa.1994";
     public static final String FACEBOOK_URI_DOAA_ELSHAZLY = "https://www.facebook.com/doaa.elshazly.12";
-
-    /**
-     * Constant for the user uid that will store in the sharped preference to load user data in each fragment
-     */
-    public static final String USER_UID = "user_uid";
 
 
     /**

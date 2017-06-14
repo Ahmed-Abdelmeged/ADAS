@@ -130,7 +130,10 @@ public class ConnectFragment extends Fragment {
             PairedDevicesList();
         }
 
-        setBroadCastReceiver();
+        if ((mBluetoothAdapter!= null)){
+            setBroadCastReceiver();
+        }
+
 
         //request location permission for bluetooth scanning for android API 23 and above
         ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ENABLE_FINE_LOCATION);

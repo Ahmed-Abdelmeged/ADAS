@@ -78,7 +78,7 @@ public class WatchVideoFragment extends Fragment {
         //get the video information from the other fragment
         videoId = getArguments().getString(constant.VIDEO_KEY);
         title = getArguments().getString(constant.TITLE_KEY);
-        publishAt = getArguments().getString(constant.PUBLISHED_AT__KEY);
+        publishAt = getArguments().getString(constant.PUBLISHED_AT_KEY);
 
         View rootView = inflater.inflate(R.layout.fragment_watch_video, container, false);
         initializeScreen(rootView);

@@ -29,7 +29,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +40,7 @@ import android.widget.Toast;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
+import com.example.mego.adas.auth.User;
 import com.example.mego.adas.utils.constant;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -112,7 +112,8 @@ public class LiveStreamingFragment extends Fragment {
 
 
             //get the current user uid
-            String uid = AuthenticationUtilities.getCurrentUser(getContext());
+            User currentUser = AuthenticationUtilities.getCurrentUser(getContext());
+            String uid = currentUser.getUserUid();
 
             //get the references for the child
             //the  child for the  live video id
@@ -126,8 +127,6 @@ public class LiveStreamingFragment extends Fragment {
 
                     //hide the loading bar
                     loadingBar.setVisibility(View.INVISIBLE);
-
-                    Log.e(LOG_TAG, "change");
 
                     if (dataSnapshot.exists()) {
                         //get the current video id

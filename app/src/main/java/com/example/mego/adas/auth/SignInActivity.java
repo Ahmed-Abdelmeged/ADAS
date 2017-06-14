@@ -63,7 +63,6 @@ public class SignInActivity extends AppCompatActivity {
     private Button signInButton;
     private ProgressDialog mProgressDialog;
 
-
     /**
      * Firebase Authentication
      */
@@ -237,4 +236,6 @@ public class SignInActivity extends AppCompatActivity {
 
         signInButton = (Button) findViewById(R.id.sign_in_Button_sign_in_activity);
     }
+
+
 }

@@ -32,7 +32,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,7 +127,7 @@ public class VideosFragments extends Fragment implements LoaderManager.LoaderCal
 
                 args.putString(constant.VIDEO_KEY, currentVideo.getVideoId());
                 args.putString(constant.TITLE_KEY, currentVideo.getTitle());
-                args.putString(constant.PUBLISHED_AT__KEY, currentVideo.getPublishedAt());
+                args.putString(constant.PUBLISHED_AT_KEY, currentVideo.getPublishedAt());
 
                 watchVideoFragment.setArguments(args);
 
@@ -183,8 +182,7 @@ public class VideosFragments extends Fragment implements LoaderManager.LoaderCal
         uriBuilder.appendQueryParameter(YoutubeAPI.QUERY_PARAMETER_KEY, constant.API_KEY);
 
 
-        Log.e(LOG_TAG, "onCreate");
-        Log.e(LOG_TAG, uriBuilder.toString());
+        //Log.e(LOG_TAG, uriBuilder.toString());
         return new VideosLoader(getContext(), uriBuilder.toString());
     }
 
@@ -196,15 +194,12 @@ public class VideosFragments extends Fragment implements LoaderManager.LoaderCal
      */
     @Override
     public void onLoadFinished(Loader<ArrayList<YouTubeVideo>> loader, ArrayList<YouTubeVideo> videos) {
-
-
         loadingBar.setVisibility(View.INVISIBLE);
         mAdapter.clear();
         emptyText.setText(getString(R.string.no_videos));
         if (videos != null && !videos.isEmpty()) {
             mAdapter.addAll(videos);
         }
-        Log.e(LOG_TAG, "onLoadFinished");
     }
 
     /**
@@ -215,6 +210,5 @@ public class VideosFragments extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onLoaderReset(Loader<ArrayList<YouTubeVideo>> loader) {
         mAdapter.clear();
-        Log.e(LOG_TAG, "onLoadReset");
     }
 }

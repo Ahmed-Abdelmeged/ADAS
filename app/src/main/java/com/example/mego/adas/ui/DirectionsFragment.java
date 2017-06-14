@@ -25,6 +25,7 @@ package com.example.mego.adas.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -43,9 +44,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -66,6 +65,7 @@ import com.example.mego.adas.R;
 import com.example.mego.adas.adapter.StepAdapter;
 import com.example.mego.adas.api.DirectionsAPI;
 import com.example.mego.adas.auth.AuthenticationUtilities;
+import com.example.mego.adas.auth.User;
 import com.example.mego.adas.loader.DirectionsLoader;
 import com.example.mego.adas.model.Directions;
 import com.example.mego.adas.model.Steps;
@@ -243,7 +243,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -289,7 +288,8 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
             mFirebaseDatabase = FirebaseDatabase.getInstance();
 
             //get the current user uid
-            String uid = AuthenticationUtilities.getCurrentUser(getContext());
+            User currentUser = AuthenticationUtilities.getCurrentUser(getContext());
+            String uid = currentUser.getUserUid();
 
             //get the references for the childes
             //the main child for the directions services
@@ -385,22 +385,14 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.e(LOG_TAG, "onConntged");
         enableMyLocation();
 
         if (location != null) {
             //get the longitude and the  latitude from the location object
             longitude = location.getLongitude();
             latitude = location.getLatitude();
-            Log.e(LOG_TAG, longitude + "");
-            Log.e(LOG_TAG, latitude + "");
-
 
             startLocation = longitude + "," + latitude;
-
-
-            Log.e(LOG_TAG + "longitude", longitude + "");
-            Log.e(LOG_TAG + "latitude", latitude + "");
 
             carPlaceMarker = new MarkerOptions()
                     .position(new LatLng(latitude, longitude))
@@ -453,8 +445,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      */
     @Override
     public void onLocationChanged(Location location) {
-
-
         startLocation = location.getLatitude() + "," + location.getLongitude();
 
         carPlace = new LatLng(location.getLatitude(), location.getLongitude());
@@ -487,18 +477,14 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
                 return;
             }
-
             // other 'case' lines to check for other
             // permissions this app might request
         }
@@ -541,7 +527,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      */
     private void drawPolyline(String polyline) {
         List<LatLng> points = PolyUtil.decode(polyline);
-        Log.e(LOG_TAG + "points", points.toString());
         carWayPolyLine = mMap.addPolyline(new PolylineOptions().geodesic(true).addAll(points));
     }
 
@@ -550,71 +535,74 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      */
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.add_new_location_fab:
-                if (!isEditTextVisible) {
-                    detailView.setVisibility(View.INVISIBLE);
-                    revealEditText(revealView);
-                    locationEditText.requestFocus();
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                        addLocationButton.setImageResource(R.drawable.icn_morp);
-                        mAnimatable = (Animatable) (addLocationButton).getDrawable();
-                        mAnimatable.start();
-                    }
-                    revealView.setBackgroundColor(Color.WHITE);
+        if (networkInfo != null && networkInfo.isConnected()) {
+            switch (v.getId()) {
+                case R.id.add_new_location_fab:
+                    if (!isEditTextVisible) {
+                        detailView.setVisibility(View.INVISIBLE);
+                        revealEditText(revealView);
+                        locationEditText.requestFocus();
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                            addLocationButton.setImageResource(R.drawable.icn_morp);
+                            mAnimatable = (Animatable) (addLocationButton).getDrawable();
+                            mAnimatable.start();
+                        }
+                        revealView.setBackgroundColor(Color.WHITE);
 
-                } else {
-                    goingLocation = locationEditText.getText().toString();
-
-                    //put the going location in the firebase
-                    mGoingLocationDatabaseReference.setValue(goingLocation);
-
-                    hideEditText(revealView);
-                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-                        revealView.setVisibility(View.INVISIBLE);
-                    }
-
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                        addLocationButton.setImageResource(R.drawable.icn_morph_reverse);
-                        mAnimatable = (Animatable) (addLocationButton).getDrawable();
-                        mAnimatable.start();
-                    }
-                    locationImageView.setVisibility(View.INVISIBLE);
-
-                    //check for the internet connection if is ok init the loader
-                    loadingbar.setVisibility(View.VISIBLE);
-
-                    if (networkInfo != null && networkInfo.isConnected()) {
-                        //create the uri request with the specific query parameters
-
-                        LoaderManager loaderManager = getActivity().getLoaderManager();
-                        loaderManager.restartLoader(DIRECTIONS_LOADER_ID, null, DirectionsFragment.this).forceLoad();
                     } else {
-                        msg("No Internet Connection");
-                        loadingbar.setVisibility(View.INVISIBLE);
+                        goingLocation = locationEditText.getText().toString();
+
+                        //put the going location in the firebase
+                        mGoingLocationDatabaseReference.setValue(goingLocation);
+
+                        hideEditText(revealView);
+                        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+                            revealView.setVisibility(View.INVISIBLE);
+                        }
+
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                            addLocationButton.setImageResource(R.drawable.icn_morph_reverse);
+                            mAnimatable = (Animatable) (addLocationButton).getDrawable();
+                            mAnimatable.start();
+                        }
+                        locationImageView.setVisibility(View.INVISIBLE);
+
+                        //check for the internet connection if is ok init the loader
+                        loadingbar.setVisibility(View.VISIBLE);
+
+                        if (networkInfo != null && networkInfo.isConnected()) {
+                            //create the uri request with the specific query parameters
+
+                            LoaderManager loaderManager = getActivity().getLoaderManager();
+                            loaderManager.restartLoader(DIRECTIONS_LOADER_ID, null, DirectionsFragment.this).forceLoad();
+                        } else {
+                            msg("No Internet Connection");
+                            loadingbar.setVisibility(View.INVISIBLE);
+                        }
+
+
                     }
+                    break;
+                case R.id.down_page_Image_View:
+                    //setup the animation
+                    Animation slideDown = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);
+                    Animation slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up_map);
 
-
-                }
-                break;
-            case R.id.down_page_Image_View:
-                Log.e(LOG_TAG, "pressed");
-
-                //setup the animation
-                Animation slideDown = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);
-                Animation slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up_map);
-
-                if (mapView.getVisibility() == View.GONE) {
-                    mapView.setVisibility(View.VISIBLE);
-                    mapView.startAnimation(slideDown);
-                    stepsListButton.setImageResource(R.drawable.ic_up_page);
-                } else {
-                    mapView.startAnimation(slideUp);
-                    mapView.setVisibility(View.GONE);
-                    stepsListButton.setImageResource(R.drawable.ic_down_page);
-                }
-                break;
+                    if (mapView.getVisibility() == View.GONE) {
+                        mapView.setVisibility(View.VISIBLE);
+                        mapView.startAnimation(slideDown);
+                        stepsListButton.setImageResource(R.drawable.ic_up_page);
+                    } else {
+                        mapView.startAnimation(slideUp);
+                        mapView.setVisibility(View.GONE);
+                        stepsListButton.setImageResource(R.drawable.ic_down_page);
+                    }
+                    break;
+            }
+        } else {
+            Toast.makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
         }
+
     }
 
     /**
@@ -773,9 +761,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_DESTINATION, goingLocation);
         uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_KEY, constant.API_KEY);
 
-        Log.e(LOG_TAG, uriBuilder.toString());
-        Log.e(LOG_TAG, "onCreateLoader");
-
+        //Log.e(LOG_TAG, uriBuilder.toString());
         return new DirectionsLoader(getContext(), uriBuilder.toString());
 
     }
@@ -825,7 +811,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
 
                     if (carWayPolyLine != null) {
                         carWayPolyLine.remove();
-                        Log.e(LOG_TAG, "remove");
                     }
 
 
@@ -852,9 +837,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
 
         }
         mAdapter.addAll(stepsArrayList);
-        Log.e(LOG_TAG, "onLoadFinished");
-
-
     }
 
     @Override
@@ -864,7 +846,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         distanceTextView.setText("");
         mAdapter.clear();
         stepsArrayList.clear();
-        Log.e(LOG_TAG, "onLoadReset");
     }
 
     /**

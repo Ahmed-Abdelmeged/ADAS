@@ -33,10 +33,11 @@ public class User {
     private String location;
     private String fullName;
     private HashMap<String, Object> timestampJoined;
+    private String userUid;
 
 
     /**
-     * show the user constructor
+     * User constructor for now user
      *
      * @param email
      * @param phoneNumber
@@ -54,9 +55,26 @@ public class User {
     }
 
     /**
+     * User constructor for verify user
+     *
+     * @param email
+     * @param phoneNumber
+     * @param location
+     * @param fullName
+     * @param userUid
+     */
+    public User(String email, String phoneNumber, String location, String fullName, String userUid) {
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.location = location;
+        this.fullName = fullName;
+        this.userUid = userUid;
+    }
+
+    /**
      * Required empty constructor
      */
-    public User( ) {
+    public User() {
     }
 
     public String getEmail() {
@@ -77,5 +95,19 @@ public class User {
 
     public HashMap<String, Object> getTimestampJoined() {
         return timestampJoined;
+    }
+
+    public String getUserUid() {
+        return userUid;
+    }
+
+    public void setUserUid(String userUid) {
+        this.userUid = userUid;
+    }
+
+    @Override
+    public String toString() {
+        return "User: " + userUid + " Name: " + fullName + " Email: " + email +
+                " Phone: " + phoneNumber + " Location: " + location;
     }
 }

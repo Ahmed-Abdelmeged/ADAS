@@ -53,6 +53,7 @@ import android.widget.Toast;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
+import com.example.mego.adas.auth.User;
 import com.example.mego.adas.model.Accident;
 import com.example.mego.adas.model.MappingServices;
 import com.example.mego.adas.model.SensorsValues;
@@ -291,7 +292,8 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
             mFirebaseDatabase = FirebaseDatabase.getInstance();
 
             //get the current user uid
-            String uid = AuthenticationUtilities.getCurrentUser(getContext());
+            User currentUser = AuthenticationUtilities.getCurrentUser(getContext());
+            String uid = currentUser.getUserUid();
 
             //get the references for the childes
             //the main child for the car services
@@ -640,7 +642,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
                 marker = mMap.addMarker(carPlace);
 
-                flyto(cameraPosition);
+                flyTo(cameraPosition);
 
             }
         }
@@ -700,7 +702,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
     /**
      * helper method to go to specific location
      */
-    private void flyto(CameraPosition target) {
+    private void flyTo(CameraPosition target) {
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
     }
 
@@ -713,39 +715,41 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
      */
     public void animateMarker(final Marker marker, final LatLng toPosition,
                               final boolean hideMarker) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        Projection proj = mMap.getProjection();
-        Point startPoint = proj.toScreenLocation(marker.getPosition());
-        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-        final long duration = 500;
+        if (marker != null && toPosition != null) {
+            final Handler handler = new Handler();
+            final long start = SystemClock.uptimeMillis();
+            Projection proj = mMap.getProjection();
+            Point startPoint = proj.toScreenLocation(marker.getPosition());
+            final LatLng startLatLng = proj.fromScreenLocation(startPoint);
+            final long duration = 500;
 
-        final Interpolator interpolator = new LinearInterpolator();
+            final Interpolator interpolator = new LinearInterpolator();
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed
-                        / duration);
-                double lng = t * toPosition.longitude + (1 - t)
-                        * startLatLng.longitude;
-                double lat = t * toPosition.latitude + (1 - t)
-                        * startLatLng.latitude;
-                marker.setPosition(new LatLng(lat, lng));
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    long elapsed = SystemClock.uptimeMillis() - start;
+                    float t = interpolator.getInterpolation((float) elapsed
+                            / duration);
+                    double lng = t * toPosition.longitude + (1 - t)
+                            * startLatLng.longitude;
+                    double lat = t * toPosition.latitude + (1 - t)
+                            * startLatLng.latitude;
+                    marker.setPosition(new LatLng(lat, lng));
 
-                if (t < 1.0) {
-                    // Post again 16ms later.
-                    handler.postDelayed(this, 16);
-                } else {
-                    if (hideMarker) {
-                        marker.setVisible(false);
+                    if (t < 1.0) {
+                        // Post again 16ms later.
+                        handler.postDelayed(this, 16);
                     } else {
-                        marker.setVisible(true);
+                        if (hideMarker) {
+                            marker.setVisible(false);
+                        } else {
+                            marker.setVisible(true);
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -843,12 +847,13 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
             if (networkInfo != null && networkInfo.isConnected()) {
                 MappingServices mappingServicesSend = new MappingServices(longitude, latitude, onConnectedFlag, onLocationChangedFlag);
                 mappingServicesDatabaseReference.setValue(mappingServicesSend);
+                animateMarker(marker, accidentPlace, false);
+                cameraPosition = new CameraPosition.Builder()
+                        .target(accidentPlace).zoom(zoom).tilt(tilt).bearing(bearing).build();
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
             }
 
-            animateMarker(marker, accidentPlace, false);
-            cameraPosition = new CameraPosition.Builder()
-                    .target(accidentPlace).zoom(zoom).tilt(tilt).bearing(bearing).build();
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
 
     }

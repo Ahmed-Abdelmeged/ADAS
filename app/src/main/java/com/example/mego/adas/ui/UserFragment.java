@@ -56,6 +56,7 @@ import android.widget.Toast;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
+import com.example.mego.adas.auth.User;
 import com.example.mego.adas.model.MappingServices;
 import com.example.mego.adas.model.SensorsValues;
 import com.example.mego.adas.utils.AdasUtils;
@@ -282,7 +283,8 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
             mFirebaseDatabase = FirebaseDatabase.getInstance();
 
             //get the current user uid
-            String uid = AuthenticationUtilities.getCurrentUser(getContext());
+            User currentUser = AuthenticationUtilities.getCurrentUser(getContext());
+            String uid = currentUser.getUserUid();
 
             //get the references for the childes
             //the main child for the directions services

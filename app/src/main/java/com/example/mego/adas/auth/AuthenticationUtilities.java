@@ -32,8 +32,6 @@ import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.example.mego.adas.utils.constant;
-
 import java.util.regex.Pattern;
 
 /**
@@ -44,7 +42,20 @@ public class AuthenticationUtilities {
     /**
      * Default value for the current user
      */
-    private static final String USER_DEFUALT = null;
+    private static final String USER_DEFAULT_UID = null;
+    private static final String USER_DEFAULT_NAME = null;
+    private static final String USER_DEFAULT_EMAIL = null;
+    private static final String USER_DEFAULT_PHONE = null;
+    private static final String USER_DEFAULT_LOCATION = null;
+
+    /**
+     * Constant for the user uid that will store in the sharped preference to load user data in each fragment
+     */
+    private static final String USER_UID = "user_uid";
+    private static final String USER_NAME = "user_name";
+    private static final String USER_EMAIL = "user_email";
+    private static final String USER_PHONE = "user_phone";
+    private static final String USER_LOCATION = "user_location";
 
     /**
      * Helper method to validate the email
@@ -119,23 +130,53 @@ public class AuthenticationUtilities {
     /**
      * Helper method to set the current user
      */
-    synchronized public static void setCurrentUser(String uid, Context context) {
+    synchronized public static void setCurrentUser(String uid, String name
+            , String email, String phoneNumber, String location, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String userUid = preferences.getString(constant.USER_UID, USER_DEFUALT);
+
+        //get the current state for shared preference
+        String userUid = preferences.getString(USER_UID, USER_DEFAULT_UID);
+        String userName = preferences.getString(USER_NAME, USER_DEFAULT_NAME);
+        String userLocation = preferences.getString(USER_LOCATION, USER_DEFAULT_LOCATION);
+        String userPhone = preferences.getString(USER_PHONE, USER_DEFAULT_PHONE);
+        String userEmail = preferences.getString(USER_EMAIL, USER_DEFAULT_EMAIL);
 
         SharedPreferences.Editor editor = preferences.edit();
 
-        editor.putString(constant.USER_UID, uid);
+        editor.putString(USER_UID, uid);
+        editor.putString(USER_NAME, name);
+        editor.putString(USER_EMAIL, email);
+        editor.putString(USER_PHONE, phoneNumber);
+        editor.putString(USER_LOCATION, location);
         editor.apply();
     }
 
     /**
      * Helper method to get the current user
      */
-    public static String getCurrentUser(Context context) {
+    public static User getCurrentUser(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String userUid = sharedPreferences.getString(constant.USER_UID, USER_DEFUALT);
-        return userUid;
+        String userUid = sharedPreferences.getString(USER_UID, USER_DEFAULT_UID);
+        String userName = sharedPreferences.getString(USER_NAME, USER_DEFAULT_NAME);
+        String userLocation = sharedPreferences.getString(USER_LOCATION, USER_DEFAULT_LOCATION);
+        String userPhone = sharedPreferences.getString(USER_PHONE, USER_DEFAULT_PHONE);
+        String userEmail = sharedPreferences.getString(USER_EMAIL, USER_DEFAULT_EMAIL);
+        return new User(userEmail, userPhone, userLocation, userName, userUid);
+    }
+
+    /**
+     * Helper method to clear current user
+     */
+    synchronized public static void clearCurrentUser(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.putString(USER_UID, null);
+        editor.putString(USER_NAME, null);
+        editor.putString(USER_EMAIL,null);
+        editor.putString(USER_PHONE, null);
+        editor.putString(USER_LOCATION,null);
+        editor.apply();
     }
 
 

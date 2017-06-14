@@ -30,10 +30,10 @@
         android:id="@+id/empty_text_accident"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:text="@string/no_accidents"
         android:textColor="@android:color/black"
-        android:textSize="34sp"
+        android:textSize="26sp"
+        android:layout_centerInParent="true"
         android:visibility="invisible" />
 
 

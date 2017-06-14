@@ -191,5 +191,7 @@
     <string name="password_not_strong">Password not strong enough. Use at least 6 characters and a mix of letters and numbers</string>
     <string name="sign_up_loading">Create an account</string>
 
+    <!-- Main Activity -->
+    <string name="load_user_data">Loading user data</string>
 
 </resources>

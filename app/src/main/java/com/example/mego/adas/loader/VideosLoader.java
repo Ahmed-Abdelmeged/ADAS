@@ -24,7 +24,6 @@ package com.example.mego.adas.loader;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.util.Log;
 
 import com.example.mego.adas.model.YouTubeVideo;
 import com.example.mego.adas.utils.QueryUtils;
@@ -63,7 +62,6 @@ public class VideosLoader extends AsyncTaskLoader<ArrayList<YouTubeVideo>> {
     @Override
     protected void onStartLoading() {
         forceLoad();
-        Log.e(LOG_TAG, "onStartLoading");
     }
 
     /**
@@ -78,7 +76,6 @@ public class VideosLoader extends AsyncTaskLoader<ArrayList<YouTubeVideo>> {
             return null;
         }
         ArrayList<YouTubeVideo> videos = QueryUtils.fetchVideosData(mUrl);
-        Log.e(LOG_TAG, "load in the background");
         return videos;
     }
 

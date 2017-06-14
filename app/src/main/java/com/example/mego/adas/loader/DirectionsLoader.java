@@ -23,7 +23,6 @@ package com.example.mego.adas.loader;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.util.Log;
 
 import com.example.mego.adas.model.Directions;
 import com.example.mego.adas.utils.QueryUtils;
@@ -59,7 +58,6 @@ public class DirectionsLoader  extends AsyncTaskLoader<ArrayList<Directions>> {
     @Override
     protected void onStartLoading() {
         forceLoad();
-        Log.e(LOG_TAG, "onStartLoading");
     }
 
     @Override

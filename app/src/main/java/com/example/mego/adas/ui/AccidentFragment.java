@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.example.mego.adas.R;
 import com.example.mego.adas.adapter.AccidentAdapter;
 import com.example.mego.adas.auth.AuthenticationUtilities;
+import com.example.mego.adas.auth.User;
 import com.example.mego.adas.model.Accident;
 import com.example.mego.adas.utils.constant;
 import com.google.firebase.database.ChildEventListener;
@@ -112,7 +113,8 @@ public class AccidentFragment extends Fragment {
             mFirebaseDatabase = FirebaseDatabase.getInstance();
 
             //get the current user uid
-            String uid = AuthenticationUtilities.getCurrentUser(getContext());
+            User currentUser = AuthenticationUtilities.getCurrentUser(getContext());
+            String uid = currentUser.getUserUid();
 
             //get the references for the childes
             accidentsDatabaseReference = mFirebaseDatabase.getReference().child(constant.FIREBASE_USERS)
