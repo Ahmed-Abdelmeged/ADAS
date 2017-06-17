@@ -155,6 +155,7 @@ public class SignInActivity extends AppCompatActivity {
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                hideProgressDialog();
                 showErrorDialog(e.getLocalizedMessage());
             }
         });
