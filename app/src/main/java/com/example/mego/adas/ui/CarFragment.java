@@ -59,8 +59,8 @@ import com.example.mego.adas.model.MappingServices;
 import com.example.mego.adas.model.SensorsValues;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Communicator;
+import com.example.mego.adas.utils.Constant;
 import com.example.mego.adas.utils.NotificationUtils;
-import com.example.mego.adas.utils.constant;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -297,49 +297,49 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
             //get the references for the childes
             //the main child for the car services
-            carDatabaseReference = mFirebaseDatabase.getReference().child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO).child(constant.FIREBASE_CAR);
+            carDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
+                    .child(uid).child(Constant.FIREBASE_USER_INFO).child(Constant.FIREBASE_CAR);
 
             //the childes for the direction root
             connectionStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_CAR).child(constant.FIREBASE_CONNECTION_STATE);
+                    .child(Constant.FIREBASE_USERS)
+                    .child(uid).child(Constant.FIREBASE_USER_INFO)
+                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_CONNECTION_STATE);
 
             accidentStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_CAR).child(constant.FIREBASE_ACCIDENT_STATE);
+                    .child(Constant.FIREBASE_USERS)
+                    .child(uid).child(Constant.FIREBASE_USER_INFO)
+                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_ACCIDENT_STATE);
 
             startStateStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_CAR).child(constant.FIREBASE_START_STATE);
+                    .child(Constant.FIREBASE_USERS)
+                    .child(uid).child(Constant.FIREBASE_USER_INFO)
+                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_START_STATE);
 
             lightsStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_CAR).child(constant.FIREBASE_LIGHTS_STATE);
+                    .child(Constant.FIREBASE_USERS)
+                    .child(uid).child(Constant.FIREBASE_USER_INFO)
+                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_LIGHTS_STATE);
 
             lockStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_CAR).child(constant.FIREBASE_LOCK_STATE);
+                    .child(Constant.FIREBASE_USERS)
+                    .child(uid).child(Constant.FIREBASE_USER_INFO)
+                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_LOCK_STATE);
 
             mappingServicesDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_CAR).child(constant.FIREBASE_MAPPING_SERVICES);
+                    .child(Constant.FIREBASE_USERS)
+                    .child(uid).child(Constant.FIREBASE_USER_INFO)
+                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_MAPPING_SERVICES);
 
             sensorsValuesDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_CAR).child(constant.FIREBASE_SENSORES_VALUES);
+                    .child(Constant.FIREBASE_USERS)
+                    .child(uid).child(Constant.FIREBASE_USER_INFO)
+                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_SENSORES_VALUES);
 
             accidentsDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_ACCIDENTS);
+                    .child(Constant.FIREBASE_USERS)
+                    .child(uid).child(Constant.FIREBASE_USER_INFO)
+                    .child(Constant.FIREBASE_ACCIDENTS);
 
             connectionStateDatabaseReference.setValue(1);
 

@@ -51,7 +51,6 @@ import com.example.mego.adas.adapter.BluetoothDevicesAdapter;
 import java.util.ArrayList;
 import java.util.Set;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -240,7 +239,7 @@ public class ConnectFragment extends Fragment {
                 bluetoothDevicesAdapter.add(bt.getName() + "\n" + bt.getAddress());
             }
         } else {
-            Toast.makeText(getApplicationContext(), R.string.no_paired_devices,
+            Toast.makeText(getContext(), R.string.no_paired_devices,
                     Toast.LENGTH_LONG).show();
         }
 

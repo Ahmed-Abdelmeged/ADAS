@@ -23,9 +23,9 @@
 package com.example.mego.adas.utils;
 
 /**
- * hold all the program constant
+ * hold all the program Constant
  */
-public class constant {
+public class Constant {
 
     /**
      * key for get the video id key bundle extra
@@ -73,7 +73,7 @@ public class constant {
     public static final String API_KEY = "AIzaSyBKyxvJIHYfhjsvINFgF3fwvCiViQ5Ie7c";
 
     /**
-     * directions constant that get from the html instructions
+     * directions Constant that get from the html instructions
      * to determine the photo that will show in the list
      * and send the car direction vay bluetooth
      */
@@ -91,7 +91,7 @@ public class constant {
     public static final String DIRECTION_SHARP_LEFT = "Sharp left";
 
     /**
-     * Firebase database reference constant for the directions
+     * Firebase database reference Constant for the directions
      */
     public static final String FIREBASE_DIRECTIONS = "directions";
 
@@ -107,18 +107,18 @@ public class constant {
     public static final String FIREBASE_STEPS = "steps";
 
     /**
-     * Firebase database reference constant for the videos
+     * Firebase database reference Constant for the videos
      */
     public static final String FIREBASE_LIVE_STREAMING_VIDEO_ID = "liveStreamingVideoID";
 
 
     /**
-     * constant to determine if there is a current streaming or not
+     * Constant to determine if there is a current streaming or not
      */
     public static final String LIVE_STREAMING_NO_LIVE_VIDEO = "no live video";
 
     /**
-     * Firebase database reference constant for the car
+     * Firebase database reference Constant for the car
      */
     public static final String FIREBASE_CAR = "car";
 
@@ -150,5 +150,11 @@ public class constant {
      * Constant for no live video
      */
     public static final String NO_LIVE_VIDEO = "no live video";
+
+    /**
+     * Constant for verify phone number
+     */
+    public static final String FIREBASE_IS_VERIFIED_PHONE = "phoneVerified";
+    public static final String FIREBASE_USER_PHONE ="phoneNumber";
 
 }

@@ -33,7 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.utils.constant;
+import com.example.mego.adas.utils.Constant;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -76,9 +76,9 @@ public class WatchVideoFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         //get the video information from the other fragment
-        videoId = getArguments().getString(constant.VIDEO_KEY);
-        title = getArguments().getString(constant.TITLE_KEY);
-        publishAt = getArguments().getString(constant.PUBLISHED_AT_KEY);
+        videoId = getArguments().getString(Constant.VIDEO_KEY);
+        title = getArguments().getString(Constant.TITLE_KEY);
+        publishAt = getArguments().getString(Constant.PUBLISHED_AT_KEY);
 
         View rootView = inflater.inflate(R.layout.fragment_watch_video, container, false);
         initializeScreen(rootView);
@@ -105,7 +105,7 @@ public class WatchVideoFragment extends Fragment {
             videoDateTextView.setText(date);
 
 
-            youTubePlayerFragment.initialize(constant.API_KEY, new YouTubePlayer.OnInitializedListener() {
+            youTubePlayerFragment.initialize(Constant.API_KEY, new YouTubePlayer.OnInitializedListener() {
                 @Override
                 public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
 

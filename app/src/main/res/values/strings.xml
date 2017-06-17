@@ -193,5 +193,16 @@
 
     <!-- Main Activity -->
     <string name="load_user_data">Loading user data</string>
+    <string name="accessibility_logo">App Logo</string>
+
+    <!-- Verify phone number activity -->
+    <string name="verify_phone_number_label">Verify Phone</string>
+    <string name="continue_label">Continue</string>
+    <string name="please_enter_code">Please enter the code sent</string>
+    <string name="on_your_phone">on your phone</string>
+    <string name="resend_code">Resend Code</string>
+    <string name="did_not_get_code">Didn\'t get the code?</string>
+    <string name="invalid_phone_number">Invalid phone number</string>
+    <string name="unexpected_error_call_the_support">Unexpected error contact the support</string>
 
 </resources>

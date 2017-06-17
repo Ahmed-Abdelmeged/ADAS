@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.utils.constant;
+import com.example.mego.adas.utils.Constant;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,21 +62,21 @@ public class AboutFragment extends Fragment {
         projectLeaderTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openFacebookIntent(constant.FACEBOOK_URI_HUSSAM_MOSTAFA);
+                openFacebookIntent(Constant.FACEBOOK_URI_HUSSAM_MOSTAFA);
             }
         });
 
         androidDeveloperTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openFacebookIntent(constant.FACEBOOK_URI_AHMED_ABD_ELMEGED);
+                openFacebookIntent(Constant.FACEBOOK_URI_AHMED_ABD_ELMEGED);
             }
         });
 
         computerVisionTextVeiw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openFacebookIntent(constant.FACEBOOK_URI_DOAA_ELSHAZLY);
+                openFacebookIntent(Constant.FACEBOOK_URI_DOAA_ELSHAZLY);
             }
         });
 

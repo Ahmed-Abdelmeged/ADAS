@@ -34,7 +34,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.utils.constant;
+import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -105,11 +105,11 @@ public class AccidentDetailFragment extends Fragment implements OnMapReadyCallba
                 getString(R.string.settings_map_tilt_key),
                 getString(R.string.settings_map_tilt_default)));
 
-        accidentTitle = getArguments().getString(constant.ACCIDENT_TITLE_KEY);
-        accidentTime = getArguments().getString(constant.ACCIDENT_TIME_KEY);
-        accidentDate = getArguments().getString(constant.ACCIDENT_DATE_KEY);
-        accidentLatitude = getArguments().getDouble(constant.ACCIDENT_LATITUDE_KEY);
-        accidentLongitude = getArguments().getDouble(constant.ACCIDENT_LONGITUDE_KEY);
+        accidentTitle = getArguments().getString(Constant.ACCIDENT_TITLE_KEY);
+        accidentTime = getArguments().getString(Constant.ACCIDENT_TIME_KEY);
+        accidentDate = getArguments().getString(Constant.ACCIDENT_DATE_KEY);
+        accidentLatitude = getArguments().getDouble(Constant.ACCIDENT_LATITUDE_KEY);
+        accidentLongitude = getArguments().getDouble(Constant.ACCIDENT_LONGITUDE_KEY);
 
 
 

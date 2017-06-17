@@ -41,7 +41,7 @@ import android.widget.Toast;
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
-import com.example.mego.adas.utils.constant;
+import com.example.mego.adas.utils.Constant;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
@@ -117,8 +117,8 @@ public class LiveStreamingFragment extends Fragment {
 
             //get the references for the child
             //the  child for the  live video id
-            mLiveVedeoIdDatabaseReference = mFirebaseDatabase.getReference().child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO).child(constant.FIREBASE_LIVE_STREAMING_VIDEO_ID);
+            mLiveVedeoIdDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
+                    .child(uid).child(Constant.FIREBASE_USER_INFO).child(Constant.FIREBASE_LIVE_STREAMING_VIDEO_ID);
 
             //set the id for listener
             mLiveVedeoIdValueListener = new ValueEventListener() {
@@ -130,8 +130,8 @@ public class LiveStreamingFragment extends Fragment {
 
                     if (dataSnapshot.exists()) {
                         //get the current video id
-                        currentLiveVideoId = dataSnapshot.getValue(constant.FIREBASE_LIVE_STREAMING_VIDEO_ID.getClass());
-                        if (currentLiveVideoId.equals(constant.LIVE_STREAMING_NO_LIVE_VIDEO)) {
+                        currentLiveVideoId = dataSnapshot.getValue(Constant.FIREBASE_LIVE_STREAMING_VIDEO_ID.getClass());
+                        if (currentLiveVideoId.equals(Constant.LIVE_STREAMING_NO_LIVE_VIDEO)) {
 
                             //show the warning image and text
                             noLiveVideoTextView.setVisibility(View.VISIBLE);
@@ -155,7 +155,7 @@ public class LiveStreamingFragment extends Fragment {
                             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
                             transaction.replace(R.id.watch_live_video_player, youTubePlayerFragment).commit();
 
-                            youTubePlayerFragment.initialize(constant.API_KEY, new YouTubePlayer.OnInitializedListener() {
+                            youTubePlayerFragment.initialize(Constant.API_KEY, new YouTubePlayer.OnInitializedListener() {
                                 @Override
                                 public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
 
@@ -173,7 +173,7 @@ public class LiveStreamingFragment extends Fragment {
 
                         }
                     } else {
-                        mLiveVedeoIdDatabaseReference.setValue(constant.NO_LIVE_VIDEO);
+                        mLiveVedeoIdDatabaseReference.setValue(Constant.NO_LIVE_VIDEO);
                     }
                 }
 

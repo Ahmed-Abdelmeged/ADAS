@@ -85,15 +85,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    //user is already signed in
-                    //start the MainActivity
-                    isAuth = true;
-                } else {
-                    //user is not signed in
-                    //start the NotAuthEntryActivity
-                    isAuth = false;
-                }
+                isAuth = user != null;
             }
         };
     }

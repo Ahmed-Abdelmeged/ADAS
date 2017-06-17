@@ -73,8 +73,11 @@
     <dimen name="by_signing_up_textSize">14sp</dimen>
     <dimen name="terms_conditions_textSize">16sp</dimen>
 
-
-
+    <!-- - - - - - - - - - - - -
+       Verify code
+    - - - - - - - - - - - - - - - -->
+    <dimen name="please_enter_textSize">20sp</dimen>
+    <dimen name="resend_code_textSize">18sp</dimen>
 
 
 </resources>

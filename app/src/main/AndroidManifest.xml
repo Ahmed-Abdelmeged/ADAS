@@ -24,9 +24,9 @@
         android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
-        android:largeHeap="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/splashScreenTheme">
 
@@ -37,8 +37,8 @@
 
         <!-- The meta DataSend for the api key -->
         <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDzUFC3PRm7vehzlCZdhoCxq2awhEY3sZ0" />
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBKyxvJIHYfhjsvINFgF3fwvCiViQ5Ie7c" />
 
         <activity
             android:name=".MainActivity"
@@ -66,8 +66,6 @@
         <activity
             android:name=".auth.NotAuthEntryActivity"
             android:screenOrientation="portrait" />
-
-
         <activity
             android:name=".auth.SignInActivity"
             android:label="@string/sign_in"
@@ -77,8 +75,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".auth.NotAuthEntryActivity" />
         </activity>
-
-
         <activity
             android:name=".auth.SignUpActivity"
             android:label="@string/sign_up"
@@ -88,8 +84,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".auth.NotAuthEntryActivity" />
         </activity>
-
-
         <activity
             android:name=".auth.ResetPasswordActivity"
             android:label="@string/reset_password_label"
@@ -99,20 +93,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".auth.SignInActivity" />
         </activity>
-
-
         <activity
             android:name=".auth.TermsAndConditionsActivity"
             android:label="@string/terms_conditions_label"
             android:parentActivityName=".auth.SignUpActivity"
             android:screenOrientation="portrait">
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".auth.SignUpActivity" />
-
         </activity>
-
+        <activity
+            android:name=".auth.VerifyPhoneNumberActivity"
+            android:label="@string/verify_phone_number_label"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -46,7 +46,7 @@ import com.example.mego.adas.adapter.YoutubeVideoAdapter;
 import com.example.mego.adas.api.YoutubeAPI;
 import com.example.mego.adas.loader.VideosLoader;
 import com.example.mego.adas.model.YouTubeVideo;
-import com.example.mego.adas.utils.constant;
+import com.example.mego.adas.utils.Constant;
 
 import java.util.ArrayList;
 
@@ -125,9 +125,9 @@ public class VideosFragments extends Fragment implements LoaderManager.LoaderCal
                 //set the video information to the next fragment
                 Bundle args = new Bundle();
 
-                args.putString(constant.VIDEO_KEY, currentVideo.getVideoId());
-                args.putString(constant.TITLE_KEY, currentVideo.getTitle());
-                args.putString(constant.PUBLISHED_AT_KEY, currentVideo.getPublishedAt());
+                args.putString(Constant.VIDEO_KEY, currentVideo.getVideoId());
+                args.putString(Constant.TITLE_KEY, currentVideo.getTitle());
+                args.putString(Constant.PUBLISHED_AT_KEY, currentVideo.getPublishedAt());
 
                 watchVideoFragment.setArguments(args);
 
@@ -179,7 +179,7 @@ public class VideosFragments extends Fragment implements LoaderManager.LoaderCal
         uriBuilder.appendQueryParameter(YoutubeAPI.QUERY_PARAMETER_PART, YoutubeAPI.ELEMENT_SNIPPET);
         uriBuilder.appendQueryParameter(YoutubeAPI.QUERY_PARAMETER_PLAYLISTID, playlistId);
         uriBuilder.appendQueryParameter(YoutubeAPI.QUERY_PARAMETER_MAX_RESULTS, "50");
-        uriBuilder.appendQueryParameter(YoutubeAPI.QUERY_PARAMETER_KEY, constant.API_KEY);
+        uriBuilder.appendQueryParameter(YoutubeAPI.QUERY_PARAMETER_KEY, Constant.API_KEY);
 
 
         //Log.e(LOG_TAG, uriBuilder.toString());

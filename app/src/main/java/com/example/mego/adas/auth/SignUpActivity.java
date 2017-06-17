@@ -51,6 +51,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.hbb20.CountryCodePicker;
 
 import java.util.HashMap;
 
@@ -85,6 +86,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText fullNameEditText, emailEditText, passwordEditText, phoneNumberEditText, locationEditText;
     private TextInputLayout fullNameWrapper, emailWrapper, passwordWrapper, phoneNumberWrapper, locationWrapper;
     private ProgressDialog mProgressDialog;
+    private CountryCodePicker countryCodePicker;
 
     /**
      * Firebase Authentication
@@ -162,6 +164,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 showErrorDialog(e.getLocalizedMessage());
+                hideProgressDialog();
             }
         }).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
@@ -192,7 +195,9 @@ public class SignUpActivity extends AppCompatActivity {
                     HashMap<String, Object> timestampJoined = new HashMap<String, Object>();
                     timestampJoined.put(FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
 
-                    User newUser = new User(email, phoneNumber, location, fullName, timestampJoined);
+                    User newUser = new User(email, "+" +
+                            countryCodePicker.getSelectedCountryCode() + phoneNumber
+                            , location, fullName, timestampJoined, false);
                     mUsersDatabaseReference.setValue(newUser);
                 }
             }
@@ -202,8 +207,6 @@ public class SignUpActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 
     /**
@@ -378,5 +381,6 @@ public class SignUpActivity extends AppCompatActivity {
         phoneNumberWrapper = (TextInputLayout) findViewById(R.id.phone_number_wrapper_sign_up_activity);
         locationWrapper = (TextInputLayout) findViewById(R.id.location_wrapper_sign_up_activity);
 
+        countryCodePicker = (CountryCodePicker) findViewById(R.id.country_code_picker);
     }
 }

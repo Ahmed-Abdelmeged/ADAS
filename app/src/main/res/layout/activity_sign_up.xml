@@ -135,12 +135,23 @@
                 android:contentDescription="@string/mobile_number"
                 android:src="@drawable/cellphone_iphone" />
 
+            <com.hbb20.CountryCodePicker
+                android:id="@+id/country_code_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="14dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginTop="6dp"
+                app:contentColor="@android:color/white"
+                app:defaultCode="20"
+                app:hideNameCode="true"
+                app:showFlag="false" />
+
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/phone_number_wrapper_sign_up_activity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:layout_marginStart="14dp"
                 android:layout_weight="1">
 
                 <EditText

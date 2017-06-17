@@ -42,7 +42,7 @@ import com.example.mego.adas.adapter.AccidentAdapter;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.model.Accident;
-import com.example.mego.adas.utils.constant;
+import com.example.mego.adas.utils.Constant;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -117,8 +117,8 @@ public class AccidentFragment extends Fragment {
             String uid = currentUser.getUserUid();
 
             //get the references for the childes
-            accidentsDatabaseReference = mFirebaseDatabase.getReference().child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO).child(constant.FIREBASE_ACCIDENTS);
+            accidentsDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
+                    .child(uid).child(Constant.FIREBASE_USER_INFO).child(Constant.FIREBASE_ACCIDENTS);
 
 
             //initialize the child listener
@@ -174,11 +174,11 @@ public class AccidentFragment extends Fragment {
 
                 //set the accident information to the next fragment
                 Bundle args = new Bundle();
-                args.putString(constant.ACCIDENT_TITLE_KEY, currentAccident.getAccidentTitle() + " " + (position + 1));
-                args.putString(constant.ACCIDENT_DATE_KEY, currentAccident.getDate());
-                args.putString(constant.ACCIDENT_TIME_KEY, currentAccident.getTime());
-                args.putDouble(constant.ACCIDENT_LONGITUDE_KEY, currentAccident.getAccidentLongitude());
-                args.putDouble(constant.ACCIDENT_LATITUDE_KEY, currentAccident.getAccidentLatitude());
+                args.putString(Constant.ACCIDENT_TITLE_KEY, currentAccident.getAccidentTitle() + " " + (position + 1));
+                args.putString(Constant.ACCIDENT_DATE_KEY, currentAccident.getDate());
+                args.putString(Constant.ACCIDENT_TIME_KEY, currentAccident.getTime());
+                args.putDouble(Constant.ACCIDENT_LONGITUDE_KEY, currentAccident.getAccidentLongitude());
+                args.putDouble(Constant.ACCIDENT_LATITUDE_KEY, currentAccident.getAccidentLatitude());
 
                 accidentDetailFragment.setArguments(args);
 

@@ -33,7 +33,7 @@ import android.widget.TextView;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.model.Steps;
-import com.example.mego.adas.utils.constant;
+import com.example.mego.adas.utils.Constant;
 
 import java.util.ArrayList;
 
@@ -73,11 +73,11 @@ public class StepAdapter extends ArrayAdapter<Steps> {
 
         //set the current step instructions
         String instructions = Html.fromHtml(currentStep.getHtml_instructions()).toString();
-        holder.instructionsTextView.setText(instructions);
+        holder.instructionsTextView.setText(instructions.trim());
 
         //set the step distance
         String stepDistance = convertDistance(currentStep.getStepDistanceValue(), currentStep.getStepDistanceText());
-        holder.distanceTextView.setText(stepDistance);
+        holder.distanceTextView.setText(stepDistance.trim());
 
         //set the direction Photo
         holder.directionImage.setImageResource(getCarDirection(instructions));
@@ -114,29 +114,29 @@ public class StepAdapter extends ArrayAdapter<Steps> {
      */
     private int getCarDirection(String instructions) {
         int directionDrawableResourceId;
-        if (instructions.contains(constant.DIRECTION_HEAD)) {
+        if (instructions.contains(Constant.DIRECTION_HEAD)) {
             directionDrawableResourceId = R.drawable.ic_dir_head;
-        } else if (instructions.contains(constant.DIRECTION_TURN_RIGHT)) {
+        } else if (instructions.contains(Constant.DIRECTION_TURN_RIGHT)) {
             directionDrawableResourceId = R.drawable.ic_dir_turn_right;
-        } else if (instructions.contains(constant.DIRECTION_TURN_LEFT)) {
+        } else if (instructions.contains(Constant.DIRECTION_TURN_LEFT)) {
             directionDrawableResourceId = R.drawable.ic_dir_turn_left;
-        } else if (instructions.contains(constant.DIRECTION_SLIGHT_RIGHT)) {
+        } else if (instructions.contains(Constant.DIRECTION_SLIGHT_RIGHT)) {
             directionDrawableResourceId = R.drawable.ic_dir_slight_right;
-        } else if (instructions.contains(constant.DIRECTION_SLIGHT_LEFT)) {
+        } else if (instructions.contains(Constant.DIRECTION_SLIGHT_LEFT)) {
             directionDrawableResourceId = R.drawable.ic_dir_slight_left;
-        } else if (instructions.contains(constant.DIRECTION_KEEP_RIGHT)) {
+        } else if (instructions.contains(Constant.DIRECTION_KEEP_RIGHT)) {
             directionDrawableResourceId = R.drawable.ic_dir_keep_right;
-        } else if (instructions.contains(constant.DIRECTION_KEEP_LEFT)) {
+        } else if (instructions.contains(Constant.DIRECTION_KEEP_LEFT)) {
             directionDrawableResourceId = R.drawable.ic_dir_keep_left;
-        } else if (instructions.contains(constant.DIRECTION_MAKE_U_TURN)) {
+        } else if (instructions.contains(Constant.DIRECTION_MAKE_U_TURN)) {
             directionDrawableResourceId = R.drawable.ic_dir_make_u_turn;
-        } else if (instructions.contains(constant.DIRECTION_SHARP_LEFT)) {
+        } else if (instructions.contains(Constant.DIRECTION_SHARP_LEFT)) {
             directionDrawableResourceId = R.drawable.ic_dir_sharp_right;
-        } else if (instructions.contains(constant.DIRECTION_SHARP_RIGHT)) {
+        } else if (instructions.contains(Constant.DIRECTION_SHARP_RIGHT)) {
             directionDrawableResourceId = R.drawable.ic_dir_sharp_left;
-        } else if (instructions.contains(constant.DIRECTION_ROUNDABOUT)) {
+        } else if (instructions.contains(Constant.DIRECTION_ROUNDABOUT)) {
             directionDrawableResourceId = R.drawable.ic_dir_roundabout;
-        } else if (instructions.contains(constant.DIRECTION_MERGE)) {
+        } else if (instructions.contains(Constant.DIRECTION_MERGE)) {
             directionDrawableResourceId = R.drawable.ic_dir_merge;
         } else {
             directionDrawableResourceId = R.drawable.ic_dir_head;

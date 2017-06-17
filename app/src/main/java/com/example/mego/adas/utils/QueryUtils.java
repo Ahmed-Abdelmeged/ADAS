@@ -118,7 +118,6 @@ public class QueryUtils {
 
             //get the routes
             JSONArray routesArray = baseJSONResponse.getJSONArray(DirectionsAPI.ELEMENT_ROUTES);
-            Log.e(LOG_TAG, "First Block");
 
             //loop the array to get the routes
             for (int counter1 = 0; counter1 < routesArray.length(); counter1++) {

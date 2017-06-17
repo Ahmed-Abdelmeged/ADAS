@@ -65,7 +65,7 @@ import com.example.mego.adas.ui.SettingsFragment;
 import com.example.mego.adas.ui.UserFragment;
 import com.example.mego.adas.ui.VideosFragments;
 import com.example.mego.adas.utils.Communicator;
-import com.example.mego.adas.utils.constant;
+import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.maps.MapFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -661,7 +661,7 @@ public class MainActivity extends AppCompatActivity
                 if (currentUser != null) {
                     String uid = currentUser.getUid();
                     mUsersDatabaseReference = mFirebaseDatabase.getReference().
-                            child(constant.FIREBASE_USERS).child(uid);
+                            child(Constant.FIREBASE_USERS).child(uid);
                     if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
                         getUserData(uid);
                         mUsersDatabaseReference.addValueEventListener(mUserValueEventListener);

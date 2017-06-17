@@ -60,7 +60,7 @@ public class AuthenticationUtilities {
     /**
      * Helper method to validate the email
      */
-    public static boolean isEmailValid(String email) {
+    static boolean isEmailValid(String email) {
         boolean isGoodEmail = false;
         isGoodEmail = (email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches());
         return isGoodEmail;
@@ -69,34 +69,24 @@ public class AuthenticationUtilities {
     /**
      * Helper method to validate the password
      */
-    public static boolean isPasswordValid(String password) {
-        if (password.length() < 6) {
-            return false;
-        }
-        return true;
+    static boolean isPasswordValid(String password) {
+        return password.length() >= 6;
     }
 
     /**
      * Helper method to validate the userName
      */
-    public static boolean isUserNameValid(String userName) {
-        if (userName.equals("")) {
-            return false;
-        }
-        return true;
+    static boolean isUserNameValid(String userName) {
+        return !userName.equals("");
     }
 
     /**
      * Helper method to validate the phone number
      */
-    public static boolean isPhoneNumberValid(String phoneNumber) {
+    static boolean isPhoneNumberValid(String phoneNumber) {
         boolean isGoodPhone = false;
         if (!Pattern.matches("[a-zA-Z]+", phoneNumber)) {
-            if (phoneNumber.length() < 5 || phoneNumber.length() > 14) {
-                isGoodPhone = false;
-            } else {
-                isGoodPhone = true;
-            }
+            isGoodPhone = !(phoneNumber.length() < 5 || phoneNumber.length() > 14);
         } else {
             isGoodPhone = false;
         }
@@ -110,16 +100,13 @@ public class AuthenticationUtilities {
 
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            return true;
-        }
-        return false;
+        return networkInfo != null && networkInfo.isConnected();
     }
 
     /**
      * Helper Method to hide the keyboard
      */
-    public static void hideKeyboard(Activity activity) {
+    static void hideKeyboard(Activity activity) {
         View view = activity.getCurrentFocus();
         if (view != null) {
             ((InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE)).
@@ -173,11 +160,9 @@ public class AuthenticationUtilities {
 
         editor.putString(USER_UID, null);
         editor.putString(USER_NAME, null);
-        editor.putString(USER_EMAIL,null);
+        editor.putString(USER_EMAIL, null);
         editor.putString(USER_PHONE, null);
-        editor.putString(USER_LOCATION,null);
+        editor.putString(USER_LOCATION, null);
         editor.apply();
     }
-
-
 }

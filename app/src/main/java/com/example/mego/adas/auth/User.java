@@ -34,6 +34,7 @@ public class User {
     private String fullName;
     private HashMap<String, Object> timestampJoined;
     private String userUid;
+    private boolean isPhoneVerified;
 
 
     /**
@@ -45,12 +46,14 @@ public class User {
      * @param fullName
      */
     public User(String email, String phoneNumber, String location, String fullName
-            , HashMap<String, Object> timestampJoined) {
+            , HashMap<String, Object> timestampJoined, boolean isPhoneVerified) {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.location = location;
         this.fullName = fullName;
         this.timestampJoined = timestampJoined;
+        this.isPhoneVerified = isPhoneVerified;
+
 
     }
 
@@ -72,7 +75,7 @@ public class User {
     }
 
     /**
-     * Required empty constructor
+     * empty constructor
      */
     public User() {
     }
@@ -99,6 +102,14 @@ public class User {
 
     public String getUserUid() {
         return userUid;
+    }
+
+    public boolean isPhoneVerified() {
+        return isPhoneVerified;
+    }
+
+    public void setPhoneVerified(boolean phoneVerified) {
+        isPhoneVerified = phoneVerified;
     }
 
     public void setUserUid(String userUid) {

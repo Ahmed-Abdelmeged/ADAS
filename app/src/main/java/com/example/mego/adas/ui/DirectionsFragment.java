@@ -27,6 +27,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -45,6 +46,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -69,12 +71,17 @@ import com.example.mego.adas.auth.User;
 import com.example.mego.adas.loader.DirectionsLoader;
 import com.example.mego.adas.model.Directions;
 import com.example.mego.adas.model.Steps;
-import com.example.mego.adas.utils.constant;
+import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -93,6 +100,8 @@ import com.google.maps.android.PolyUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -128,9 +137,9 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 5;
 
     /**
-     * the strings from the edit text
+     * Place is choose from place picker
      */
-    private String goingLocation = "";
+    private Place goingPlace = null;
 
     /**
      * start point is the user current location
@@ -192,7 +201,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
     /**
      * step variables
      */
-
     String html_instructions;
 
     String points;
@@ -237,6 +245,8 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      */
     ConnectivityManager connectivityManager;
     NetworkInfo networkInfo;
+
+    private static final int PLACE_PICKER_REQUEST = 2576;
 
 
     public DirectionsFragment() {
@@ -293,53 +303,12 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
 
             //get the references for the childes
             //the main child for the directions services
-            mDirecionsDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_DIRECTIONS);
-
-            //the childes for the direction root
-            mStartLocationDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_DIRECTIONS).child(constant.FIREBASE_START_LOCATION);
-
-            mGoingLocationDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_DIRECTIONS).child(constant.FIREBASE_GOING_LOCATION);
-
-            mCurrentLocationDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_DIRECTIONS).child(constant.FIREBASE_CURRENT_LOCATION);
-
-            mLegDistanceTextDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_DIRECTIONS).child(constant.FIREBASE_LEG_DISTANCE_TEXT);
-
-            mLegDurationTextDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_DIRECTIONS).child(constant.FIREBASE_LEG_DURATION_TEXT);
-
-            mOverViewPolylineDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_DIRECTIONS).child(constant.FIREBASE_LEG_OVERVIEW_POLYLINE);
-
-            mStepsDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(constant.FIREBASE_USERS)
-                    .child(uid).child(constant.FIREBASE_USER_INFO)
-                    .child(constant.FIREBASE_DIRECTIONS).child(constant.FIREBASE_STEPS);
-
+            setFirebaseReferences(uid);
 
         } else {
             Toast.makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
 
         }
-
 
         //initialize google map fragment
         MapFragment mapFragment = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.google_map_location);
@@ -410,9 +379,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
 
             //check for the map state if it's ready start
             if (mapReady) {
-
                 marker = mMap.addMarker(carPlaceMarker);
-
             }
         }
         mLocationRequest = new LocationRequest();
@@ -548,12 +515,12 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                             mAnimatable.start();
                         }
                         revealView.setBackgroundColor(Color.WHITE);
-
+                        startPlacePicker();
                     } else {
-                        goingLocation = locationEditText.getText().toString();
-
-                        //put the going location in the firebase
-                        mGoingLocationDatabaseReference.setValue(goingLocation);
+                        if (goingPlace != null) {
+                            //put the going location in the firebase
+                            mGoingLocationDatabaseReference.setValue(goingPlace.getLatLng());
+                        }
 
                         hideEditText(revealView);
                         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -579,8 +546,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                             msg("No Internet Connection");
                             loadingbar.setVisibility(View.INVISIBLE);
                         }
-
-
                     }
                     break;
                 case R.id.down_page_Image_View:
@@ -717,9 +682,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      */
     private void enableSetLocation() {
         if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-
-        {
+                == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
 
         } else {
@@ -733,9 +696,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      */
     private void enableUpdateMyLocation() {
         if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-
-        {
+                == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
         } else {
@@ -752,15 +713,15 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         Uri baseUri = Uri.parse(DirectionsAPI.GOOGLE_DIRECTION_API_REQUEST_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
-
         uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_ORIGIN, startLocation);
 
         //put the start location in the firebase
         mStartLocationDatabaseReference.setValue(startLocation);
 
-        uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_DESTINATION, goingLocation);
-        uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_KEY, constant.API_KEY);
-
+        if (getLatLang(goingPlace) != null) {
+            uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_DESTINATION, getLatLang(goingPlace));
+            uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_KEY, Constant.API_KEY);
+        }
         //Log.e(LOG_TAG, uriBuilder.toString());
         return new DirectionsLoader(getContext(), uriBuilder.toString());
 
@@ -813,10 +774,8 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                         carWayPolyLine.remove();
                     }
 
-
                     distanceTextView.setText(legDistanceText);
                     durationTextView.setText(legDurationText);
-                    destinationTextView.setText(goingLocation);
                     drawPolyline(overview_polyline_string);
 
                     //put the led information in the firebase
@@ -857,7 +816,127 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
+                .enableAutoManage(getActivity(), this)
                 .build();
+    }
+
+    /**
+     * Called when the place picker activity returns back with a selected place
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
+            Place place = PlacePicker.getPlace(getContext(), data);
+            goingPlace = place;
+            Log.e(LOG_TAG, getLatLang(place));
+
+            //get the first name of the address
+            String shortAddress = "";
+            for (int i = 0; i < place.getAddress().length(); i++) {
+                if (place.getAddress().charAt(i) == ',') {
+                    shortAddress = (String) place.getAddress().subSequence(0, i);
+                    break;
+                }
+            }
+            locationEditText.setText(shortAddress);
+            destinationTextView.setText(shortAddress);
+            locationEditText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startPlacePicker();
+                }
+            });
+            if (place == null) {
+                return;
+            }
+        }
+    }
+
+    /**
+     * Method to start place picker
+     */
+    private void startPlacePicker() {
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        Intent placePickerIntent = null;
+        try {
+            placePickerIntent = builder.build(getActivity());
+        } catch (GooglePlayServicesRepairableException e) {
+            Log.e(LOG_TAG, String.format("GooglePlayServices Not Available [%s]", e.getMessage()));
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Log.e(LOG_TAG, String.format("GooglePlayServices Not Available [%s]", e.getMessage()));
+        } catch (Exception e) {
+            Log.e(LOG_TAG, String.format("PlacePicker Exception: %s", e.getMessage()));
+        }
+        startActivityForResult(placePickerIntent, PLACE_PICKER_REQUEST);
+    }
+
+    /**
+     * Method to set firebase references
+     */
+    private void setFirebaseReferences(String uid) {
+        mDirecionsDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_DIRECTIONS);
+
+        //the childes for the direction root
+        mStartLocationDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_START_LOCATION);
+
+        mGoingLocationDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_GOING_LOCATION);
+
+        mCurrentLocationDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_CURRENT_LOCATION);
+
+        mLegDistanceTextDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_LEG_DISTANCE_TEXT);
+
+        mLegDurationTextDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_LEG_DURATION_TEXT);
+
+        mOverViewPolylineDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_LEG_OVERVIEW_POLYLINE);
+
+        mStepsDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_STEPS);
+    }
+
+    /**
+     * Method to get the lat , lang from the places API
+     * And format to be call in the direction API request
+     */
+    private String getLatLang(Place place) {
+        if (place != null) {
+            String latLang = String.valueOf(place.getLatLng());
+            String goingLatLang = "";
+            for (int i = 0; i < latLang.length(); i++) {
+                if (latLang.charAt(i) == '(') {
+                    goingLatLang = latLang.substring(i + 1, latLang.length() - 1);
+                }
+            }
+            return goingLatLang;
+        }
+        return null;
     }
 
     /**
@@ -884,5 +963,4 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
 
         mapView = (LinearLayout) view.findViewById(R.id.map_view);
     }
-
 }
