@@ -129,7 +129,7 @@ public class ConnectFragment extends Fragment {
             PairedDevicesList();
         }
 
-        if ((mBluetoothAdapter!= null)){
+        if ((mBluetoothAdapter != null)) {
             setBroadCastReceiver();
         }
 
@@ -142,10 +142,14 @@ public class ConnectFragment extends Fragment {
         searchForNewDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchForNewDevices.setEnabled(false);
-                bluetoothDevicesAdapter.clear();
-                PairedDevicesList();
-                NewDevicesList();
+                if (mBluetoothAdapter != null) {
+                    searchForNewDevices.setEnabled(false);
+                    bluetoothDevicesAdapter.clear();
+                    PairedDevicesList();
+                    NewDevicesList();
+                } else {
+                    Toast.makeText(getContext(), R.string.does_not_have_bluetooth, Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -179,7 +183,6 @@ public class ConnectFragment extends Fragment {
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         getActivity().registerReceiver(mReceiver, filter);
     }
-
 
 
     /**
@@ -216,11 +219,10 @@ public class ConnectFragment extends Fragment {
                     }
                 }
 
-            }
-            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 searchForNewDevices.setEnabled(true);
-                if(pairedDevices.size() == bluetoothDevicesAdapter.getCount()){
-                    Toast.makeText(getContext(),"No devices found",Toast.LENGTH_SHORT).show();
+                if (pairedDevices.size() == bluetoothDevicesAdapter.getCount()) {
+                    Toast.makeText(getContext(), "No devices found", Toast.LENGTH_SHORT).show();
                 }
             }
         }
