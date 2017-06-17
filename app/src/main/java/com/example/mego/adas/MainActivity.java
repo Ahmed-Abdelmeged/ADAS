@@ -53,6 +53,7 @@ import android.widget.Toast;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.NotAuthEntryActivity;
 import com.example.mego.adas.auth.User;
+import com.example.mego.adas.auth.VerifyPhoneNumberActivity;
 import com.example.mego.adas.sync.AdasSyncUtils;
 import com.example.mego.adas.ui.AboutFragment;
 import com.example.mego.adas.ui.AccidentFragment;
@@ -154,14 +155,16 @@ public class MainActivity extends AppCompatActivity
      */
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private boolean isPhoneVerified = false;
+
 
     /**
      * Firebase objects
      * to specific part of the database
      */
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mUsersDatabaseReference;
-    private ValueEventListener mUserValueEventListener;
+    private DatabaseReference mUsersDatabaseReference, isPhoneAuthDatabaseReference;
+    private ValueEventListener mUserValueEventListener, isPhoneAuthValueEventListener;
     private ProgressDialog mProgressDialog;
     private int newConnectionFlag = 0;
 
@@ -224,7 +227,14 @@ public class MainActivity extends AppCompatActivity
 
         if (networkInfo != null && networkInfo.isConnected()) {
 
+            if (mFirebaseAuth.getCurrentUser().getUid() != null){
+                isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference()
+                        .child(Constant.FIREBASE_USERS)
+                        .child(mFirebaseAuth.getCurrentUser().getUid())
+                        .child(Constant.FIREBASE_IS_VERIFIED_PHONE);
 
+                getPhoneVerificationState();
+            }
         } else {
             Toast.makeText(MainActivity.this, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
         }
@@ -698,6 +708,36 @@ public class MainActivity extends AppCompatActivity
 
             }
         };
+    }
+
+    /**
+     * Method to get the current phone verification state
+     */
+    private void getPhoneVerificationState() {
+        isPhoneAuthValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    isPhoneVerified = dataSnapshot.getValue(Boolean.class);
+                    if (!isPhoneVerified) {
+                        hideProgressDialog();
+                        Intent mainIntent = new Intent(MainActivity.this, VerifyPhoneNumberActivity.class);
+                        //clear the application stack (clear all  former the activities)
+                        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(mainIntent);
+                        finish();
+                    }
+                } else {
+                    hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        isPhoneAuthDatabaseReference.addValueEventListener(isPhoneAuthValueEventListener);
     }
 
     /**

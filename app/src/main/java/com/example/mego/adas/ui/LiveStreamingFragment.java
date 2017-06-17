@@ -207,5 +207,4 @@ public class LiveStreamingFragment extends Fragment {
         loadingBar = (ProgressBar) view.findViewById(R.id.loading_streaming_indicator_progress);
     }
 
-
 }

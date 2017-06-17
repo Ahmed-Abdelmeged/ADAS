@@ -165,5 +165,4 @@ public class AccidentAdapterRecycler extends RecyclerView.Adapter<AccidentAdapte
         notifyDataSetChanged();
     }
 
-
 }

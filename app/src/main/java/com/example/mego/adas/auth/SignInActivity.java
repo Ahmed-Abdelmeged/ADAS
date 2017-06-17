@@ -38,11 +38,17 @@ import android.widget.Toast;
 
 import com.example.mego.adas.MainActivity;
 import com.example.mego.adas.R;
+import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Activity used for signing in
@@ -67,6 +73,16 @@ public class SignInActivity extends AppCompatActivity {
      * Firebase Authentication
      */
     private FirebaseAuth mFirebaseAuth;
+    private boolean isPhoneVerified = false;
+
+
+    /**
+     * Firebase objects
+     * to specific part of the database
+     */
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference isPhoneAuthDatabaseReference;
+    private ValueEventListener isPhoneAuthValueEventListener;
 
 
     @Override
@@ -79,6 +95,10 @@ public class SignInActivity extends AppCompatActivity {
 
         //initialize the Firebase auth object
         mFirebaseAuth = FirebaseAuth.getInstance();
+
+        //set up the firebase
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,13 +143,14 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Intent mainIntent = new Intent(SignInActivity.this, MainActivity.class);
-                            //clear the application stack (clear all  former the activities)
-                            mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(mainIntent);
-                            finish();
+
+                            isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference()
+                                    .child(Constant.FIREBASE_USERS)
+                                    .child(task.getResult().getUser().getUid())
+                                    .child(Constant.FIREBASE_IS_VERIFIED_PHONE);
+
+                            getPhoneVerificationState();
                         }
-                        hideProgressDialog();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -223,6 +244,43 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     /**
+     * Method to get the current phone verification state
+     */
+    private void getPhoneVerificationState() {
+        isPhoneAuthValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    isPhoneVerified = dataSnapshot.getValue(Boolean.class);
+                    if (!isPhoneVerified) {
+                        hideProgressDialog();
+                        Intent mainIntent = new Intent(SignInActivity.this, VerifyPhoneNumberActivity.class);
+                        //clear the application stack (clear all  former the activities)
+                        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(mainIntent);
+                        finish();
+                    } else {
+                        hideProgressDialog();
+                        Intent mainIntent = new Intent(SignInActivity.this, MainActivity.class);
+                        //clear the application stack (clear all  former the activities)
+                        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(mainIntent);
+                        finish();
+                    }
+                } else {
+                    hideProgressDialog();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        isPhoneAuthDatabaseReference.addValueEventListener(isPhoneAuthValueEventListener);
+    }
+
+    /**
      * Link the layout element from XML to Java
      */
     private void initializeScreen() {
@@ -236,6 +294,5 @@ public class SignInActivity extends AppCompatActivity {
 
         signInButton = (Button) findViewById(R.id.sign_in_Button_sign_in_activity);
     }
-
 
 }

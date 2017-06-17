@@ -98,7 +98,6 @@ public class PreferenceUtilities {
                 .getBoolean(displayNotificationsKey, shouldDisplayNotificationsByDefault);
 
         return shouldDisplayNotifications;
-
     }
 
 }

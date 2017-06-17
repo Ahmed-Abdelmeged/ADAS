@@ -23,7 +23,7 @@
 package com.example.mego.adas.utils;
 
 /**
- * interface to send the connection state from the fragment to the activity ro disconnect
+ * interface to send the connection state from the fragment to the activity to disconnect
  */
 public interface Communicator {
 
