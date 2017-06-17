@@ -24,7 +24,8 @@
         android:layout_height="wrap_content"
         android:clipToPadding="false"
         android:divider="@android:color/white"
-        android:dividerHeight="10dp" />
+        android:dividerHeight="10dp"
+        tools:listitem="@layout/youtube_video_list" />
 
     <TextView
         android:id="@+id/empty_text_videos"

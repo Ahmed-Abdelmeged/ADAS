@@ -40,6 +40,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:textColor="@android:color/black"
@@ -66,7 +67,6 @@
                 android:layout_gravity="end"
                 tools:text="6:30pm"
                 tools:textSize="12sp" />
-
 
         </LinearLayout>
     </LinearLayout>
