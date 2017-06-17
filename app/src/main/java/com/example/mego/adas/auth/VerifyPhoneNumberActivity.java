@@ -21,6 +21,7 @@
 
 package com.example.mego.adas.auth;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -70,8 +71,9 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
      * UI Element
      */
     private TextView resendTextView;
-    private Button continueVerfiyingButton;
+    private Button continueVerifyingButton;
     private PinEntryEditText pinCodeEditText;
+    private ProgressDialog mProgressDialog;
 
     /**
      * Firebase objects
@@ -129,6 +131,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                 if (firebaseUser == null) {
+                    logOut();
                     Intent mainIntent = new Intent(VerifyPhoneNumberActivity.this, NotAuthEntryActivity.class);
                     //clear the application stack (clear all  former the activities)
                     mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -156,6 +159,8 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
                                     }
                                 }
                             });
+                        } else {
+                            logOut();
                         }
                     } else {
                         Toast.makeText(VerifyPhoneNumberActivity.this, R.string.error_message_failed_sign_in_no_network,
@@ -188,7 +193,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
                 // the verification complete and set the is phone auth to true
                 mVerificationInProgress = false;
                 Log.e(LOG_TAG, "success");
-                startApp();
+                linkEmailToPhoneNumber(phoneAuthCredential);
             }
 
             @Override
@@ -274,9 +279,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     userPhoneNumber = dataSnapshot.getValue(String.class);
-                    Log.e(LOG_TAG, userPhoneNumber);
                     if (userPhoneNumber != null) {
-                        Log.e(LOG_TAG, "get number");
                         startPhoneNumberVerification(userPhoneNumber);
                     }
                 }
@@ -304,11 +307,28 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
      * Method to start verifying
      */
     private void startVerification() {
-        continueVerfiyingButton.setOnClickListener(new View.OnClickListener() {
+
+        pinCodeEditText.setOnPinEnteredListener(new PinEntryEditText.OnPinEnteredListener() {
+            @Override
+            public void onPinEntered(CharSequence str) {
+                if (str.length() == 6) {
+                    continueVerifyingButton.setEnabled(true);
+                } else {
+                    continueVerifyingButton.setEnabled(false);
+                }
+            }
+        });
+
+        continueVerifyingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                showProgressDialog();
                 String code = pinCodeEditText.getText().toString();
-                verifyPhoneNumberWithCode(mVerificationId, code);
+                if (code.length() == 6) {
+                    verifyPhoneNumberWithCode(mVerificationId, code);
+                } else {
+                    hideProgressDialog();
+                }
             }
         });
     }
@@ -336,6 +356,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.e(LOG_TAG, "linking");
+                            hideProgressDialog();
                             startApp();
                         }
                     }
@@ -343,9 +364,11 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                    hideProgressDialog();
                     showErrorDialog("Invalid code.", INVALID_CODE_FLAG);
                     pinCodeEditText.setText(null);
                 } else {
+                    hideProgressDialog();
                     showErrorDialog(e.getLocalizedMessage(), INVALID_LINKING);
                 }
             }
@@ -411,11 +434,48 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
     }
 
     /**
+     * Helper method to show progress dialog
+     */
+    public void showProgressDialog() {
+
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setMessage(getString(R.string.sign_in_loading));
+            mProgressDialog.setIndeterminate(true);
+        }
+        mProgressDialog.show();
+    }
+
+    /**
+     * Helper method to hide progress dialog
+     */
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        hideProgressDialog();
+    }
+
+    /**
+     * Method to log out
+     */
+    private void logOut() {
+        mFirebaseAuth.signOut();
+    }
+
+    /**
      * Link the layout element from XML to Java
      */
     private void initializeScreen() {
         resendTextView = (TextView) findViewById(R.id.resend_code_textView);
-        continueVerfiyingButton = (Button) findViewById(R.id.continue_verifying_button);
+        continueVerifyingButton = (Button) findViewById(R.id.continue_verifying_button);
         pinCodeEditText = (PinEntryEditText) findViewById(R.id.pin_code_editText);
+
+        continueVerifyingButton.setEnabled(false);
     }
 }

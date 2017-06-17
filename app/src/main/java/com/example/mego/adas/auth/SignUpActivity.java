@@ -36,7 +36,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.mego.adas.MainActivity;
 import com.example.mego.adas.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -221,7 +220,7 @@ public class SignUpActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Intent mainIntent = new Intent(SignUpActivity.this, MainActivity.class);
+                            Intent mainIntent = new Intent(SignUpActivity.this, VerifyPhoneNumberActivity.class);
                             //clear the application stack (clear all  former the activities)
                             mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(mainIntent);
