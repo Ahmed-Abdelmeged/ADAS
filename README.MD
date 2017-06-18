@@ -5,37 +5,7 @@ and it's a part of graduation project
 
 ## Screenshots
 
-![Entry Screen](http://i.imgur.com/tJg7TYb.png)
-
-![Authentication](http://i.imgur.com/WnM5Wr0.png)
-
-![Sign in](http://i.imgur.com/NJTCHwG.png)
-
-![Sign up](http://i.imgur.com/3iqau9Y.png)
-
-![Bluetooth Connect](http://i.imgur.com/V1DWD4O.png)
-
-![Car](http://i.imgur.com/Kvp2mdq.png)
-
-![Directions](http://i.imgur.com/gNvCpeG.png)
-
-![Live Streaming](http://i.imgur.com/bQzaAT2.png)
-
-![About](http://i.imgur.com/JSrKtCh.png)
-
-![Help](http://i.imgur.com/pWkq6jl.png)
-
-![Settings](http://i.imgur.com/k3J7MgF.png)
-
-![Videos](http://i.imgur.com/kxTX7yj.png)
-
-![Watch Video](http://i.imgur.com/LQ4qb7U.png)
-
-![Accidents](http://i.imgur.com/XhCnTbZ.png)
-
-![Accidents Details](http://i.imgur.com/gpmlUAR.png)
-
-
+[Screenshots](https://imgur.com/a/Z20d7)
 
 ## License
 
