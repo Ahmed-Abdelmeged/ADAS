@@ -157,4 +157,9 @@ public class Constant {
     public static final String FIREBASE_IS_VERIFIED_PHONE = "phoneVerified";
     public static final String FIREBASE_USER_PHONE ="phoneNumber";
 
+    /**
+     * Constant for firebase storage user photo
+     */
+    public static final String FIREBASE_USER_IMAGE = "userImage";
+
 }

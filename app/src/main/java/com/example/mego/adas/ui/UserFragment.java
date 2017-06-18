@@ -85,6 +85,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import static android.widget.Toast.makeText;
+
 /**
  * A simple {@link Fragment} subclass.
  * <p>
@@ -186,16 +188,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
     double userLongitude, userLatitude;
 
     /**
-     * instance for call the SensorValue Class
-     */
-    SensorsValues sensorsValues = new SensorsValues();
-
-    /**
-     * instance for call the CommandsValues Class
-     */
-    MappingServices mappingServices = new MappingServices();
-
-    /**
      * Thread for handle the progress
      */
     Thread potThread, tempThread, ldrThread;
@@ -246,17 +238,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         //extract  the camera values value
-        zoom = Float.parseFloat(sharedPreferences.getString(
-                getString(R.string.settings_map_zoom_key),
-                getString(R.string.settings_map_zoom_default)));
-
-        bearing = Float.parseFloat(sharedPreferences.getString(
-                getString(R.string.settings_map_bearing_key),
-                getString(R.string.settings_map_bearing_default)));
-
-        tilt = Float.parseFloat(sharedPreferences.getString(
-                getString(R.string.settings_map_tilt_key),
-                getString(R.string.settings_map_tilt_default)));
+        setMapView(sharedPreferences);
 
         String currentTempFormatState = sharedPreferences.getString(
                 getString(R.string.settings_temp_units_key),
@@ -273,8 +255,8 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
         if (networkInfo != null && networkInfo.isConnected()) {
             //show a progress dialog in the BluetoothServerActivity
-            progressDialog = ProgressDialog.show(getContext(),
-                    "Connecting...", "Please wait!!!");
+            //progressDialog = ProgressDialog.show(getContext(),
+            //    "Connecting...", "Please wait!!!");
 
             buildGoogleApiClient();
 
@@ -288,47 +270,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
             //get the references for the childes
             //the main child for the directions services
-            carDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR);
-
-            //the childes for the direction root
-            connectionStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_CONNECTION_STATE);
-
-            accidentStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_ACCIDENT_STATE);
-
-            startStateStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_START_STATE);
-
-            lightsStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_LIGHTS_STATE);
-
-            lockStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_LOCK_STATE);
-
-            mappingServicesDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_MAPPING_SERVICES);
-
-            sensorsValuesDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_SENSORES_VALUES);
-
+            getFirebaseObjectReferences(uid);
 
         }
 
@@ -336,7 +278,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         else {
             if (userFragment != null) {
 
-                Toast.makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+                makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
             }
         }
 
@@ -628,7 +570,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_user_marker));
 
                                     userMarker = mMap.addMarker(carPlace);
-                                    flyto(cameraPosition);
+                                    flyTo(cameraPosition);
                                 }
                             }
                         }
@@ -703,8 +645,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                                     notificationPotFlag = 0;
                                 }
                             }
-
-
                         }
                     });
                     try {
@@ -747,7 +687,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                                     tempProgressBar.setProgressDrawable(getActivity().
                                             getResources().getDrawable(R.drawable.progressbarblue));
                                     notificationTempFlag = 0;
-
                                 }
                             }
                         }
@@ -793,7 +732,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                                     ldrProgressBar.setProgressDrawable(getActivity().
                                             getResources().getDrawable(R.drawable.progressbarblue));
                                     notificationLdrFlag = 0;
-
                                 }
                             }
                         }
@@ -935,7 +873,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                     refreshUI();
                 } else {
                     msg("There is't a car for this user");
-                    progressDialog.dismiss();
+                    //progressDialog.dismiss();
                 }
             }
 
@@ -981,7 +919,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
                         if (onConnectedFlag == 1) {
                             marker = mMap.addMarker(carPlace);
-                            flyto(cameraPosition);
+                            flyTo(cameraPosition);
 
                         }
 
@@ -1044,11 +982,11 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                     connectionState = (long) dataSnapshot.getValue();
                     if (connectionState == 0) {
                         if (userFragments.isAdded()) {
-                            Toast.makeText(getContext(), R.string.car_not_connected, Toast.LENGTH_LONG).show();
+                            makeText(getContext(), R.string.car_not_connected, Toast.LENGTH_LONG).show();
                         }
                     } else if (connectionState == 1) {
                         if (userFragments.isAdded()) {
-                            Toast.makeText(getContext(), R.string.car_is_connected, Toast.LENGTH_LONG).show();
+                            makeText(getContext(), R.string.car_is_connected, Toast.LENGTH_LONG).show();
                         }
                     }
                 }
@@ -1148,7 +1086,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
     /**
      * helper method to go to specific location
      */
-    private void flyto(CameraPosition target) {
+    private void flyTo(CameraPosition target) {
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
     }
 
@@ -1202,7 +1140,12 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
      */
     private void msg(String message) {
         if (userFragments.isAdded()) {
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+            if (toast == null) {
+                toast.show();
+            } else {
+                toast.cancel();
+            }
         }
     }
 
@@ -1238,6 +1181,70 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         //create and show the alert dialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    /**
+     * Method to get references to firebase objects
+     */
+    private void getFirebaseObjectReferences(String uid) {
+        carDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR);
+
+        //the childes for the direction root
+        connectionStateDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_CONNECTION_STATE);
+
+        accidentStateDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_ACCIDENT_STATE);
+
+        startStateStateDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_START_STATE);
+
+        lightsStateDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_LIGHTS_STATE);
+
+        lockStateDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_LOCK_STATE);
+
+        mappingServicesDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_MAPPING_SERVICES);
+
+        sensorsValuesDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_SENSORES_VALUES);
+
+    }
+
+    /**
+     * Method to set map view
+     */
+    private void setMapView(SharedPreferences sharedPreferences) {
+        zoom = Float.parseFloat(sharedPreferences.getString(
+                getString(R.string.settings_map_zoom_key),
+                getString(R.string.settings_map_zoom_default)));
+
+        bearing = Float.parseFloat(sharedPreferences.getString(
+                getString(R.string.settings_map_bearing_key),
+                getString(R.string.settings_map_bearing_default)));
+
+        tilt = Float.parseFloat(sharedPreferences.getString(
+                getString(R.string.settings_map_tilt_key),
+                getString(R.string.settings_map_tilt_default)));
     }
 }
 

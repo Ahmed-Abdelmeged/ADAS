@@ -51,6 +51,8 @@ import com.example.mego.adas.adapter.BluetoothDevicesAdapter;
 import java.util.ArrayList;
 import java.util.Set;
 
+import static android.widget.Toast.makeText;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,6 +68,7 @@ public class ConnectFragment extends Fragment {
      */
     private FloatingActionButton searchForNewDevices;
     private ListView DevicesList;
+    private Toast toast = null;
 
 
     /**
@@ -121,7 +124,12 @@ public class ConnectFragment extends Fragment {
         bluetoothDevicesAdapter = new BluetoothDevicesAdapter(getContext(), bluetoothDevicesNamesList);
 
         if (mBluetoothAdapter == null) {
-            Toast.makeText(getContext(), R.string.does_not_have_bluetooth, Toast.LENGTH_LONG).show();
+            if (toast != null) {
+                toast.cancel();
+            }
+            toast = Toast.makeText(getContext(), R.string.does_not_have_bluetooth, Toast.LENGTH_LONG);
+            toast.show();
+
         } else if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntentBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntentBluetooth, REQUEST_ENABLE_BT);
@@ -148,7 +156,7 @@ public class ConnectFragment extends Fragment {
                     PairedDevicesList();
                     NewDevicesList();
                 } else {
-                    Toast.makeText(getContext(), R.string.does_not_have_bluetooth, Toast.LENGTH_LONG).show();
+                    makeText(getContext(), R.string.does_not_have_bluetooth, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -165,7 +173,7 @@ public class ConnectFragment extends Fragment {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //permission granted!
                 } else {
-                    Toast.makeText(getContext(), "Access Location must be allowed for bluetooth Search", Toast.LENGTH_LONG).show();
+                    makeText(getContext(), "Access Location must be allowed for bluetooth Search", Toast.LENGTH_LONG).show();
                 }
         }
     }
@@ -222,7 +230,7 @@ public class ConnectFragment extends Fragment {
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 searchForNewDevices.setEnabled(true);
                 if (pairedDevices.size() == bluetoothDevicesAdapter.getCount()) {
-                    Toast.makeText(getContext(), "No devices found", Toast.LENGTH_SHORT).show();
+                    makeText(getContext(), "No devices found", Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -241,7 +249,7 @@ public class ConnectFragment extends Fragment {
                 bluetoothDevicesAdapter.add(bt.getName() + "\n" + bt.getAddress());
             }
         } else {
-            Toast.makeText(getContext(), R.string.no_paired_devices,
+            makeText(getContext(), R.string.no_paired_devices,
                     Toast.LENGTH_LONG).show();
         }
 
@@ -270,7 +278,9 @@ public class ConnectFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
+        if (toast != null) {
+            toast.cancel();
+        }
         // Make sure we're not doing discovery anymore
         if (mBluetoothAdapter != null) {
             mBluetoothAdapter.cancelDiscovery();
@@ -278,7 +288,9 @@ public class ConnectFragment extends Fragment {
 
         if (connectFragment.isAdded()) {
             // Unregister broadcast listeners
-            getActivity().unregisterReceiver(mReceiver);
+            if (mReceiver.isOrderedBroadcast()) {
+                getActivity().unregisterReceiver(mReceiver);
+            }
         }
     }
 

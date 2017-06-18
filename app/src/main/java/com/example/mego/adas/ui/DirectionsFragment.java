@@ -264,17 +264,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         //extract  the camera values value
-        zoom = Float.parseFloat(sharedPreferences.getString(
-                getString(R.string.settings_map_zoom_key),
-                getString(R.string.settings_map_zoom_default)));
-
-        bearing = Float.parseFloat(sharedPreferences.getString(
-                getString(R.string.settings_map_bearing_key),
-                getString(R.string.settings_map_bearing_default)));
-
-        tilt = Float.parseFloat(sharedPreferences.getString(
-                getString(R.string.settings_map_tilt_key),
-                getString(R.string.settings_map_tilt_default)));
+        setMapView(sharedPreferences);
 
         //set the button to onClick Listener
         addLocationButton.setOnClickListener(this);
@@ -512,7 +502,9 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                             addLocationButton.setImageResource(R.drawable.icn_morp);
                             mAnimatable = (Animatable) (addLocationButton).getDrawable();
-                            mAnimatable.start();
+                            if (mAnimatable != null) {
+                                mAnimatable.start();
+                            }
                         }
                         revealView.setBackgroundColor(Color.WHITE);
                         startPlacePicker();
@@ -530,7 +522,9 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                             addLocationButton.setImageResource(R.drawable.icn_morph_reverse);
                             mAnimatable = (Animatable) (addLocationButton).getDrawable();
-                            mAnimatable.start();
+                            if (mAnimatable != null) {
+                                mAnimatable.start();
+                            }
                         }
                         locationImageView.setVisibility(View.INVISIBLE);
 
@@ -962,5 +956,22 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         stepListView = (ListView) view.findViewById(R.id.steps_listView);
 
         mapView = (LinearLayout) view.findViewById(R.id.map_view);
+    }
+
+    /**
+     * Method to set map view
+     */
+    private void setMapView(SharedPreferences sharedPreferences) {
+        zoom = Float.parseFloat(sharedPreferences.getString(
+                getString(R.string.settings_map_zoom_key),
+                getString(R.string.settings_map_zoom_default)));
+
+        bearing = Float.parseFloat(sharedPreferences.getString(
+                getString(R.string.settings_map_bearing_key),
+                getString(R.string.settings_map_bearing_default)));
+
+        tilt = Float.parseFloat(sharedPreferences.getString(
+                getString(R.string.settings_map_tilt_key),
+                getString(R.string.settings_map_tilt_default)));
     }
 }

@@ -205,4 +205,13 @@
     <string name="invalid_phone_number">Invalid phone number</string>
     <string name="unexpected_error_call_the_support">Unexpected error contact the support</string>
 
+    <!-- Edit account activity -->
+    <string name="label_edit_account">Edit account</string>
+    <string name="phone">Phone</string>
+    <string name="name">Name</string>
+    <string name="password_place_holder">12345678</string>
+    <string name="accessibility_user_image">User Image</string>
+    <string name="edit_email_not_change">You can\'t change your email</string>
+    <string name="failed_to_upload_photo_try_again">Failed to upload image try again</string>
+
 </resources>

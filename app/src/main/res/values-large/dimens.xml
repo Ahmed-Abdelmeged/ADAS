@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Nav header -->
+    <dimen name="nav_user_image_size">85dp</dimen>
+    <dimen name="nav_user_name">18sp</dimen>
+    <dimen name="nav_user_email">16sp</dimen>
+
     <!-- - - - - - - - - - - - -
         Connect Devices fragment
      - - - - - - - - - - - - - - - -->
@@ -67,9 +72,18 @@
     <dimen name="terms_conditions_textSize">22sp</dimen>
 
     <!-- - - - - - - - - - - - -
-        Verify code
+        Verify code Activity
     - - - - - - - - - - - - - - - -->
     <dimen name="please_enter_textSize">32sp</dimen>
     <dimen name="resend_code_textSize">30sp</dimen>
+
+    <!-- - - - - - - - - - - - -
+        Edit Account Activity
+    - - - - - - - - - - - - - - - -->
+    <dimen name="edit_item_label_textSize">24sp</dimen>
+    <dimen name="edit_item_text_textSize">26sp</dimen>
+    <dimen name="upload_progress_bar_size">90dp</dimen>
+    <dimen name="upload_progress_text_size">20sp</dimen>
+
 
 </resources>

@@ -70,12 +70,11 @@ public class AccidentDetailFragment extends Fragment implements OnMapReadyCallba
      * the information get from the
      */
     private String accidentTitle = null, accidentTime = null, accidentDate = null;
-    double accidentLongitude=0, accidentLatitude=0;
+    double accidentLongitude = 0, accidentLatitude = 0;
 
     public AccidentDetailFragment() {
         // Required empty public constructor
     }
-
 
     /**
      * camera settings
@@ -93,24 +92,13 @@ public class AccidentDetailFragment extends Fragment implements OnMapReadyCallba
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         //extract  the camera values value
-        zoom = Float.parseFloat(sharedPreferences.getString(
-                getString(R.string.settings_map_zoom_key),
-                getString(R.string.settings_map_zoom_default)));
-
-        bearing = Float.parseFloat(sharedPreferences.getString(
-                getString(R.string.settings_map_bearing_key),
-                getString(R.string.settings_map_bearing_default)));
-
-        tilt = Float.parseFloat(sharedPreferences.getString(
-                getString(R.string.settings_map_tilt_key),
-                getString(R.string.settings_map_tilt_default)));
+        setMapView(sharedPreferences);
 
         accidentTitle = getArguments().getString(Constant.ACCIDENT_TITLE_KEY);
         accidentTime = getArguments().getString(Constant.ACCIDENT_TIME_KEY);
         accidentDate = getArguments().getString(Constant.ACCIDENT_DATE_KEY);
         accidentLatitude = getArguments().getDouble(Constant.ACCIDENT_LATITUDE_KEY);
         accidentLongitude = getArguments().getDouble(Constant.ACCIDENT_LONGITUDE_KEY);
-
 
 
         //setup the map fragment
@@ -138,7 +126,7 @@ public class AccidentDetailFragment extends Fragment implements OnMapReadyCallba
         mapReady = true;
         mMap = googleMap;
 
-        if (mapReady &&accidentLatitude!=0 &&accidentLongitude!=0) {
+        if (mapReady && accidentLatitude != 0 && accidentLongitude != 0) {
 
             carPlace = new MarkerOptions()
                     .position(new LatLng(accidentLatitude, accidentLongitude))
@@ -161,7 +149,7 @@ public class AccidentDetailFragment extends Fragment implements OnMapReadyCallba
                     .fillColor(Color.argb(64, 255, 0, 0)));
 
             mMap.addMarker(carPlace);
-            flyto(cameraPosition);
+            flyTo(cameraPosition);
         }
 
     }
@@ -192,8 +180,25 @@ public class AccidentDetailFragment extends Fragment implements OnMapReadyCallba
     /**
      * helper method to go to specific location
      */
-    private void flyto(CameraPosition target) {
+    private void flyTo(CameraPosition target) {
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
+    }
+
+    /**
+     * Method to set map view
+     */
+    private void setMapView(SharedPreferences sharedPreferences) {
+        zoom = Float.parseFloat(sharedPreferences.getString(
+                getString(R.string.settings_map_zoom_key),
+                getString(R.string.settings_map_zoom_default)));
+
+        bearing = Float.parseFloat(sharedPreferences.getString(
+                getString(R.string.settings_map_bearing_key),
+                getString(R.string.settings_map_bearing_default)));
+
+        tilt = Float.parseFloat(sharedPreferences.getString(
+                getString(R.string.settings_map_tilt_key),
+                getString(R.string.settings_map_tilt_default)));
     }
 
 }

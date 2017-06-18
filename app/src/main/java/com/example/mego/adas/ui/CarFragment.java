@@ -258,17 +258,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         //extract  the camera values value
-        zoom = Float.parseFloat(sharedPreferences.getString(
-                getString(R.string.settings_map_zoom_key),
-                getString(R.string.settings_map_zoom_default)));
-
-        bearing = Float.parseFloat(sharedPreferences.getString(
-                getString(R.string.settings_map_bearing_key),
-                getString(R.string.settings_map_bearing_default)));
-
-        tilt = Float.parseFloat(sharedPreferences.getString(
-                getString(R.string.settings_map_tilt_key),
-                getString(R.string.settings_map_tilt_default)));
+        setMapView(sharedPreferences);
 
         String currentTempFormatState = sharedPreferences.getString(
                 getString(R.string.settings_temp_units_key),
@@ -297,49 +287,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
             //get the references for the childes
             //the main child for the car services
-            carDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO).child(Constant.FIREBASE_CAR);
-
-            //the childes for the direction root
-            connectionStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_CONNECTION_STATE);
-
-            accidentStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_ACCIDENT_STATE);
-
-            startStateStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_START_STATE);
-
-            lightsStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_LIGHTS_STATE);
-
-            lockStateDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_LOCK_STATE);
-
-            mappingServicesDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_MAPPING_SERVICES);
-
-            sensorsValuesDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_SENSORES_VALUES);
-
-            accidentsDatabaseReference = mFirebaseDatabase.getReference()
-                    .child(Constant.FIREBASE_USERS)
-                    .child(uid).child(Constant.FIREBASE_USER_INFO)
-                    .child(Constant.FIREBASE_ACCIDENTS);
+            getFirebaseObjectReferences(uid);
 
             connectionStateDatabaseReference.setValue(1);
 
@@ -1250,4 +1198,70 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         alertDialog.show();
     }
 
+    /**
+     * Method to get reference to firebase object
+     */
+    private void getFirebaseObjectReferences(String uid) {
+        carDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO).child(Constant.FIREBASE_CAR);
+
+        //the childes for the direction root
+        connectionStateDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_CONNECTION_STATE);
+
+        accidentStateDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_ACCIDENT_STATE);
+
+        startStateStateDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_START_STATE);
+
+        lightsStateDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_LIGHTS_STATE);
+
+        lockStateDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_LOCK_STATE);
+
+        mappingServicesDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_MAPPING_SERVICES);
+
+        sensorsValuesDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_SENSORES_VALUES);
+
+        accidentsDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_ACCIDENTS);
+
+    }
+
+    /**
+     * Method to set map view
+     */
+    private void setMapView(SharedPreferences sharedPreferences) {
+        zoom = Float.parseFloat(sharedPreferences.getString(
+                getString(R.string.settings_map_zoom_key),
+                getString(R.string.settings_map_zoom_default)));
+
+        bearing = Float.parseFloat(sharedPreferences.getString(
+                getString(R.string.settings_map_bearing_key),
+                getString(R.string.settings_map_bearing_default)));
+
+        tilt = Float.parseFloat(sharedPreferences.getString(
+                getString(R.string.settings_map_tilt_key),
+                getString(R.string.settings_map_tilt_default)));
+    }
 }

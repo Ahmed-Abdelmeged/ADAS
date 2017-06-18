@@ -62,9 +62,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".auth.NotAuthEntryActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".auth.SignInActivity"
             android:label="@string/sign_in"
@@ -74,6 +76,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".auth.NotAuthEntryActivity" />
         </activity>
+
         <activity
             android:name=".auth.SignUpActivity"
             android:label="@string/sign_up"
@@ -83,6 +86,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".auth.NotAuthEntryActivity" />
         </activity>
+
         <activity
             android:name=".auth.ResetPasswordActivity"
             android:label="@string/reset_password_label"
@@ -92,6 +96,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".auth.SignInActivity" />
         </activity>
+
         <activity
             android:name=".auth.TermsAndConditionsActivity"
             android:label="@string/terms_conditions_label"
@@ -101,10 +106,57 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".auth.SignUpActivity" />
         </activity>
+
         <activity
             android:name=".auth.VerifyPhoneNumberActivity"
             android:label="@string/verify_phone_number_label"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".user.EditUserInfoActivity"
+            android:label="@string/label_edit_account"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".user.EditUserNameActivity"
+            android:parentActivityName=".user.EditUserInfoActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".user.EditUserInfoActivity" />
+        </activity>
+
+        <activity
+            android:name=".user.EditUserPhoneActivity"
+            android:parentActivityName=".user.EditUserInfoActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".user.EditUserInfoActivity" />
+        </activity>
+
+        <activity
+            android:name=".user.EditUserLocationActivity"
+            android:parentActivityName=".user.EditUserInfoActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".user.EditUserInfoActivity" />
+        </activity>
+
+        <activity
+            android:name=".user.EditUserPasswordActivity"
+            android:parentActivityName=".user.EditUserInfoActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".user.EditUserInfoActivity" />
+        </activity>
     </application>
 
 </manifest>

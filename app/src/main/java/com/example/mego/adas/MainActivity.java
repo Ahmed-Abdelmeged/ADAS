@@ -65,6 +65,7 @@ import com.example.mego.adas.ui.LiveStreamingFragment;
 import com.example.mego.adas.ui.SettingsFragment;
 import com.example.mego.adas.ui.UserFragment;
 import com.example.mego.adas.ui.VideosFragments;
+import com.example.mego.adas.user.EditUserInfoActivity;
 import com.example.mego.adas.utils.Communicator;
 import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.maps.MapFragment;
@@ -81,6 +82,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import static android.widget.Toast.makeText;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Communicator {
 
@@ -89,6 +92,9 @@ public class MainActivity extends AppCompatActivity
      * UI Element
      */
     private TextView userNameTextView, userEmailTextView;
+    private ImageView backgroundImageView, userImageView;
+    private Toast toast;
+
 
     /**
      * The adapter to get all bluetooth services
@@ -141,11 +147,6 @@ public class MainActivity extends AppCompatActivity
     public static ConnectedThread mConnectedThread;
 
     CarFragment carFragment;
-    /**
-     * UI Element
-     */
-    private ImageView backgroundImageView;
-
 
     public static boolean connected = false;
 
@@ -207,12 +208,19 @@ public class MainActivity extends AppCompatActivity
 
         initializeScreen(headerView);
 
+        openEditAccountActivity();
+
         //check if the device has a bluetooth or not
         //and show Toast message if it does't have
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if (mBluetoothAdapter == null) {
-            Toast.makeText(this, R.string.does_not_have_bluetooth, Toast.LENGTH_LONG).show();
+            if (toast != null) {
+                toast.cancel();
+            }
+            toast = Toast.makeText(this, R.string.does_not_have_bluetooth, Toast.LENGTH_SHORT);
+            toast.show();
+
         } else if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntentBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntentBluetooth, REQUEST_ENABLE_BT);
@@ -227,7 +235,7 @@ public class MainActivity extends AppCompatActivity
 
         if (networkInfo != null && networkInfo.isConnected()) {
 
-            if (mFirebaseAuth.getCurrentUser().getUid() != null){
+            if (mFirebaseAuth.getCurrentUser().getUid() != null) {
                 isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference()
                         .child(Constant.FIREBASE_USERS)
                         .child(mFirebaseAuth.getCurrentUser().getUid())
@@ -236,7 +244,7 @@ public class MainActivity extends AppCompatActivity
                 getPhoneVerificationState();
             }
         } else {
-            Toast.makeText(MainActivity.this, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+            makeText(MainActivity.this, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
         }
 
         bluetoothHandler = new Handler() {
@@ -263,7 +271,23 @@ public class MainActivity extends AppCompatActivity
      */
     private void initializeScreen(View view) {
         userNameTextView = (TextView) view.findViewById(R.id.header_user_name);
+
         userEmailTextView = (TextView) view.findViewById(R.id.header_user_email);
+
+        userImageView = (ImageView) view.findViewById(R.id.header_user_imageView);
+    }
+
+    /**
+     * Method to open edit account activity
+     */
+    private void openEditAccountActivity() {
+        userImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent editAccountIntent = new Intent(MainActivity.this, EditUserInfoActivity.class);
+                startActivity(editAccountIntent);
+            }
+        });
     }
 
     /**
@@ -525,8 +549,7 @@ public class MainActivity extends AppCompatActivity
      * fast way to call Toast
      */
     private void msg(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-
+        makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -762,6 +785,14 @@ public class MainActivity extends AppCompatActivity
         String email = currentUser.getEmail();
         if (email != null) {
             userEmailTextView.setText(email);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (toast != null) {
+            toast.cancel();
         }
     }
 }

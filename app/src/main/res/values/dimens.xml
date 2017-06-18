@@ -7,6 +7,10 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <!-- Nav header -->
+    <dimen name="nav_user_image_size">65dp</dimen>
+    <dimen name="nav_user_name">14sp</dimen>
+    <dimen name="nav_user_email">12sp</dimen>
 
     <!-- - - - - - - - - - - - -
     Connect Devices fragment
@@ -74,10 +78,17 @@
     <dimen name="terms_conditions_textSize">16sp</dimen>
 
     <!-- - - - - - - - - - - - -
-       Verify code
+       Verify code Activity
     - - - - - - - - - - - - - - - -->
     <dimen name="please_enter_textSize">20sp</dimen>
     <dimen name="resend_code_textSize">18sp</dimen>
 
+    <!-- - - - - - - - - - - - -
+       Edit Account Activity
+    - - - - - - - - - - - - - - - -->
+    <dimen name="edit_item_label_textSize">16sp</dimen>
+    <dimen name="edit_item_text_textSize">18sp</dimen>
+    <dimen name="upload_progress_bar_size">70dp</dimen>
+    <dimen name="upload_progress_text_size">14sp</dimen>
 
 </resources>
