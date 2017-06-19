@@ -213,5 +213,8 @@
     <string name="accessibility_user_image">User Image</string>
     <string name="edit_email_not_change">You can\'t change your email</string>
     <string name="failed_to_upload_photo_try_again">Failed to upload image try again</string>
+    <string name="email_not_verified">Email: not verified</string>
+    <string name="sending_verification_email">Sending a verification email</string>
+    <string name="verification_is_sent">Verification email is sent</string>
 
 </resources>

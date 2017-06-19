@@ -101,6 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/email"
+                android:id="@+id/edit_user_email_label"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/edit_item_label_textSize" />
 

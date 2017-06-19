@@ -32,6 +32,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 
 import com.example.mego.adas.R;
+import com.google.android.gms.location.places.Place;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -180,6 +181,24 @@ public final class AdasUtils {
 
         String savedUserImagePath = preferences.getString(USER_IMAGE_PATH, USER_DEFAULT_IMAGE_PATH);
         return savedUserImagePath;
+    }
+
+    /**
+     * Method to get a short address from the place picker
+     *
+     * @param selectedPlace the elected place
+     * @return the shorten address
+     */
+    public static String getShortenAddress(Place selectedPlace) {
+        //get the first name of the address
+        String shortAddress = "";
+        for (int i = 0; i < selectedPlace.getAddress().length(); i++) {
+            if (selectedPlace.getAddress().charAt(i) == ',') {
+                shortAddress = (String) selectedPlace.getAddress().subSequence(0, i);
+                break;
+            }
+        }
+        return shortAddress;
     }
 
 }

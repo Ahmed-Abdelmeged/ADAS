@@ -21,12 +21,15 @@
 
 package com.example.mego.adas.user;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -42,6 +45,8 @@ import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -94,6 +99,11 @@ public class EditUserInfoActivity extends AppCompatActivity {
     @BindView(R.id.upload_progress_text)
     TextView uploadingProgressTextView;
 
+    @BindView(R.id.edit_user_email_label)
+    TextView editUserEmailLabelTextView;
+
+    private ProgressDialog mProgressVerify;
+
     private Toast toast = null;
 
     /**
@@ -112,6 +122,14 @@ public class EditUserInfoActivity extends AppCompatActivity {
     private DatabaseReference mUsersImageDatabaseReference;
     private ValueEventListener mUserImageValueEventListener;
 
+    /**
+     * Firebase Authentication
+     */
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private FirebaseUser currentFirebaseUser;
+
+
     private String userImagePath = null;
 
 
@@ -123,6 +141,14 @@ public class EditUserInfoActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
         showCurrentUser();
+
+        //initialize the Firebase auth object
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        currentFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        if (AuthenticationUtilities.isAvailableInternetConnection(EditUserInfoActivity.this)) {
+            verifyEmail();
+        }
 
         //get current user
         User user = AuthenticationUtilities.getCurrentUser(this);
@@ -213,7 +239,13 @@ public class EditUserInfoActivity extends AppCompatActivity {
 
     @OnClick(R.id.edit_email_container)
     public void emailPressed() {
-        showToast(getString(R.string.edit_email_not_change));
+        if (currentFirebaseUser != null) {
+            if (currentFirebaseUser.isEmailVerified()) {
+                showToast(getString(R.string.edit_email_not_change));
+            } else {
+                sendVerificationEmail();
+            }
+        }
     }
 
     @OnClick(R.id.edit_name_container)
@@ -272,6 +304,66 @@ public class EditUserInfoActivity extends AppCompatActivity {
         if (currentUser.getLocation() != null) {
             editUserLocationTextView.setText(currentUser.getLocation());
         }
+    }
+
+    /**
+     * Method to send verification email
+     */
+    private void sendVerificationEmail() {
+        if (AuthenticationUtilities.isAvailableInternetConnection(EditUserInfoActivity.this)) {
+            if (currentFirebaseUser != null) {
+                showVerifyProgressDialog(getString(R.string.sending_verification_email));
+                currentFirebaseUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        hideVerifyProgressDialog();
+                        showInfoDialog(getString(R.string.verification_is_sent));
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        hideVerifyProgressDialog();
+                        showInfoDialog(e.getLocalizedMessage());
+                    }
+                });
+            }
+        } else {
+            showToast(getString(R.string.error_message_failed_sign_in_no_network));
+        }
+
+    }
+
+    /**
+     * Method to check if the email is verified
+     */
+    private void verifyEmail() {
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                if (currentUser != null) {
+                    if (!currentUser.isEmailVerified()) {
+                        editUserEmailLabelTextView.setText(getString(R.string.email_not_verified));
+                        editUserEmailLabelTextView.setTextColor(getResources().getColor(R.color.red));
+                    } else {
+                        editUserEmailLabelTextView.setText(getString(R.string.email));
+                        editUserEmailLabelTextView.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    }
+                }
+            }
+        };
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
     }
 
     /**
@@ -349,6 +441,58 @@ public class EditUserInfoActivity extends AppCompatActivity {
         };
         mUsersImageDatabaseReference.addValueEventListener(mUserImageValueEventListener);
     }
+
+    /**
+     * Helper method to show progress dialog
+     */
+    public void showVerifyProgressDialog(String message) {
+
+        if (mProgressVerify == null) {
+            mProgressVerify = new ProgressDialog(this);
+            mProgressVerify.setMessage(message);
+            mProgressVerify.setIndeterminate(true);
+        }
+        mProgressVerify.show();
+    }
+
+    /**
+     * Helper method to hide progress dialog
+     */
+    public void hideVerifyProgressDialog() {
+        if (mProgressVerify != null && mProgressVerify.isShowing()) {
+            mProgressVerify.dismiss();
+        }
+    }
+
+    /**
+     * show a dialog that till that an error
+     */
+    private void showInfoDialog(String info) {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the positive buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(EditUserInfoActivity.this);
+        builder.setMessage(info);
+
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        //create and show the alert dialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        hideVerifyProgressDialog();
+    }
+
 
     @Override
     protected void onDestroy() {

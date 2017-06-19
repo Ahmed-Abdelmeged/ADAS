@@ -46,7 +46,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -71,6 +70,7 @@ import com.example.mego.adas.auth.User;
 import com.example.mego.adas.loader.DirectionsLoader;
 import com.example.mego.adas.model.Directions;
 import com.example.mego.adas.model.Steps;
+import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -827,16 +827,10 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
             Place place = PlacePicker.getPlace(getContext(), data);
             goingPlace = place;
-            Log.e(LOG_TAG, getLatLang(place));
 
             //get the first name of the address
-            String shortAddress = "";
-            for (int i = 0; i < place.getAddress().length(); i++) {
-                if (place.getAddress().charAt(i) == ',') {
-                    shortAddress = (String) place.getAddress().subSequence(0, i);
-                    break;
-                }
-            }
+            String shortAddress = AdasUtils.getShortenAddress(place);
+
             locationEditText.setText(shortAddress);
             destinationTextView.setText(shortAddress);
             locationEditText.setOnClickListener(new View.OnClickListener() {
@@ -860,11 +854,8 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         try {
             placePickerIntent = builder.build(getActivity());
         } catch (GooglePlayServicesRepairableException e) {
-            Log.e(LOG_TAG, String.format("GooglePlayServices Not Available [%s]", e.getMessage()));
         } catch (GooglePlayServicesNotAvailableException e) {
-            Log.e(LOG_TAG, String.format("GooglePlayServices Not Available [%s]", e.getMessage()));
         } catch (Exception e) {
-            Log.e(LOG_TAG, String.format("PlacePicker Exception: %s", e.getMessage()));
         }
         startActivityForResult(placePickerIntent, PLACE_PICKER_REQUEST);
     }
