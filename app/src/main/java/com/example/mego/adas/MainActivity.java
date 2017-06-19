@@ -29,6 +29,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -50,6 +51,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.NotAuthEntryActivity;
 import com.example.mego.adas.auth.User;
@@ -66,6 +68,7 @@ import com.example.mego.adas.ui.SettingsFragment;
 import com.example.mego.adas.ui.UserFragment;
 import com.example.mego.adas.ui.VideosFragments;
 import com.example.mego.adas.user.EditUserInfoActivity;
+import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Communicator;
 import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.maps.MapFragment;
@@ -81,8 +84,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import static android.widget.Toast.makeText;
+import static com.example.mego.adas.utils.Constant.FIREBASE_USERS;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Communicator {
@@ -164,11 +169,12 @@ public class MainActivity extends AppCompatActivity
      * to specific part of the database
      */
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mUsersDatabaseReference, isPhoneAuthDatabaseReference;
-    private ValueEventListener mUserValueEventListener, isPhoneAuthValueEventListener;
+    private DatabaseReference mUsersDatabaseReference, isPhoneAuthDatabaseReference, mUsersImageDatabaseReference;
+    private ValueEventListener mUserValueEventListener, isPhoneAuthValueEventListener, mUserImageValueEventListener;
     private ProgressDialog mProgressDialog;
     private int newConnectionFlag = 0;
 
+    private String userImagePath = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,6 +214,15 @@ public class MainActivity extends AppCompatActivity
 
         initializeScreen(headerView);
 
+        //display current user image
+        Bitmap userImageBitmap = AdasUtils.loadUserImageFromStorage(
+                AdasUtils.getCurrentUserImagePath(MainActivity.this));
+        if (userImageBitmap != null) {
+            userImageView.setImageBitmap(userImageBitmap);
+        } else {
+            userImageView.setImageResource(R.drawable.car_profile_icon);
+        }
+
         openEditAccountActivity();
 
         //check if the device has a bluetooth or not
@@ -237,7 +252,7 @@ public class MainActivity extends AppCompatActivity
 
             if (mFirebaseAuth.getCurrentUser().getUid() != null) {
                 isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference()
-                        .child(Constant.FIREBASE_USERS)
+                        .child(FIREBASE_USERS)
                         .child(mFirebaseAuth.getCurrentUser().getUid())
                         .child(Constant.FIREBASE_IS_VERIFIED_PHONE);
 
@@ -364,7 +379,12 @@ public class MainActivity extends AppCompatActivity
             case R.id.sign_out_item:
                 //sign out from the current user and start the not auth activity
                 mFirebaseAuth.signOut();
+
+                //clear the current user information
                 AuthenticationUtilities.clearCurrentUser(this);
+                AdasUtils.deleteUserImageFromStorage(AdasUtils.getCurrentUserImagePath(this));
+                AdasUtils.setCurrentUserImagePath(this, null);
+
                 Intent notAuthIntent = new Intent(MainActivity.this, NotAuthEntryActivity.class);
                 startActivity(notAuthIntent);
                 finish();
@@ -694,10 +714,16 @@ public class MainActivity extends AppCompatActivity
                 if (currentUser != null) {
                     String uid = currentUser.getUid();
                     mUsersDatabaseReference = mFirebaseDatabase.getReference().
-                            child(Constant.FIREBASE_USERS).child(uid);
+                            child(FIREBASE_USERS).child(uid);
+
+                    mUsersImageDatabaseReference = mFirebaseDatabase.getReference().child(FIREBASE_USERS)
+                            .child(uid).child(Constant.FIREBASE_USER_IMAGE);
+
                     if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
                         getUserData(uid);
-                        mUsersDatabaseReference.addValueEventListener(mUserValueEventListener);
+                        if (AdasUtils.getCurrentUserImagePath(MainActivity.this) == null) {
+                            getUserImageUrl();
+                        }
                     }
 
                 } else {
@@ -707,6 +733,71 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
+    }
+
+    /**
+     * Method to get the user image url
+     */
+    private void getUserImageUrl() {
+        mUserImageValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String userImageUrl = dataSnapshot.getValue(String.class);
+                if (userImageUrl != null) {
+                    for (int i = 0; i < userImageUrl.length(); i++) {
+                        if (userImageUrl.charAt(i) == '?') {
+                            userImagePath = userImageUrl.substring(i - 6, i);
+                        }
+                    }
+                    new DownloadUserImageBitmap().execute(userImageUrl);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        mUsersImageDatabaseReference.addValueEventListener(mUserImageValueEventListener);
+    }
+
+    /**
+     * AsyncTask to download image
+     */
+    private class DownloadUserImageBitmap extends AsyncTask<String, Void, Bitmap> {
+        Bitmap bitmap;
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            try {
+                bitmap = Glide.with(MainActivity.this)
+                        .load(params[0])
+                        .asBitmap()
+                        .into(-1, -1)
+                        .get();
+
+                if (bitmap != null) {
+                    //save the current image
+                    String savedPath = AdasUtils.saveImageIntoInternalStorage(bitmap,
+                            MainActivity.this, userImagePath);
+
+                    AdasUtils.setCurrentUserImagePath(MainActivity.this
+                            , savedPath + "/" + userImagePath);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            //display the image after save it
+            userImageView.setImageBitmap(bitmap);
+        }
     }
 
     /**
@@ -731,6 +822,7 @@ public class MainActivity extends AppCompatActivity
 
             }
         };
+        mUsersDatabaseReference.addValueEventListener(mUserValueEventListener);
     }
 
     /**

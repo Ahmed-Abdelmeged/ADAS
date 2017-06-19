@@ -23,15 +23,31 @@
 package com.example.mego.adas.utils;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 
 import com.example.mego.adas.R;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 /**
  * Contains useful utilities for a ADAS app, such as conversion between Celsius and Fahrenheit ..etc
  */
 public final class AdasUtils {
+
+    /**
+     * Constant for the user image shared preference
+     */
+    private static final String USER_IMAGE_PATH = "user_image_path";
+    private static final String USER_DEFAULT_IMAGE_PATH = null;
 
     /**
      * This method will convert a temperature from Celsius to Fahrenheit.
@@ -73,4 +89,97 @@ public final class AdasUtils {
             context.startActivity(sendSmsIntent);
         }
     }
+
+    /**
+     * Method to save save user image in internal storage for the device
+     *
+     * @param bitmapImage the downloaded bitmap
+     * @param context
+     * @param name        the image name (the last segment)
+     * @return the saved path for th image
+     */
+    public static String saveImageIntoInternalStorage(Bitmap bitmapImage, Context context, String name) {
+
+        // path to /data/data/adas/app_data/imageDir
+        ContextWrapper contextWrapper = new ContextWrapper(context);
+
+        //Folder name in device android/data/
+        String folderName = "UserImages";
+        File directory = contextWrapper.getDir(folderName, Context.MODE_PRIVATE);
+
+        //Create imageDir
+        File imagePath = new File(directory, name);
+
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(imagePath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, fileOutputStream);
+            fileOutputStream.close();
+        } catch (Exception e) {
+        }
+        return directory.getAbsolutePath();
+    }
+
+    /**
+     * Method to get the current user image saved
+     *
+     * @param path the saved path for the image
+     * @return the bitmap that will be displayed
+     */
+    public static Bitmap loadUserImageFromStorage(String path) {
+        Bitmap bitmap;
+        try {
+            if (path != null) {
+                File file = new File(path);
+                bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+                return bitmap;
+            }
+        } catch (FileNotFoundException e) {
+        }
+        return null;
+    }
+
+    /**
+     * Method to delete saved user image when sign out
+     *
+     * @param path the saved image path
+     * @return the boolean to indicate if the photo is deleted or not
+     */
+    public static boolean deleteUserImageFromStorage(String path) {
+        File file = new File(path);
+        return file.delete();
+    }
+
+    /**
+     * Method to set the current user image path to retrieve ans display it
+     *
+     * @param context   the application context
+     * @param imagePath the saved image path
+     */
+    synchronized public static void setCurrentUserImagePath(Context context, String imagePath) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        //get the current state for shared preference
+        String currentPath = preferences.getString(USER_IMAGE_PATH, USER_DEFAULT_IMAGE_PATH);
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(USER_IMAGE_PATH, imagePath);
+        editor.apply();
+
+    }
+
+    /**
+     * Method to get the current user image path to retrieve ans display it
+     *
+     * @param context the application context
+     * @return the saved image path
+     */
+    public static String getCurrentUserImagePath(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        String savedUserImagePath = preferences.getString(USER_IMAGE_PATH, USER_DEFAULT_IMAGE_PATH);
+        return savedUserImagePath;
+    }
+
 }

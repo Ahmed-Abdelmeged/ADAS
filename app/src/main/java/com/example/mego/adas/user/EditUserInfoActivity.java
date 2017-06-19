@@ -22,7 +22,9 @@
 package com.example.mego.adas.user;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -36,15 +38,21 @@ import com.bumptech.glide.Glide;
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
+import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -101,7 +109,10 @@ public class EditUserInfoActivity extends AppCompatActivity {
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mUsersPhotosStorageReference;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mUsersDatabaseReference;
+    private DatabaseReference mUsersImageDatabaseReference;
+    private ValueEventListener mUserImageValueEventListener;
+
+    private String userImagePath = null;
 
 
     @Override
@@ -123,9 +134,21 @@ public class EditUserInfoActivity extends AppCompatActivity {
 
         //set up the firebase
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mUsersDatabaseReference = mFirebaseDatabase.getReference().child(USERS)
+        mUsersImageDatabaseReference = mFirebaseDatabase.getReference().child(USERS)
                 .child(user.getUserUid()).child(Constant.FIREBASE_USER_IMAGE);
 
+        //display current user image
+        Bitmap userImageBitmap = AdasUtils.loadUserImageFromStorage(
+                AdasUtils.getCurrentUserImagePath(EditUserInfoActivity.this));
+        if (userImageBitmap != null) {
+            editUserImageImageView.setImageBitmap(userImageBitmap);
+        } else {
+            editUserImageImageView.setImageResource(R.drawable.app_logo);
+        }
+
+        if (AdasUtils.getCurrentUserImagePath(EditUserInfoActivity.this) == null) {
+            getUserImageUrl();
+        }
 
     }
 
@@ -134,25 +157,30 @@ public class EditUserInfoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             //get the choose photo as URI
-            Uri selectedImageUri = data.getData();
+            final Uri selectedImageUri = data.getData();
 
             //get reference to store user photo
             StorageReference photoRef =
                     mUsersPhotosStorageReference.child(selectedImageUri.getLastPathSegment());
 
+            userImagePath = selectedImageUri.getLastPathSegment();
 
             photoRef.putFile(selectedImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                    //get the download url
+                    //get the download url and display it
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    mUsersDatabaseReference.setValue(downloadUrl.toString());
-                    Glide.with(EditUserInfoActivity.this)
-                            .load(downloadUrl)
-                            .into(editUserImageImageView);
+
+                    mUsersImageDatabaseReference.setValue(downloadUrl.toString());
+
+                    //get the user bitmap and save it in internal storage to offline access
+                    //and save bandwidth
+                    new DownloadUserImageBitmap().execute(downloadUrl.toString());
+
                     imageUploadingProgressBar.setVisibility(View.INVISIBLE);
                     uploadingProgressTextView.setVisibility(View.INVISIBLE);
+
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -255,6 +283,71 @@ public class EditUserInfoActivity extends AppCompatActivity {
         }
         toast = Toast.makeText(EditUserInfoActivity.this, message, Toast.LENGTH_SHORT);
         toast.show();
+    }
+
+    /**
+     * AsyncTask to download image
+     */
+    private class DownloadUserImageBitmap extends AsyncTask<String, Void, Bitmap> {
+        Bitmap bitmap;
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            try {
+                bitmap = Glide.with(EditUserInfoActivity.this)
+                        .load(params[0])
+                        .asBitmap()
+                        .into(-1, -1)
+                        .get();
+
+                if (bitmap != null) {
+                    //save the current image
+                    String savedPath = AdasUtils.saveImageIntoInternalStorage(bitmap,
+                            EditUserInfoActivity.this, userImagePath);
+
+                    AdasUtils.setCurrentUserImagePath(EditUserInfoActivity.this
+                            , savedPath + "/" + userImagePath);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            //display the image after save it
+            editUserImageImageView.setImageBitmap(bitmap);
+        }
+    }
+
+    /**
+     * Method to get the user image url
+     */
+    private void getUserImageUrl() {
+        mUserImageValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String userImageUrl = dataSnapshot.getValue(String.class);
+                if (userImageUrl != null) {
+                    for (int i = 0; i < userImageUrl.length(); i++) {
+                        if (userImageUrl.charAt(i) == '?') {
+                            userImagePath = userImageUrl.substring(i - 6, i);
+                        }
+                    }
+                    new DownloadUserImageBitmap().execute(userImageUrl);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        mUsersImageDatabaseReference.addValueEventListener(mUserImageValueEventListener);
     }
 
     @Override
