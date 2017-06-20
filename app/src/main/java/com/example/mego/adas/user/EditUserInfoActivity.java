@@ -154,10 +154,7 @@ public class EditUserInfoActivity extends AppCompatActivity {
         super.onResume();
 
         showCurrentUser();
-
-        if (AuthenticationUtilities.isAvailableInternetConnection(EditUserInfoActivity.this)) {
-            verifyEmail();
-        }
+        verifyEmail();
 
         //get current user
         User user = AuthenticationUtilities.getCurrentUser(this);
@@ -289,10 +286,14 @@ public class EditUserInfoActivity extends AppCompatActivity {
 
     @OnClick(R.id.edit_user_image)
     public void imagePressed() {
-        Intent getImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        getImageIntent.setType("image/*");
-        getImageIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-        startActivityForResult(Intent.createChooser(getImageIntent, "Complete action using"), RC_PHOTO_PICKER);
+        if (AuthenticationUtilities.isAvailableInternetConnection(EditUserInfoActivity.this)) {
+            Intent getImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            getImageIntent.setType("image/*");
+            getImageIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            startActivityForResult(Intent.createChooser(getImageIntent, "Complete action using"), RC_PHOTO_PICKER);
+        } else {
+            showToast(getString(R.string.no_internet_connection));
+        }
     }
 
     /**

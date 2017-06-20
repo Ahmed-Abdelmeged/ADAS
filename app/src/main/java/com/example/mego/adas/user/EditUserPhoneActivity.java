@@ -108,12 +108,13 @@ public class EditUserPhoneActivity extends AppCompatActivity {
         isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
                 .child(currentAuthUser.getUserUid()).child(Constant.FIREBASE_IS_VERIFIED_PHONE);
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(EditUserPhoneActivity.this)) {
-            saveNumberPhoneButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (validatePhone()) {
-                        if (currentUser != null) {
+        saveNumberPhoneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validatePhone()) {
+                    if (currentUser != null) {
+                        if (AuthenticationUtilities.isAvailableInternetConnection(EditUserPhoneActivity.this)) {
+
                             String phoneNumber = phoneNumberEditText.getText().toString();
 
                             unLinkUserPhoneNumber();
@@ -131,13 +132,13 @@ public class EditUserPhoneActivity extends AppCompatActivity {
                             mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(mainIntent);
                             finish();
+                        } else {
+                            showToast(getString(R.string.no_internet_connection));
                         }
                     }
                 }
-            });
-        } else {
-            showToast(getString(R.string.no_internet_connection));
-        }
+            }
+        });
     }
 
     /**

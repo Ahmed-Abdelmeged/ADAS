@@ -82,22 +82,23 @@ public class EditUserLocationActivity extends AppCompatActivity {
         mUsersLocationDatabaseReference = mFirebaseDatabase.getReference()
                 .child(Constant.FIREBASE_USERS).child(currentUser.getUserUid()).child(Constant.FIREBASE_USER_LOCATION);
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(EditUserLocationActivity.this)) {
-            saveLocationButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (validateLocation()) {
+        saveLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validateLocation()) {
+                    if (AuthenticationUtilities.isAvailableInternetConnection(EditUserLocationActivity.this)) {
+
                         String location = locationEditText.getText().toString();
                         mUsersLocationDatabaseReference.setValue(location);
                         AuthenticationUtilities.setCurrentUserLocation(
                                 EditUserLocationActivity.this, location);
                         finish();
+                    } else {
+                        showToast(getString(R.string.no_internet_connection));
                     }
                 }
-            });
-        } else {
-            showToast(getString(R.string.no_internet_connection));
-        }
+            }
+        });
     }
 
     /**

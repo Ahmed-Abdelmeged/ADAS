@@ -84,24 +84,24 @@ public class EditUserNameActivity extends AppCompatActivity {
                 .child(Constant.FIREBASE_USERS).child(currentUser.getUserUid())
                 .child(Constant.FIREBASE_USER_NAME);
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(EditUserNameActivity.this)) {
-            saveNameButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (validateName()) {
+        saveNameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validateName()) {
+                    if (AuthenticationUtilities.isAvailableInternetConnection(EditUserNameActivity.this)) {
                         String name = nameEditText.getText().toString();
                         mUsersNameDatabaseReference.setValue(name);
                         AuthenticationUtilities.setCurrentUserName(
                                 EditUserNameActivity.this, name);
                         finish();
+                    } else {
+                        showToast(getString(R.string.no_internet_connection));
                     }
                 }
-            });
-        } else {
-            showToast(getString(R.string.no_internet_connection));
-        }
-
+            }
+        });
     }
+
 
     /**
      * Link the layout element from XML to Java

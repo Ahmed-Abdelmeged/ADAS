@@ -36,6 +36,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
@@ -63,6 +64,7 @@ public class EditUserPasswordActivity extends AppCompatActivity {
     private TextInputLayout currentPasswordWrapper, newPasswordWrapper, reTypeNewPasswordWrapper;
     private Button updatePasswordButton;
     private ProgressDialog mProgressDialog;
+    private Toast toast;
 
     /**
      * Firebase Authentication
@@ -87,11 +89,15 @@ public class EditUserPasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (validateForm()) {
-                    if (currentUser != null) {
-                        showProgressDialog(getString(R.string.updating_password));
-                        updatePassword(currentUser.getEmail(),
-                                currentPasswordEditText.getText().toString(),
-                                newPasswordEditText.getText().toString());
+                    if (AuthenticationUtilities.isAvailableInternetConnection(EditUserPasswordActivity.this)) {
+                        if (currentUser != null) {
+                            showProgressDialog(getString(R.string.updating_password));
+                            updatePassword(currentUser.getEmail(),
+                                    currentPasswordEditText.getText().toString(),
+                                    newPasswordEditText.getText().toString());
+                        }
+                    } else {
+                        showToast(getString(R.string.no_internet_connection));
                     }
                 }
             }
@@ -244,6 +250,24 @@ public class EditUserPasswordActivity extends AppCompatActivity {
         mProgressDialog.show();
     }
 
+    /**
+     * Fast way to call Toast
+     */
+    private void showToast(String message) {
+        if (toast != null) {
+            toast.cancel();
+        }
+        toast = Toast.makeText(EditUserPasswordActivity.this, message, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (toast != null) {
+            toast.cancel();
+        }
+    }
 
     /**
      * Link the layout element from XML to Java
