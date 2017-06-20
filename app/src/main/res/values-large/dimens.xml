@@ -84,6 +84,8 @@
     <dimen name="edit_item_text_textSize">26sp</dimen>
     <dimen name="upload_progress_bar_size">90dp</dimen>
     <dimen name="upload_progress_text_size">20sp</dimen>
+    <dimen name="update_password_textSize">26sp</dimen>
+
 
 
 </resources>

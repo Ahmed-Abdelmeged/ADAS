@@ -204,6 +204,8 @@
     <string name="did_not_get_code">Didn\'t get the code?</string>
     <string name="invalid_phone_number">Invalid phone number</string>
     <string name="unexpected_error_call_the_support">Unexpected error contact the support</string>
+    <string name="not_your_phone_number">Not your number?</string>
+    <string name="change_number">Change number</string>
 
     <!-- Edit account activity -->
     <string name="label_edit_account">Edit account</string>
@@ -216,5 +218,19 @@
     <string name="email_not_verified">Email: not verified</string>
     <string name="sending_verification_email">Sending a verification email</string>
     <string name="verification_is_sent">Verification email is sent</string>
+    <string name="save">Save</string>
+
+    <!-- Edit Password Activity -->
+    <string name="current_password">Current password</string>
+    <string name="new_password">New password</string>
+    <string name="re_type_new_password">Re-type new password</string>
+    <string name="update_password">Update Password</string>
+
+    <!-- Edit User Password Activity -->
+    <string name="password_do_not_much">Passwords don\'t match</string>
+    <string name="new_password_do_not_much_details">New passwords don\'t match. Please try again.</string>
+    <string name="updating_password">Updating password...</string>
+    <string name="update">Update</string>
+    <string name="password_updating_successfully">Password updating successfully</string>
 
 </resources>

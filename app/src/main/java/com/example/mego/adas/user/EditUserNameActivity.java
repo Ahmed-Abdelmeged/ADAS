@@ -25,12 +25,48 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.mego.adas.R;
+import com.example.mego.adas.auth.AuthenticationUtilities;
+import com.example.mego.adas.auth.User;
+import com.example.mego.adas.utils.Constant;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+/**
+ * Activity to edit user name
+ */
 
 public class EditUserNameActivity extends AppCompatActivity {
+
+    /**
+     * Tag for the logs
+     */
+    private static final String LOG_TAG = EditUserNameActivity.class.getSimpleName();
+
+    /**
+     * UI Element
+     */
+    private EditText nameEditText;
+    private TextInputLayout nameWrapper;
+    private Button saveNameButton;
+    private Toast toast;
+
+    /**
+     * Firebase objects
+     * to specific part of the database
+     */
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mUsersNameDatabaseReference;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +74,39 @@ public class EditUserNameActivity extends AppCompatActivity {
         setTheme(R.style.EditInfoThemeNoActionBar);
         setContentView(R.layout.activity_edit_user_name);
 
+        initializeScreen();
+
+        //set up the firebase
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+        User currentUser = AuthenticationUtilities.getCurrentUser(EditUserNameActivity.this);
+        mUsersNameDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS).child(currentUser.getUserUid())
+                .child(Constant.FIREBASE_USER_NAME);
+
+        if (AuthenticationUtilities.isAvailableInternetConnection(EditUserNameActivity.this)) {
+            saveNameButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (validateName()) {
+                        String name = nameEditText.getText().toString();
+                        mUsersNameDatabaseReference.setValue(name);
+                        AuthenticationUtilities.setCurrentUserName(
+                                EditUserNameActivity.this, name);
+                        finish();
+                    }
+                }
+            });
+        } else {
+            showToast(getString(R.string.no_internet_connection));
+        }
+
+    }
+
+    /**
+     * Link the layout element from XML to Java
+     */
+    private void initializeScreen() {
         //to show white up button in the activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.edit_user_name_toolBar);
         setSupportActionBar(toolbar);
@@ -47,5 +116,45 @@ public class EditUserNameActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(drawable);
         getSupportActionBar().setTitle("");
 
+        nameEditText = (EditText) findViewById(R.id.name_editText_edit_name_activity);
+
+        nameWrapper = (TextInputLayout) findViewById(R.id.name_wrapper_edit_name_activity);
+
+        saveNameButton = (Button) findViewById(R.id.save_new_name_button);
+    }
+
+    /**
+     * Helper method to validate the data from the edit text
+     *
+     * @return boolean to indicate name validation
+     */
+    private boolean validateName() {
+        String name = nameEditText.getText().toString();
+        if (TextUtils.isEmpty(name) || !AuthenticationUtilities.isUserNameValid(name)) {
+            nameWrapper.setError(getString(R.string.error_message_required));
+            return false;
+        } else {
+            nameWrapper.setError(null);
+        }
+        return true;
+    }
+
+    /**
+     * Fast way to call Toast
+     */
+    private void showToast(String message) {
+        if (toast != null) {
+            toast.cancel();
+        }
+        toast = Toast.makeText(EditUserNameActivity.this, message, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (toast != null) {
+            toast.cancel();
+        }
     }
 }

@@ -67,7 +67,7 @@ public class SignUpActivity extends AppCompatActivity {
     /**
      * Constants for the saving the values in saved instance
      */
-    public static final String USERS = "users";
+    private static final String USERS = "users";
     public static final String FIREBASE_PROPERTY_TIMESTAMP = "timestamp";
 
 
@@ -239,7 +239,7 @@ public class SignUpActivity extends AppCompatActivity {
     /**
      * Helper method to validate the data from the edit text
      *
-     * @return
+     * @return boolean to indicate form validation
      */
     private boolean validateForm() {
         boolean valid = true;

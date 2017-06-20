@@ -155,11 +155,17 @@ public class Constant {
      * Constant for verify phone number
      */
     public static final String FIREBASE_IS_VERIFIED_PHONE = "phoneVerified";
-    public static final String FIREBASE_USER_PHONE ="phoneNumber";
+    public static final String FIREBASE_USER_PHONE = "phoneNumber";
 
     /**
      * Constant for firebase storage user photo
      */
     public static final String FIREBASE_USER_IMAGE = "userImage";
+
+    /**
+     * Constants for update current user
+     */
+    public static final String FIREBASE_USER_LOCATION = "location";
+    public static final String FIREBASE_USER_NAME = "fullName";
 
 }

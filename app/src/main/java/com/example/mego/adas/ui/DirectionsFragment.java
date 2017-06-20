@@ -317,6 +317,8 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         if (mapFragment != null) {
             getActivity().getFragmentManager().beginTransaction().remove(mapFragment).commit();
         }
+        mGoogleApiClient.stopAutoManage(getActivity());
+        mGoogleApiClient.disconnect();
     }
 
     /**

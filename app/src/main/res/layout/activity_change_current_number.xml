@@ -16,7 +16,7 @@
 
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/edit_user_phone_toolBar"
+            android:id="@+id/change_user_phone_toolBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/Theme.AppCompat.NoActionBar"
@@ -31,7 +31,7 @@
             android:padding="16dp">
 
             <com.hbb20.CountryCodePicker
-                android:id="@+id/edit_phone_number_country_code_picker"
+                android:id="@+id/change_phone_number_country_code_picker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -42,13 +42,13 @@
                 app:showFlag="false" />
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/phone_number_wrapper_edit_phone_number_activity"
+                android:id="@+id/change_number_wrapper_change_phone_number_activity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
                 <EditText
-                    android:id="@+id/phone_number_editText_edit_phone_number_activity"
+                    android:id="@+id/change_number_editText_change_phone_number_activity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/mobile_number"
@@ -61,7 +61,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/save_new_phone_number_button"
+            android:id="@+id/change_new_phone_number_button"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_auth_main"
             android:layout_gravity="center_horizontal"

@@ -5,39 +5,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_dark"
-    android:fillViewport="true"
     android:padding="16dp"
     tools:context="com.example.mego.adas.auth.VerifyPhoneNumberActivity">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/please_enter_code_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
             android:text="@string/please_enter_code"
             android:textColor="@android:color/white"
             android:textSize="@dimen/please_enter_textSize" />
 
         <TextView
+            android:id="@+id/on_your_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/please_enter_code_textView"
-            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="6dp"
             android:text="@string/on_your_phone"
             android:textColor="@android:color/white"
             android:textSize="@dimen/please_enter_textSize" />
 
+        <TextView
+            android:id="@+id/current_phone_number_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="6dp"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/please_enter_textSize"
+            tools:text="+2001017517563" />
+
         <com.alimuzaffar.lib.pin.PinEntryEditText
             android:id="@+id/pin_code_editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/continue_verifying_button"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="6dp"
+            android:layout_marginTop="50dp"
             android:digits="1234567890"
             android:inputType="number"
             android:maxLength="6"
@@ -50,17 +62,16 @@
             android:id="@+id/continue_verifying_button"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_auth_main"
-            android:layout_centerInParent="true"
             android:text="@string/continue_label"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/editText_auth_main" />
 
         <LinearLayout
+            android:id="@+id/resend_code_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/continue_verifying_button"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -83,5 +94,31 @@
 
         </LinearLayout>
 
-    </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/not_your_phone_number"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/resend_code_textSize" />
+
+            <TextView
+                android:id="@+id/change_phone_number_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:text="@string/change_number"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/resend_code_textSize" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 </ScrollView>

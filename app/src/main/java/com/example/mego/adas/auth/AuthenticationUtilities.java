@@ -60,7 +60,7 @@ public class AuthenticationUtilities {
     /**
      * Helper method to validate the email
      */
-    static boolean isEmailValid(String email) {
+    public static boolean isEmailValid(String email) {
         boolean isGoodEmail = false;
         isGoodEmail = (email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches());
         return isGoodEmail;
@@ -69,21 +69,21 @@ public class AuthenticationUtilities {
     /**
      * Helper method to validate the password
      */
-    static boolean isPasswordValid(String password) {
+    public static boolean isPasswordValid(String password) {
         return password.length() >= 6;
     }
 
     /**
      * Helper method to validate the userName
      */
-    static boolean isUserNameValid(String userName) {
+    public static boolean isUserNameValid(String userName) {
         return !userName.equals("");
     }
 
     /**
      * Helper method to validate the phone number
      */
-    static boolean isPhoneNumberValid(String phoneNumber) {
+    public static boolean isPhoneNumberValid(String phoneNumber) {
         boolean isGoodPhone = false;
         if (!Pattern.matches("[a-zA-Z]+", phoneNumber)) {
             isGoodPhone = !(phoneNumber.length() < 5 || phoneNumber.length() > 14);
@@ -106,7 +106,7 @@ public class AuthenticationUtilities {
     /**
      * Helper Method to hide the keyboard
      */
-    static void hideKeyboard(Activity activity) {
+    public static void hideKeyboard(Activity activity) {
         View view = activity.getCurrentFocus();
         if (view != null) {
             ((InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE)).
@@ -149,6 +149,39 @@ public class AuthenticationUtilities {
         String userPhone = sharedPreferences.getString(USER_PHONE, USER_DEFAULT_PHONE);
         String userEmail = sharedPreferences.getString(USER_EMAIL, USER_DEFAULT_EMAIL);
         return new User(userEmail, userPhone, userLocation, userName, userUid);
+    }
+
+    /**
+     * Helper Method to set the current user location
+     */
+    synchronized public static void setCurrentUserLocation(Context context, String location) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String userLocation = preferences.getString(USER_LOCATION, USER_DEFAULT_LOCATION);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(USER_LOCATION, location);
+        editor.apply();
+    }
+
+    /**
+     * Helper Method to set the current user name
+     */
+    synchronized public static void setCurrentUserName(Context context, String name) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String userName = preferences.getString(USER_NAME, USER_DEFAULT_NAME);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(USER_NAME, name);
+        editor.apply();
+    }
+
+    /**
+     * Helper Method to set the current user phone
+     */
+    synchronized public static void setCurrentUserPhone(Context context, String phone) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String userPhone = preferences.getString(USER_PHONE, USER_DEFAULT_PHONE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(USER_PHONE, phone);
+        editor.apply();
     }
 
     /**

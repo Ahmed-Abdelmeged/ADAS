@@ -70,7 +70,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
     /**
      * UI Element
      */
-    private TextView resendTextView;
+    private TextView resendTextView, changeNumberTextView, currentPhoneNumber;
     private Button continueVerifyingButton;
     private PinEntryEditText pinCodeEditText;
     private ProgressDialog mProgressDialog;
@@ -126,55 +126,28 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
         //initialize the Firebase auth object
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                if (firebaseUser == null) {
-                    logOut();
-                    Intent mainIntent = new Intent(VerifyPhoneNumberActivity.this, NotAuthEntryActivity.class);
-                    //clear the application stack (clear all  former the activities)
-                    mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(mainIntent);
-                    finish();
-                } else {
-                    uid = firebaseUser.getUid();
-                    if (AuthenticationUtilities.isAvailableInternetConnection(VerifyPhoneNumberActivity.this)) {
-                        if (uid != null) {
-                            isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
-                                    .child(uid).child(Constant.FIREBASE_IS_VERIFIED_PHONE);
-
-                            phoneNumberDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
-                                    .child(uid).child(Constant.FIREBASE_USER_PHONE);
-
-                            verificationStatesCallbacks();
-                            getUserPhoneNumber();
-                            startVerification();
-
-                            resendTextView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (userPhoneNumber != null) {
-                                        resendVerificationCode(userPhoneNumber, mResendToken);
-                                    }
-                                }
-                            });
-                        } else {
-                            logOut();
-                        }
-                    } else {
-                        Toast.makeText(VerifyPhoneNumberActivity.this, R.string.error_message_failed_sign_in_no_network,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        };
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        User currentUser = AuthenticationUtilities.getCurrentUser(VerifyPhoneNumberActivity.this);
+        currentPhoneNumber.setText(currentUser.getPhoneNumber());
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    /**
+     * Method to start change phone number activity
+     */
+    private void startChangeCurrentNumber() {
+        changeNumberTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent changeCurrentNumber = new Intent(
+                        VerifyPhoneNumberActivity.this, ChangeCurrentNumber.class);
+                startActivity(changeCurrentNumber);
+            }
+        });
     }
 
     @Override
@@ -224,6 +197,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        startVerificationFlow();
         if (mVerificationInProgress && userPhoneNumber != null) {
             startPhoneNumberVerification(userPhoneNumber);
         }
@@ -376,7 +350,57 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
     }
 
     /**
-     * Method to sign in with
+     * Method to start verification flow
+     */
+    private void startVerificationFlow() {
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                if (firebaseUser == null) {
+                    logOut();
+                    Intent mainIntent = new Intent(VerifyPhoneNumberActivity.this, NotAuthEntryActivity.class);
+                    //clear the application stack (clear all  former the activities)
+                    mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(mainIntent);
+                    finish();
+                } else {
+                    uid = firebaseUser.getUid();
+                    startChangeCurrentNumber();
+                    if (AuthenticationUtilities.isAvailableInternetConnection(VerifyPhoneNumberActivity.this)) {
+                        if (uid != null) {
+                            isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
+                                    .child(uid).child(Constant.FIREBASE_IS_VERIFIED_PHONE);
+
+                            phoneNumberDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
+                                    .child(uid).child(Constant.FIREBASE_USER_PHONE);
+
+                            verificationStatesCallbacks();
+                            getUserPhoneNumber();
+                            startVerification();
+
+                            resendTextView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (userPhoneNumber != null) {
+                                        resendVerificationCode(userPhoneNumber, mResendToken);
+                                    }
+                                }
+                            });
+                        } else {
+                            logOut();
+                        }
+                    } else {
+                        Toast.makeText(VerifyPhoneNumberActivity.this, R.string.error_message_failed_sign_in_no_network,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        };
+    }
+
+    /**
+     * Method to sign in with phone number
      */
     /*private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mFirebaseAuth.signInWithCredential(credential)
@@ -437,6 +461,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
      * Helper method to show progress dialog
      */
     public void showProgressDialog() {
+        AuthenticationUtilities.hideKeyboard(VerifyPhoneNumberActivity.this);
 
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
@@ -450,6 +475,8 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
      * Helper method to hide progress dialog
      */
     public void hideProgressDialog() {
+        AuthenticationUtilities.hideKeyboard(VerifyPhoneNumberActivity.this);
+
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
@@ -473,7 +500,11 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
      */
     private void initializeScreen() {
         resendTextView = (TextView) findViewById(R.id.resend_code_textView);
+        changeNumberTextView = (TextView) findViewById(R.id.change_phone_number_textView);
+        currentPhoneNumber = (TextView) findViewById(R.id.current_phone_number_textView);
+
         continueVerifyingButton = (Button) findViewById(R.id.continue_verifying_button);
+
         pinCodeEditText = (PinEntryEditText) findViewById(R.id.pin_code_editText);
 
         continueVerifyingButton.setEnabled(false);

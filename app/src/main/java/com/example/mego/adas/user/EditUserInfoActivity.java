@@ -63,8 +63,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.example.mego.adas.auth.SignUpActivity.USERS;
 
+/**
+ * Activity to display and edit user info
+ */
 public class EditUserInfoActivity extends AppCompatActivity {
 
     /**
@@ -140,11 +142,18 @@ public class EditUserInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_user_info);
 
         ButterKnife.bind(this);
-        showCurrentUser();
 
         //initialize the Firebase auth object
         mFirebaseAuth = FirebaseAuth.getInstance();
         currentFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        showCurrentUser();
 
         if (AuthenticationUtilities.isAvailableInternetConnection(EditUserInfoActivity.this)) {
             verifyEmail();
@@ -160,8 +169,9 @@ public class EditUserInfoActivity extends AppCompatActivity {
 
         //set up the firebase
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mUsersImageDatabaseReference = mFirebaseDatabase.getReference().child(USERS)
+        mUsersImageDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
                 .child(user.getUserUid()).child(Constant.FIREBASE_USER_IMAGE);
+
 
         //display current user image
         Bitmap userImageBitmap = AdasUtils.loadUserImageFromStorage(
@@ -176,6 +186,7 @@ public class EditUserInfoActivity extends AppCompatActivity {
             getUserImageUrl();
         }
 
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
     @Override
@@ -352,12 +363,6 @@ public class EditUserInfoActivity extends AppCompatActivity {
                 }
             }
         };
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
     @Override
