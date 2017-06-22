@@ -184,4 +184,9 @@ public class Constant {
     public static final String FIREBASE_USER_LOCATION = "location";
     public static final String FIREBASE_USER_NAME = "fullName";
 
+    /**
+     * Key for get the phone number extra when sign up
+     */
+    public static final String VERIFY_NUMBER_INTENT_EXTRA_KEY = "verify_number_intent_extra";
+
 }

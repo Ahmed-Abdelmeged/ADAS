@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mego.adas.R;
+import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -223,6 +224,8 @@ public class SignUpActivity extends AppCompatActivity {
                             Intent mainIntent = new Intent(SignUpActivity.this, VerifyPhoneNumberActivity.class);
                             //clear the application stack (clear all  former the activities)
                             mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            mainIntent.putExtra(Constant.VERIFY_NUMBER_INTENT_EXTRA_KEY,
+                                    "+" + countryCodePicker.getSelectedCountryCode() + phoneNumber);
                             startActivity(mainIntent);
                             finish();
                         }

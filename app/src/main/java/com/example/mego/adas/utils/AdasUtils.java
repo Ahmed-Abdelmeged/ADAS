@@ -148,8 +148,12 @@ public final class AdasUtils {
      * @return the boolean to indicate if the photo is deleted or not
      */
     public static boolean deleteUserImageFromStorage(String path) {
-        File file = new File(path);
-        return file.delete();
+        if (path != null) {
+            File file = new File(path);
+            return file.delete();
+        } else {
+            return false;
+        }
     }
 
     /**

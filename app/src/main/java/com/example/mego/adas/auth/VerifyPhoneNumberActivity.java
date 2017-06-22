@@ -107,6 +107,8 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
     private static final int INVALID_CODE_FLAG = 34;
     private static final int INVALID_LINKING = 35;
 
+    private String currentNumber;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +121,9 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
         }
+
+        //get the phone number from the sign up activity
+        currentNumber = getIntent().getStringExtra(Constant.VERIFY_NUMBER_INTENT_EXTRA_KEY);
 
         //set up the firebase
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -376,7 +381,12 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
                                     .child(uid).child(Constant.FIREBASE_USER_PHONE);
 
                             verificationStatesCallbacks();
-                            getUserPhoneNumber();
+                            if (currentNumber == null) {
+                                getUserPhoneNumber();
+                            } else {
+                                userPhoneNumber = currentNumber;
+                                startPhoneNumberVerification(userPhoneNumber);
+                            }
                             startVerification();
 
                             resendTextView.setOnClickListener(new View.OnClickListener() {
