@@ -68,6 +68,22 @@ public class Constant {
     public static final String ACCIDENT_DATE_KEY = "accident_date";
 
     /**
+     * Key for get the accident Uri key bundle extra
+     */
+    public static final String ACCIDENT_URI_KEY = "accident_uri";
+
+    /**
+     * Key for get th accident started in online of offline
+     */
+    public static final String ACCIDENT_START_MODE_KEY = "accident_start_mode";
+
+    /**
+     * Constants to determine the starting mode
+     */
+    public static final String ACCIDENT_MODE_OFFLINE = "accident_offline";
+    public static final String ACCIDENT_MODE_ONLINE = "accident_online";
+
+    /**
      * Google Client API Key
      */
     public static final String API_KEY = "AIzaSyBKyxvJIHYfhjsvINFgF3fwvCiViQ5Ie7c";

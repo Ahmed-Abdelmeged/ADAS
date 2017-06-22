@@ -43,7 +43,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1094,11 +1093,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
      * methods used to refresh Ui state and organize the data
      */
     public void refreshUI() {
-
-
-        Log.e(LOG_TAG, tempSensorValue + "");
-        Log.e(LOG_TAG, ldrSensorValue + "");
-        Log.e(LOG_TAG, potSensorValue + "");
 
         lDRSensorValueTextView.setText(ldrSensorValue + "");
         if (isFahrenheit) {

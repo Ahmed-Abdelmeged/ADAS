@@ -40,7 +40,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -87,8 +86,6 @@ public class ConnectFragment extends Fragment {
      * request to enable bluetooth form activity result
      */
     public static final int REQUEST_ENABLE_BT = 1;
-
-    private ArrayAdapter<String> mNewDevicesArrayAdapter;
 
     ConnectFragment connectFragment;
 

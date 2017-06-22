@@ -22,7 +22,6 @@
 package com.example.mego.adas.adapter;
 
 
-
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -42,7 +41,7 @@ import java.util.ArrayList;
 public class AccidentAdapter extends ArrayAdapter<Accident> {
 
     /**
-     * Required public constructor
+     * Required public constructor for the the internet connected
      */
     public AccidentAdapter(Context context, ArrayList<Accident> accidents) {
         super(context, 0, accidents);
@@ -89,14 +88,13 @@ public class AccidentAdapter extends ArrayAdapter<Accident> {
         String accidentPosition = "lng: " + longitude + " ,lat: " + latitude;
         holder.accidentPositionTextView.setText(accidentPosition);
 
-
         return listView;
     }
 
     /**
      * View holder stores each of the component views inside the tag field of the Layout
      */
-    static class ViewHolder {
+    private static class ViewHolder {
         TextView dateTextView;
         TextView timeTextView;
         TextView accidentTitleTextView;

@@ -59,7 +59,7 @@ public class LiveStreamingFragment extends Fragment {
     /**
      * Tag fro the Log and debug
      */
-    public static final String LOG_TAG = LiveStreamingFragment.class.getSimpleName();
+    private static final String LOG_TAG = LiveStreamingFragment.class.getSimpleName();
 
     /**
      * UI Element
@@ -186,7 +186,8 @@ public class LiveStreamingFragment extends Fragment {
             //attach the listener
             mLiveVedeoIdDatabaseReference.addValueEventListener(mLiveVedeoIdValueListener);
         } else {
-            Toast.makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            noLiveVideoTextView.setVisibility(View.VISIBLE);
+            liveStreamingImageView.setVisibility(View.VISIBLE);
         }
 
         // Inflate the layout for this fragment

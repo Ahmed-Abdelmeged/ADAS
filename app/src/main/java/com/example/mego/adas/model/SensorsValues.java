@@ -31,8 +31,6 @@ public class SensorsValues {
     private int ldrSensorValue ;
     private int potSensorValue ;
 
-
-
     public SensorsValues() {
     }
 

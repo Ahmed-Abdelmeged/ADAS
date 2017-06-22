@@ -27,5 +27,5 @@ package com.example.mego.adas.utils;
  */
 public interface Communicator {
 
-    public void disconnectListener(long connectionState);
+    void disconnectListener(long connectionState);
 }

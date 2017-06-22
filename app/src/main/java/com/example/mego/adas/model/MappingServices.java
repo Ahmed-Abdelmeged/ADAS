@@ -27,12 +27,10 @@ package com.example.mego.adas.model;
  */
 public class MappingServices {
 
-
     private double longitude;
     private double latitude;
     private int onConnectedFlag;
     private int onLocationChangedFlag;
-
 
     /**
      * Use the constructor to create new mapping services object
@@ -48,7 +46,6 @@ public class MappingServices {
         this.onConnectedFlag = onConnectedFlag;
         this.onLocationChangedFlag = onLocationChangedFlag;
     }
-
 
 
     public MappingServices() {

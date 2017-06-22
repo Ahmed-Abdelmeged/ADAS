@@ -127,7 +127,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
     /**
      * Tag fro the Log and debug
      */
-    public static final String LOG_TAG = DirectionsFragment.class.getSimpleName();
+    private static final String LOG_TAG = DirectionsFragment.class.getSimpleName();
 
     /**
      * Request code for location permission request.
@@ -317,8 +317,10 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         if (mapFragment != null) {
             getActivity().getFragmentManager().beginTransaction().remove(mapFragment).commit();
         }
-        mGoogleApiClient.stopAutoManage(getActivity());
-        mGoogleApiClient.disconnect();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.stopAutoManage(getActivity());
+            mGoogleApiClient.disconnect();
+        }
     }
 
     /**

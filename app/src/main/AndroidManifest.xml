@@ -53,6 +53,12 @@
             </intent-filter>
         </service>
 
+        <!-- Accident Content provider -->
+        <provider
+            android:name=".data.AccidentProvider"
+            android:authorities="com.example.mego.adas"
+            android:exported="false" />
+
         <activity
             android:name=".auth.SplashActivity"
             android:screenOrientation="portrait">

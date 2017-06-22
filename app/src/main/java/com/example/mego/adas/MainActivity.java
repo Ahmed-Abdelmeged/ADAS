@@ -56,6 +56,7 @@ import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.NotAuthEntryActivity;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.auth.VerifyPhoneNumberActivity;
+import com.example.mego.adas.data.AccidentsDbHelper;
 import com.example.mego.adas.sync.AdasSyncUtils;
 import com.example.mego.adas.ui.AboutFragment;
 import com.example.mego.adas.ui.AccidentFragment;
@@ -384,6 +385,10 @@ public class MainActivity extends AppCompatActivity
                 AuthenticationUtilities.clearCurrentUser(this);
                 AdasUtils.deleteUserImageFromStorage(AdasUtils.getCurrentUserImagePath(this));
                 AdasUtils.setCurrentUserImagePath(this, null);
+
+                //delete user accidents database
+                boolean isDeleted = getApplicationContext()
+                        .deleteDatabase(AccidentsDbHelper.DATABASE_NAME);
 
                 Intent notAuthIntent = new Intent(MainActivity.this, NotAuthEntryActivity.class);
                 startActivity(notAuthIntent);
@@ -742,14 +747,16 @@ public class MainActivity extends AppCompatActivity
         mUserImageValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String userImageUrl = dataSnapshot.getValue(String.class);
-                if (userImageUrl != null) {
-                    for (int i = 0; i < userImageUrl.length(); i++) {
-                        if (userImageUrl.charAt(i) == '?') {
-                            userImagePath = userImageUrl.substring(i - 6, i);
+                if (dataSnapshot.exists()) {
+                    String userImageUrl = dataSnapshot.getValue(String.class);
+                    if (userImageUrl != null) {
+                        for (int i = 0; i < userImageUrl.length(); i++) {
+                            if (userImageUrl.charAt(i) == '?') {
+                                userImagePath = userImageUrl.substring(i - 6, i);
+                            }
                         }
+                        new DownloadUserImageBitmap().execute(userImageUrl);
                     }
-                    new DownloadUserImageBitmap().execute(userImageUrl);
                 }
             }
 

@@ -26,7 +26,6 @@ package com.example.mego.adas.api;
  */
 public class YoutubeAPI {
 
-
     /**
      * part query parameter
      */

@@ -429,14 +429,16 @@ public class EditUserInfoActivity extends AppCompatActivity {
         mUserImageValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String userImageUrl = dataSnapshot.getValue(String.class);
-                if (userImageUrl != null) {
-                    for (int i = 0; i < userImageUrl.length(); i++) {
-                        if (userImageUrl.charAt(i) == '?') {
-                            userImagePath = userImageUrl.substring(i - 6, i);
+                if (dataSnapshot.exists()) {
+                    String userImageUrl = dataSnapshot.getValue(String.class);
+                    if (userImageUrl != null) {
+                        for (int i = 0; i < userImageUrl.length(); i++) {
+                            if (userImageUrl.charAt(i) == '?') {
+                                userImagePath = userImageUrl.substring(i - 6, i);
+                            }
                         }
+                        new DownloadUserImageBitmap().execute(userImageUrl);
                     }
-                    new DownloadUserImageBitmap().execute(userImageUrl);
                 }
             }
 
