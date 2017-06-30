@@ -185,8 +185,23 @@ public class Constant {
     public static final String FIREBASE_USER_NAME = "fullName";
 
     /**
+     * Constants for user device token to use it for FCM
+     */
+    public static final String FIREBASE_DEVICE_TOKEN = "devicePushToken";
+
+    /**
      * Key for get the phone number extra when sign up
      */
     public static final String VERIFY_NUMBER_INTENT_EXTRA_KEY = "verify_number_intent_extra";
+
+    /**
+     * Keys for get the JSON objects form FCM
+     */
+    public static final String FCM_LONGITUDE = "longitude";
+    public static final String FCM_LATITIDE = "latitude";
+    public static final String FCM_TITLE = "title";
+    public static final String FCM_SOUND = "sound";
+    public static final String FCM_STATE = "state";
+
 
 }

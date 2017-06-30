@@ -30,6 +30,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -51,6 +52,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.hbb20.CountryCodePicker;
 
 import java.util.HashMap;
@@ -185,6 +187,9 @@ public class SignUpActivity extends AppCompatActivity {
      * @param uid the user unique id
      */
     private void createUserInFirebaseHelper(String uid) {
+        //Get the current device token
+        final String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
         mUsersDatabaseReference = mFirebaseDatabase.getReference().child(USERS).child(uid);
         mUsersDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -197,7 +202,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                     User newUser = new User(email, "+" +
                             countryCodePicker.getSelectedCountryCode() + phoneNumber
-                            , location, fullName, timestampJoined, false);
+                            , location, fullName, timestampJoined, false, deviceToken);
                     mUsersDatabaseReference.setValue(newUser);
                 }
             }

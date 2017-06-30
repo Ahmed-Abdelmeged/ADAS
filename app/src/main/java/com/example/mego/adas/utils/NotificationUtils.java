@@ -202,7 +202,7 @@ public class NotificationUtils {
      * @param context
      * @return a large icon bitmap
      */
-    private static Bitmap largeIcon(Context context) {
+    public static Bitmap largeIcon(Context context) {
         Resources res = context.getResources();
 
         Bitmap largeIcon = BitmapFactory.decodeResource(res, R.mipmap.ic_launcher);

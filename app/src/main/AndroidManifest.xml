@@ -59,6 +59,20 @@
             android:authorities="com.example.mego.adas"
             android:exported="false" />
 
+        <!-- Id service -->
+        <service android:name=".fcm.ADASFirebaseInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- Messaging service -->
+        <service android:name=".fcm.ADASFirebaseMessageService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".auth.SplashActivity"
             android:screenOrientation="portrait">

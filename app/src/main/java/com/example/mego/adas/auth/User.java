@@ -35,6 +35,7 @@ public class User {
     private HashMap<String, Object> timestampJoined;
     private String userUid;
     private boolean isPhoneVerified;
+    private String devicePushToken;
 
 
     /**
@@ -46,15 +47,14 @@ public class User {
      * @param fullName
      */
     public User(String email, String phoneNumber, String location, String fullName
-            , HashMap<String, Object> timestampJoined, boolean isPhoneVerified) {
+            , HashMap<String, Object> timestampJoined, boolean isPhoneVerified, String devicePushToken) {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.location = location;
         this.fullName = fullName;
         this.timestampJoined = timestampJoined;
         this.isPhoneVerified = isPhoneVerified;
-
-
+        this.devicePushToken = devicePushToken;
     }
 
     /**
@@ -114,6 +114,14 @@ public class User {
 
     public void setUserUid(String userUid) {
         this.userUid = userUid;
+    }
+
+    public String getDevicePushToken() {
+        return devicePushToken;
+    }
+
+    public void setDevicePushToken(String devicePushToken) {
+        this.devicePushToken = devicePushToken;
     }
 
     @Override

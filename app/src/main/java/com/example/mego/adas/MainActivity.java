@@ -80,6 +80,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -170,18 +171,20 @@ public class MainActivity extends AppCompatActivity
      * to specific part of the database
      */
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mUsersDatabaseReference, isPhoneAuthDatabaseReference, mUsersImageDatabaseReference;
+    private DatabaseReference mUsersDatabaseReference, isPhoneAuthDatabaseReference,
+            mUsersImageDatabaseReference, mUserDeviceTokenDatabaseReference;
     private ValueEventListener mUserValueEventListener, isPhoneAuthValueEventListener, mUserImageValueEventListener;
     private ProgressDialog mProgressDialog;
     private int newConnectionFlag = 0;
 
     private String userImagePath = null;
+    private String deviceToken = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //get the MAC address from the Connect Device Activity
+        //Get the MAC address from the Connect Device Activity
         Intent newIntent = getIntent();
         if (savedInstanceState == null) {
             address = newIntent.getStringExtra(ConnectFragment.EXTRA_DEVICE_ADDRESS);
@@ -190,11 +193,14 @@ public class MainActivity extends AppCompatActivity
         }
         setContentView(R.layout.activity_main);
 
-        //initialize the Firebase auth object
+        //Initialize the Firebase auth object
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        //set up the firebase
+        //Set up the firebase
         mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+        //Get the current device token
+        deviceToken = FirebaseInstanceId.getInstance().getToken();
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -344,6 +350,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+        updateDeviceToken();
     }
 
     @Override
@@ -884,6 +891,22 @@ public class MainActivity extends AppCompatActivity
         String email = currentUser.getEmail();
         if (email != null) {
             userEmailTextView.setText(email);
+        }
+    }
+
+    /**
+     * Method to update device token
+     */
+    private void updateDeviceToken() {
+        User currentUser = AuthenticationUtilities.getCurrentUser(MainActivity.this);
+        //Get a reference for the user token and update it
+        mUserDeviceTokenDatabaseReference = mFirebaseDatabase.getReference()
+                .child(FIREBASE_USERS)
+                .child(currentUser.getUserUid())
+                .child(Constant.FIREBASE_DEVICE_TOKEN);
+
+        if (deviceToken != null) {
+            mUserDeviceTokenDatabaseReference.setValue(deviceToken);
         }
     }
 
