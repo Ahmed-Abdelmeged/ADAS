@@ -23,6 +23,8 @@ package com.example.mego.adas.loader;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.location.Location;
+import android.util.Log;
 
 import com.example.mego.adas.model.Directions;
 import com.example.mego.adas.utils.QueryUtils;
@@ -65,6 +67,7 @@ public class DirectionsLoader  extends AsyncTaskLoader<ArrayList<Directions>> {
         if (mUrl == null) {
             return null;
         }
+        Log.e(LOG_TAG,mUrl);
         ArrayList<Directions> directions = QueryUtils.fetchDirectionsData(mUrl);
         return directions;
     }

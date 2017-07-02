@@ -117,7 +117,7 @@ public class ADASFirebaseMessageService extends FirebaseMessagingService {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(notificationText))
                 .setDefaults(Notification.DEFAULT_VIBRATE)
                 .setDefaults(Notification.DEFAULT_SOUND)
-                .setContentIntent(contentIntent(context))
+                .setContentIntent(contentIntent(context, longitude, latitude))
                 .setAutoCancel(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -136,12 +136,14 @@ public class ADASFirebaseMessageService extends FirebaseMessagingService {
      * @param context
      * @return a pending intent with activity that will be open form the notification
      */
-    private static PendingIntent contentIntent(Context context) {
-        Intent startActivityIntent = new Intent(context, MainActivity.class);
+    private static PendingIntent contentIntent(Context context, double longitude, double latitude) {
+        Intent startAccidentActivityIntent = new Intent(context, AccidentActivity.class);
+        startAccidentActivityIntent.putExtra(Constant.FCM_LONGITUDE_EXTRA, longitude);
+        startAccidentActivityIntent.putExtra(Constant.FCM_LATITUDE_EXTRA, longitude);
         return PendingIntent.getActivity(
                 context,
                 ADAS_ACCIDENT_FCM_PENDING_INTENT_ID,
-                startActivityIntent,
+                startAccidentActivityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

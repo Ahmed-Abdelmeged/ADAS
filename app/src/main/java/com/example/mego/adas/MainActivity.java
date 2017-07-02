@@ -902,7 +902,7 @@ public class MainActivity extends AppCompatActivity
         //Get a reference for the user token and update it
         mUserDeviceTokenDatabaseReference = mFirebaseDatabase.getReference()
                 .child(FIREBASE_USERS)
-                .child(currentUser.getUserUid())
+                .child(mFirebaseAuth.getCurrentUser().getUid())
                 .child(Constant.FIREBASE_DEVICE_TOKEN);
 
         if (deviceToken != null) {

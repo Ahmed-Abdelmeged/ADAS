@@ -203,5 +203,11 @@ public class Constant {
     public static final String FCM_SOUND = "sound";
     public static final String FCM_STATE = "state";
 
+    /**
+     * Keys for get the longitude and latitude for the accident fcm notification
+     */
+    public static final String FCM_LONGITUDE_EXTRA = "fcm_longitude_extra";
+    public static final String FCM_LATITUDE_EXTRA = "fcm_latitude_extra";
+
 
 }

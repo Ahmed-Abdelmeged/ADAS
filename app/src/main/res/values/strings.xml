@@ -14,6 +14,7 @@
     <string name="label_live_streaming">Live Streaming</string>
     <string name="label_videos">Videos</string>
     <string name="label_accidents">Accidents</string>
+    <string name="label_accident">Accident</string>
 
     <string name="label_setting">Setting</string>
     <string name="label_help">Help</string>
@@ -171,6 +172,8 @@
     <string name="error_message_valid_email">Enter a valid email</string>
     <string name="error_message_password_wrong_or_valid_email">The password is invalid or the user does not have an email</string>
     <string name="error_message_valid_number">Enter a valid phone number</string>
+    <string name="connection_maps_suspend">Connection With Google Maps Suspended</string>
+    <string name="connection_maps_failed">Connection With Google Maps Failed</string>
 
     <!-- Reset password activity -->
     <string name="reset_password_label">Reset Password</string>

@@ -72,6 +72,7 @@ import com.example.mego.adas.model.Directions;
 import com.example.mego.adas.model.Steps;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.LocationUtilities;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -331,9 +332,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         mapReady = true;
         mMap = googleMap;
         //check the internet connection
-
-        //check the internet connection
-
         //if the internet is work start the loader if not show toast message
         if (networkInfo != null && networkInfo.isConnected()) {
             buildGoogleApiClient();
@@ -389,7 +387,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      */
     @Override
     public void onConnectionSuspended(int i) {
-        msg("Connection With Google Maps Suspended");
+        msg(getString(R.string.connection_maps_suspend));
 
     }
 
@@ -398,7 +396,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        msg("Connection With Google Maps Failed");
+        msg(getString(R.string.connection_maps_failed));
     }
 
     /**
@@ -448,38 +446,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
             }
             // other 'case' lines to check for other
             // permissions this app might request
-        }
-    }
-
-    /**
-     * helper method to check the response code form the direction API Response State
-     */
-    private void checkResponseState(String statues) {
-        switch (statues) {
-            case DirectionsAPI.STATUES_INVALID_REQUEST:
-                msg(DirectionsAPI.STATUES_INVALID_REQUEST);
-                break;
-            case DirectionsAPI.STATUES_MAX_ROUTE_LENGTH_EXCEEDED:
-                msg(DirectionsAPI.STATUES_MAX_ROUTE_LENGTH_EXCEEDED);
-                break;
-            case DirectionsAPI.STATUES_NOT_FOUND:
-                msg(DirectionsAPI.STATUES_NOT_FOUND);
-                break;
-            case DirectionsAPI.STATUES_OVER_QUERY_LIMIT:
-                msg(DirectionsAPI.STATUES_OVER_QUERY_LIMIT);
-                break;
-            case DirectionsAPI.STATUES_REQUEST_DENIED:
-                msg(DirectionsAPI.STATUES_REQUEST_DENIED);
-                break;
-            case DirectionsAPI.STATUES_UNKNOWN_ERROR:
-                msg(DirectionsAPI.STATUES_UNKNOWN_ERROR);
-                break;
-            case DirectionsAPI.STATUES_ZERO_RESULTS:
-                msg(DirectionsAPI.STATUES_ZERO_RESULTS);
-                break;
-            default:
-                msg(DirectionsAPI.STATUES_OK);
-                break;
         }
     }
 
@@ -782,7 +748,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                     mOverViewPolylineDatabaseReference.setValue(overview_polyline_string);
 
                 } else {
-                    checkResponseState(statues);
+                    msg(LocationUtilities.checkResponseState(statues));
                 }
             }
 
