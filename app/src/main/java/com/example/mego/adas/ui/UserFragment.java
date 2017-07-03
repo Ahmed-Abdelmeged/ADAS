@@ -912,7 +912,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                                     .radius(50)
                                     .strokeColor(getResources().getColor((R.color.red)))
                                     .fillColor(Color.argb(64, 255, 0, 0)));
-                            NotificationUtils.showAccidentNotification(getContext());
+                            //NotificationUtils.showAccidentNotification(getContext());
                         }
 
                     } else if (accidentState == 0) {

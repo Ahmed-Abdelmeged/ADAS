@@ -242,4 +242,12 @@
     <string name="select_number_0_90">Please select a number between 0 and 90</string>
     <string name="select_number_0_360">Please select a number between 0 and 360</string>
 
+    <!-- Bluetooth connection states -->
+    <string name="bluetooth_connecting">Connecting...</string>
+    <string name="bluetooth_connection_failed">Connection Failed. Is it a SPP Bluetooth? Try again.</string>
+    <string name="bluetooth_connected">Connected.</string>
+    <string name="bluetooth_please_wait">Please wait!</string>
+    <string name="bluetooth_no_device_found">No devices found</string>
+    <string name="bluetooth_access_location_required">Access Location must be allowed for bluetooth Search</string>
+
 </resources>

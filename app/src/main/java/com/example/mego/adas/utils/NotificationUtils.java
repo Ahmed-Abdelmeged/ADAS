@@ -42,7 +42,7 @@ import com.example.mego.adas.sync.CarAdviceAssistantIntentService;
 /**
  * Utility class for creating ADAS notifications
  */
-public class NotificationUtils {
+public final class NotificationUtils {
 
     /**
      * This notification ID can be used to access our notification after we've displayed it. This

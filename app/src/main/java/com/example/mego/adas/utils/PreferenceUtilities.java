@@ -32,9 +32,9 @@ import com.example.mego.adas.R;
 /**
  * This class contains utility methods which update advices counts in SharedPreferences
  */
-public class PreferenceUtilities {
+public final class PreferenceUtilities {
 
-    public static final String KEY_ADVICE_COUNT = "advice-count";
+    private static final String KEY_ADVICE_COUNT = "advice-count";
     private static final int DEFAULT_COUNT = -1;
 
 

@@ -5,7 +5,7 @@
     android:background="@color/background_dark"
     android:paddingLeft="6dp"
     android:paddingRight="6dp"
-    android:paddingTop="64dp"
+    android:paddingTop="@dimen/fragment_main_padding_top"
     tools:context="com.example.mego.adas.ui.WatchVideoFragment">
 
     <FrameLayout

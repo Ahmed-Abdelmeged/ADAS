@@ -58,6 +58,7 @@ import com.example.mego.adas.auth.NotAuthEntryActivity;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.auth.VerifyPhoneNumberActivity;
 import com.example.mego.adas.data.AccidentsDbHelper;
+import com.example.mego.adas.fcm.AccidentActivity;
 import com.example.mego.adas.sync.AdasSyncUtils;
 import com.example.mego.adas.ui.AboutFragment;
 import com.example.mego.adas.ui.AccidentFragment;
@@ -326,7 +327,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 btSocket.close(); //close connection
             } catch (IOException e) {
-                msg("Error");
+                showToast("Error");
             }
         }
     }
@@ -525,7 +526,7 @@ public class MainActivity extends AppCompatActivity
 
             //show a progress dialog in the BluetoothServerActivity
             progressDialog = ProgressDialog.show(MainActivity.this,
-                    "Connecting...", "Please wait!!!");
+                    getString(R.string.bluetooth_connecting), getString(R.string.bluetooth_please_wait));
         }
 
         //while the progress dialog is shown, the connection is done in background
@@ -561,10 +562,10 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!connectSuccess) {
-                msg("Connection Failed. Is it a SPP Bluetooth? Try again.");
+                showToast(getString(R.string.bluetooth_connection_failed));
                 finish();
             } else {
-                msg("Connected.");
+                showToast(getString(R.string.bluetooth_connected));
                 connected = true;
 
                 isBtConnected = true;
@@ -578,11 +579,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * fast way to call Toast
+     * Fast way to call Toast
      */
-    private void msg(String message) {
-        makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    private void showToast(String message) {
+        if (toast != null) {
+            toast.cancel();
+        }
+        toast = Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT);
+        toast.show();
     }
+
 
     /**
      * call when the back button is pressed

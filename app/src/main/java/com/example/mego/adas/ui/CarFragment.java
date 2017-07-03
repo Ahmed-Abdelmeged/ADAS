@@ -286,12 +286,16 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
             }
         }
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext()) && connected) {
+        if (connected) {
             connectionState = 1;
-            connectionStateDatabaseReference.setValue(connectionState);
-        } else if (AuthenticationUtilities.isAvailableInternetConnection(getContext())&& !connected) {
+            if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                connectionStateDatabaseReference.setValue(connectionState);
+            }
+        } else if (!connected) {
             connectionState = 0;
-            connectionStateDatabaseReference.setValue(connectionState);
+            if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                connectionStateDatabaseReference.setValue(connectionState);
+            }
         }
 
         //get the date from the connected thread
@@ -333,7 +337,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         disconnectButton.setOnClickListener(this);
         startButton.setOnClickListener(this);
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())&& connected) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext()) && connected) {
             actionResolver();
         }
         //setup the map fragment
@@ -424,113 +428,134 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
      */
     @Override
     public void onClick(View v) {
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())&& connected) {
+        switch (v.getId()) {
+            case R.id.lights_on_button:
+                if (lightsState == 0) {
 
-            switch (v.getId()) {
-                case R.id.lights_on_button:
-                    if (lightsState == 0) {
-
-                        //change the button color to the accent color when it's on
-                        lightsButton.setBackgroundTintList(ColorStateList.
-                                valueOf(getResources().getColor(R.color.off)));
-
+                    //change the button color to the accent color when it's on
+                    lightsButton.setBackgroundTintList(ColorStateList.
+                            valueOf(getResources().getColor(R.color.off)));
+                    if (connected) {
                         mConnectedThread.write("o");
-
-                        //send the state of the lights to the firebase
-                        lightsState = 1;
+                    }
+                    //send the state of the lights to the firebase
+                    lightsState = 1;
+                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
                         lightsStateDatabaseReference.setValue(lightsState);
+                    }
 
-                    } else if (lightsState == 1) {
-                        //change the button color to the accent color when it's on
-                        lightsButton.setBackgroundTintList(ColorStateList.
-                                valueOf(getResources().getColor(R.color.colorPrimary)));
-
+                } else if (lightsState == 1) {
+                    //change the button color to the accent color when it's on
+                    lightsButton.setBackgroundTintList(ColorStateList.
+                            valueOf(getResources().getColor(R.color.colorPrimary)));
+                    if (connected) {
                         mConnectedThread.write("f");
-
-                        //send the state of the lights to the firebase
-                        lightsState = 0;
+                    }
+                    //send the state of the lights to the firebase
+                    lightsState = 0;
+                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
                         lightsStateDatabaseReference.setValue(lightsState);
                     }
-                    break;
-                case R.id.lock_car_button:
-                    if (lockState == 0) {
-                        //change the button color to the accent color when it's on
-                        lockButton.setBackgroundTintList(ColorStateList.
-                                valueOf(getResources().getColor(R.color.off)));
+                }
+                break;
+            case R.id.lock_car_button:
+                if (lockState == 0) {
+                    //change the button color to the accent color when it's on
+                    lockButton.setBackgroundTintList(ColorStateList.
+                            valueOf(getResources().getColor(R.color.off)));
+                    if (connected) {
+                        mConnectedThread.write("r");
+                    }
 
-                        lockButton.setImageResource(R.drawable.lock_outline);
+                    lockButton.setImageResource(R.drawable.lock_outline);
 
-                        //send the state of the lock to the firebase
-                        lockState = 1;
-                        lockStateDatabaseReference.setValue(lockState);
-
-                    } else if (lockState == 1) {
-                        //change the button color to the accent color when it's on
-                        lockButton.setBackgroundTintList(ColorStateList.
-                                valueOf(getResources().getColor(R.color.colorPrimary)));
-
-                        lockButton.setImageResource(R.drawable.lock_open_outline);
-
-                        //send the state of the lock to the firebase
-                        lockState = 0;
+                    //send the state of the lock to the firebase
+                    lockState = 1;
+                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
                         lockStateDatabaseReference.setValue(lockState);
                     }
-                    break;
 
-                case R.id.start_car_button:
-                    if (startState == 0) {
-                        //change the button color to the accent color when it's on
-                        startButton.setBackgroundTintList(ColorStateList.
-                                valueOf(getResources().getColor(R.color.off)));
+                } else if (lockState == 1) {
+                    //change the button color to the accent color when it's on
+                    lockButton.setBackgroundTintList(ColorStateList.
+                            valueOf(getResources().getColor(R.color.colorPrimary)));
 
-                        //send the state of the start to the firebase
-                        startState = 1;
-                        startStateStateDatabaseReference.setValue(startState);
-                    } else if (startState == 1) {
-                        //change the button color to the accent color when it's on
-                        startButton.setBackgroundTintList(ColorStateList.
-                                valueOf(getResources().getColor(R.color.colorPrimary)));
+                    if (connected) {
+                        mConnectedThread.write("v");
+                    }
 
-                        //send the state of the start to the firebase
-                        startState = 0;
+                    lockButton.setImageResource(R.drawable.lock_open_outline);
+
+                    //send the state of the lock to the firebase
+                    lockState = 0;
+                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                        lockStateDatabaseReference.setValue(lockState);
+                    }
+                }
+                break;
+
+            case R.id.start_car_button:
+                if (startState == 0) {
+                    //change the button color to the accent color when it's on
+                    startButton.setBackgroundTintList(ColorStateList.
+                            valueOf(getResources().getColor(R.color.off)));
+
+                    if (connected) {
+                        mConnectedThread.write("p");
+                    }
+
+                    //send the state of the start to the firebase
+                    startState = 1;
+                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
                         startStateStateDatabaseReference.setValue(startState);
                     }
-                    break;
-                case R.id.disconnect_button:
-                    if (connectionState == 0) {
-                        //change the button color to the accent color when it's on
-                        disconnectButton.setBackgroundTintList(ColorStateList.
-                                valueOf(getResources().getColor(R.color.colorPrimary)));
-                    } else if (connectionState == 1) {
-                        //change the button color to the accent color when it's on
-                        disconnectButton.setBackgroundTintList(ColorStateList.
-                                valueOf(getResources().getColor(R.color.colorPrimary)));
+                } else if (startState == 1) {
+                    //change the button color to the accent color when it's on
+                    startButton.setBackgroundTintList(ColorStateList.
+                            valueOf(getResources().getColor(R.color.colorPrimary)));
 
-                        //send the state of the connection to the firebase
-                        showLoseConnectionDialog(getString(R.string.are_you_sure_to_lose_connection));
-
+                    if (connected) {
+                        mConnectedThread.write("t");
                     }
-                    break;
-            }
+
+                    //send the state of the start to the firebase
+                    startState = 0;
+                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                        startStateStateDatabaseReference.setValue(startState);
+                    }
+                }
+                break;
+            case R.id.disconnect_button:
+                if (connectionState == 0) {
+                    //change the button color to the accent color when it's on
+                    disconnectButton.setBackgroundTintList(ColorStateList.
+                            valueOf(getResources().getColor(R.color.colorPrimary)));
+                } else if (connectionState == 1) {
+                    //change the button color to the accent color when it's on
+                    disconnectButton.setBackgroundTintList(ColorStateList.
+                            valueOf(getResources().getColor(R.color.off)));
+
+                    //send the state of the connection to the firebase
+                    showLoseConnectionDialog(getString(R.string.are_you_sure_to_lose_connection));
+                }
+                break;
         }
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
         //check the internet connection
-
         if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             mGoogleApiClient.connect();
         }
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
         //check the internet connection
-
         if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             if (mGoogleApiClient != null) {
                 mGoogleApiClient.disconnect();
@@ -751,7 +776,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                         accidentStateDatabaseReference.setValue(accidentState);
                         if (accidentState == 1) {
                             accidentNotificationFlag++;
-                            if (accidentNotificationFlag == 1) {
+                            if (accidentNotificationFlag == 1 && !AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
                                 NotificationUtils.showAccidentNotification(getContext());
                             }
                             //send a new accident with the current data,time ,longitude and latitude
@@ -963,14 +988,14 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                 if (dataSnapshot.exists()) {
                     startState = (long) dataSnapshot.getValue();
                     if (startState == 1) {
-                        //TODO send a on command
+                        mConnectedThread.write("p");
                         if (carFragments.isAdded()) {
                             //change the button color to the accent color when it's on
                             startButton.setBackgroundTintList(ColorStateList.
                                     valueOf(getResources().getColor(R.color.off)));
                         }
                     } else if (startState == 0) {
-                        //TODO send off command
+                        mConnectedThread.write("t");
                         if (carFragments.isAdded()) {
                             //change the button color to the accent color when it's on
                             startButton.setBackgroundTintList(ColorStateList.
@@ -992,14 +1017,14 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                 if (dataSnapshot.exists()) {
                     lockState = (long) dataSnapshot.getValue();
                     if (lockState == 1) {
-                        //TODO send a on command
+                        mConnectedThread.write("r");
                         if (carFragments.isAdded()) {
                             //change the button color to the accent color when it's on
                             lockButton.setBackgroundTintList(ColorStateList.
                                     valueOf(getResources().getColor(R.color.off)));
                         }
                     } else if (lockState == 0) {
-                        //TODO send off command
+                        mConnectedThread.write("v");
                         if (carFragments.isAdded()) {
                             //change the button color to the accent color when it's on
                             lockButton.setBackgroundTintList(ColorStateList.
@@ -1061,9 +1086,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
      * Show a dialog that warns the user there are will lose the connection
      * if they continue leaving the app.
      */
-    private void showLoseConnectionDialog(
-            final String message
-    ) {
+    private void showLoseConnectionDialog(final String message) {
         // Create an AlertDialog.Builder and set the message, and click listeners
         // for the positive and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -1072,8 +1095,12 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 connectionState = 0;
+                disconnectButton.setBackgroundTintList(ColorStateList.
+                        valueOf(getResources().getColor(R.color.colorPrimary)));
                 communicator.disconnectListener(connectionState);
-                connectionStateDatabaseReference.setValue(startState);
+                if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                    connectionStateDatabaseReference.setValue(startState);
+                }
             }
         });
 

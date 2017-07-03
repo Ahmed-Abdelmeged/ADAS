@@ -7,7 +7,7 @@
     android:paddingBottom="16dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingTop="64dp"
+    android:paddingTop="@dimen/fragment_main_padding_top"
     tools:context="com.example.mego.adas.ui.AboutFragment">
 
     <LinearLayout

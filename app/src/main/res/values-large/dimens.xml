@@ -5,6 +5,9 @@
     <dimen name="nav_user_image_size">85dp</dimen>
     <dimen name="nav_user_name">18sp</dimen>
     <dimen name="nav_user_email">16sp</dimen>
+    <dimen name="fragment_main_padding_top">84dp</dimen>
+    <dimen name="fragment_settings_padding_top">80dp</dimen>
+
 
     <!-- - - - - - - - - - - - -
         Connect Devices fragment

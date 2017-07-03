@@ -36,7 +36,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.GoogleMap;
 
-public class LocationUtilities {
+public final class LocationUtilities {
 
     /**
      * Request code for location permission request.

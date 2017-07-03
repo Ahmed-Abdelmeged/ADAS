@@ -50,7 +50,7 @@ import com.google.android.gms.maps.model.Marker;
 /**
  * Class offer utility methods to location services
  */
-public class DirectionsUtilities {
+public final class DirectionsUtilities {
 
     /**
      * helper method to check the response code form the direction API Response State
