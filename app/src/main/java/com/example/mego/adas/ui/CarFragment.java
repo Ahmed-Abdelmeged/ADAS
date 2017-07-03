@@ -28,14 +28,13 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.graphics.Point;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -44,8 +43,6 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -54,12 +51,15 @@ import android.widget.Toast;
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
+import com.example.mego.adas.fcm.AccidentActivity;
 import com.example.mego.adas.model.Accident;
 import com.example.mego.adas.model.MappingServices;
 import com.example.mego.adas.model.SensorsValues;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Communicator;
 import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.DirectionsUtilities;
+import com.example.mego.adas.utils.LocationUtilities;
 import com.example.mego.adas.utils.NotificationUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -70,7 +70,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -86,9 +85,9 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.example.mego.adas.MainActivity.bluetoothHandler;
-import static com.example.mego.adas.MainActivity.connected;
-import static com.example.mego.adas.MainActivity.mConnectedThread;
+import static com.example.mego.adas.application.MainActivity.bluetoothHandler;
+import static com.example.mego.adas.application.MainActivity.connected;
+import static com.example.mego.adas.application.MainActivity.mConnectedThread;
 
 
 /**
@@ -131,13 +130,10 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
      */
     private TextView tempSensorValueTextView, lDRSensorValueTextView, potSensorValueTextView,
             tempTextView, ldrTextView, potTextView;
-
-
     private LinearLayout carFragment;
-
     private ProgressBar tempProgressBar, potProgressBar, ldrProgressBar;
-
     private FloatingActionButton lightsButton, startButton, lockButton, disconnectButton;
+    private Toast toast;
 
     /**
      * Handler to set the progressbar progress
@@ -214,13 +210,6 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
     boolean fragmentIsRunning = false;
 
-
-    /**
-     * check internet state
-     */
-    ConnectivityManager connectivityManager;
-    NetworkInfo networkInfo;
-
     CarFragment carFragments;
 
     /**
@@ -271,11 +260,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
         communicator = (Communicator) getActivity();
 
-        //check the internet connection
-        connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        networkInfo = connectivityManager.getActiveNetworkInfo();
-
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             buildGoogleApiClient();
 
             //set up the firebase
@@ -301,10 +286,10 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
             }
         }
 
-        if (networkInfo != null && networkInfo.isConnected() && connected) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext()) && connected) {
             connectionState = 1;
             connectionStateDatabaseReference.setValue(connectionState);
-        } else if (networkInfo != null && networkInfo.isConnected() && !connected) {
+        } else if (AuthenticationUtilities.isAvailableInternetConnection(getContext())&& !connected) {
             connectionState = 0;
             connectionStateDatabaseReference.setValue(connectionState);
         }
@@ -348,7 +333,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         disconnectButton.setOnClickListener(this);
         startButton.setOnClickListener(this);
 
-        if (networkInfo != null && networkInfo.isConnected() && connected) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())&& connected) {
             actionResolver();
         }
         //setup the map fragment
@@ -358,6 +343,17 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
         // Inflate the layout for this fragment
         return rootView;
+    }
+
+    /**
+     * Fast way to call Toast
+     */
+    private void showToast(String message) {
+        if (toast != null) {
+            toast.cancel();
+        }
+        toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     @Override
@@ -379,11 +375,14 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
             getActivity().getFragmentManager().beginTransaction().remove(mapFragment).commit();
         }
 
+        if (toast != null) {
+            toast.cancel();
+        }
+
         recDataString.delete(0, recDataString.length());
         //send data to Firebase
 
-
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             onConnectedFlag = 0;
             onLocationChangedFlag = 0;
             connectionState = 0;
@@ -425,7 +424,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
      */
     @Override
     public void onClick(View v) {
-        if (networkInfo != null && networkInfo.isConnected() && connected) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())&& connected) {
 
             switch (v.getId()) {
                 case R.id.lights_on_button:
@@ -521,7 +520,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         super.onStart();
         //check the internet connection
 
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             mGoogleApiClient.connect();
         }
 
@@ -532,26 +531,20 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         super.onStop();
         //check the internet connection
 
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             if (mGoogleApiClient != null) {
                 mGoogleApiClient.disconnect();
             }
         }
     }
 
-    /**
-     * fast way to call Toast
-     */
-    private void msg(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
 
     /**
      * show the current location when the api client is connected to the service
      */
     @Override
     public void onConnected(Bundle bundle) {
-        enableMyLocation();
+        location = LocationUtilities.enableMyLocation(getActivity(), mGoogleApiClient);
         if (location != null) {
             //get the longitude and the  latitude from the location object
             longitude = location.getLongitude();
@@ -599,8 +592,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         mLocationRequest.setFastestInterval(3000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        enableUpdateMyLocation();
-
+        LocationUtilities.enableUpdateMyLocation(getActivity(), mGoogleApiClient, mLocationRequest, this);
     }
 
     /**
@@ -608,7 +600,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
      */
     @Override
     public void onConnectionSuspended(int i) {
-        msg("Connection With Google Maps Suspended");
+        showToast(getString(R.string.connection_maps_suspend));
 
     }
 
@@ -616,8 +608,8 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
      * call when the connection with google api client failed
      */
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        msg("Connection With Google Maps Failed");
+    public void onConnectionFailed(@Nullable ConnectionResult connectionResult) {
+        showToast(getString(R.string.connection_maps_failed));
     }
 
     /**
@@ -627,10 +619,10 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
     public void onMapReady(GoogleMap googleMap) {
         mapReady = true;
         mMap = googleMap;
-        enableSetLocation();
+        LocationUtilities.enableSetLocation(getActivity(), mMap);
         //check the internet connection
 
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             mGoogleApiClient.connect();
         }
 
@@ -655,100 +647,6 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
     }
 
     /**
-     * a function to move the marker from place to other
-     *
-     * @param marker     marker object
-     * @param toPosition to the position i want from started one
-     * @param hideMarker set true if i want to hide the marker
-     */
-    public void animateMarker(final Marker marker, final LatLng toPosition,
-                              final boolean hideMarker) {
-        if (marker != null && toPosition != null) {
-            final Handler handler = new Handler();
-            final long start = SystemClock.uptimeMillis();
-            Projection proj = mMap.getProjection();
-            Point startPoint = proj.toScreenLocation(marker.getPosition());
-            final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-            final long duration = 500;
-
-            final Interpolator interpolator = new LinearInterpolator();
-
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    long elapsed = SystemClock.uptimeMillis() - start;
-                    float t = interpolator.getInterpolation((float) elapsed
-                            / duration);
-                    double lng = t * toPosition.longitude + (1 - t)
-                            * startLatLng.longitude;
-                    double lat = t * toPosition.latitude + (1 - t)
-                            * startLatLng.latitude;
-                    marker.setPosition(new LatLng(lat, lng));
-
-                    if (t < 1.0) {
-                        // Post again 16ms later.
-                        handler.postDelayed(this, 16);
-                    } else {
-                        if (hideMarker) {
-                            marker.setVisible(false);
-                        } else {
-                            marker.setVisible(true);
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-    /**
-     * helper method to check the permission and find the current location
-     */
-    private void enableMyLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-
-        {
-            location = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    /**
-     * helper method to check the permission and find the current location
-     */
-    private void enableSetLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-
-        {
-            mMap.setMyLocationEnabled(true);
-
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    /**
-     * helper method to check the permission and find the current location
-     */
-    private void enableUpdateMyLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-
-        {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    /**
      * method triggered when the app need a run time permission
      */
     @Override
@@ -770,7 +668,6 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                 }
                 return;
             }
-
             // other 'case' lines to check for other
             // permissions this app might request
         }
@@ -792,10 +689,10 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
             mappingServices.setOnLocationChangedFlag(onLocationChangedFlag);
 
             //send data to Firebase
-            if (networkInfo != null && networkInfo.isConnected()) {
+            if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
                 MappingServices mappingServicesSend = new MappingServices(longitude, latitude, onConnectedFlag, onLocationChangedFlag);
                 mappingServicesDatabaseReference.setValue(mappingServicesSend);
-                animateMarker(marker, accidentPlace, false);
+                DirectionsUtilities.AnimateMarker(marker, accidentPlace, false, mMap);
                 cameraPosition = new CameraPosition.Builder()
                         .target(accidentPlace).zoom(zoom).tilt(tilt).bearing(bearing).build();
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -850,7 +747,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                     accidentState = (Integer.parseInt(sensorsValueList.get(3)));
 
 
-                    if (networkInfo != null && networkInfo.isConnected()) {
+                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
                         accidentStateDatabaseReference.setValue(accidentState);
                         if (accidentState == 1) {
                             accidentNotificationFlag++;
@@ -877,7 +774,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
 
                 }
-                if (networkInfo != null && networkInfo.isConnected()) {
+                if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
                     //send data to Firebase
                     SensorsValues sensorsValuesSend = new SensorsValues(tempSensorValue, ldrSensorValue, potSensorValue);
                     sensorsValuesDatabaseReference.setValue(sensorsValuesSend);
@@ -1142,7 +1039,6 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                             lightsButton.setBackgroundTintList(ColorStateList.
                                     valueOf(getResources().getColor(R.color.colorPrimary)));
                         }
-
                     }
                 }
             }
@@ -1158,7 +1054,6 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         startStateStateDatabaseReference.addValueEventListener(startStateEventListener);
         lockStateDatabaseReference.addValueEventListener(lockStateEventListener);
         lightsStateDatabaseReference.addValueEventListener(lightsStateEventListener);
-
     }
 
 

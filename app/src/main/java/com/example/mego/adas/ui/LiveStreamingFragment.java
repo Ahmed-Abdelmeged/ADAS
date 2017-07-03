@@ -75,9 +75,9 @@ public class LiveStreamingFragment extends Fragment {
      */
     private FirebaseDatabase mFirebaseDatabase;
 
-    private DatabaseReference mLiveVedeoIdDatabaseReference;
+    private DatabaseReference mLiveVideoIdDatabaseReference;
 
-    private ValueEventListener mLiveVedeoIdValueListener;
+    private ValueEventListener mLiveVideoIdValueListener;
 
     /**
      * the current live video id
@@ -117,11 +117,11 @@ public class LiveStreamingFragment extends Fragment {
 
             //get the references for the child
             //the  child for the  live video id
-            mLiveVedeoIdDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
+            mLiveVideoIdDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
                     .child(uid).child(Constant.FIREBASE_USER_INFO).child(Constant.FIREBASE_LIVE_STREAMING_VIDEO_ID);
 
             //set the id for listener
-            mLiveVedeoIdValueListener = new ValueEventListener() {
+            mLiveVideoIdValueListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -173,7 +173,7 @@ public class LiveStreamingFragment extends Fragment {
 
                         }
                     } else {
-                        mLiveVedeoIdDatabaseReference.setValue(Constant.NO_LIVE_VIDEO);
+                        mLiveVideoIdDatabaseReference.setValue(Constant.NO_LIVE_VIDEO);
                     }
                 }
 
@@ -184,7 +184,7 @@ public class LiveStreamingFragment extends Fragment {
             };
 
             //attach the listener
-            mLiveVedeoIdDatabaseReference.addValueEventListener(mLiveVedeoIdValueListener);
+            mLiveVideoIdDatabaseReference.addValueEventListener(mLiveVideoIdValueListener);
         } else {
             noLiveVideoTextView.setVisibility(View.VISIBLE);
             liveStreamingImageView.setVisibility(View.VISIBLE);
@@ -198,7 +198,6 @@ public class LiveStreamingFragment extends Fragment {
      * Line the UI Element with the UI
      */
     private void initializeScreen(View view) {
-
         noLiveVideoTextView = (TextView) view.findViewById(R.id.no_live_streaming_video_textView);
 
         liveStreamingImageView = (ImageView) view.findViewById(R.id.live_streaming_image_view);

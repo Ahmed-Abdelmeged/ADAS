@@ -43,7 +43,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.mego.adas.MainActivity;
+import com.example.mego.adas.application.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.adapter.BluetoothDevicesAdapter;
 

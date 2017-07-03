@@ -31,9 +31,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
-import com.example.mego.adas.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.utils.Constant;
 import com.example.mego.adas.utils.NotificationUtils;

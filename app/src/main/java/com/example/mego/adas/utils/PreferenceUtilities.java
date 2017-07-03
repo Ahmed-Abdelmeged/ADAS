@@ -62,12 +62,11 @@ public class PreferenceUtilities {
      * get the current advices count
      *
      * @param context
-     * @return
+     * @return the current device count
      */
     public static int getAdviceCount(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int adviceCount = sharedPreferences.getInt(KEY_ADVICE_COUNT, DEFAULT_COUNT);
-        return adviceCount;
+        return sharedPreferences.getInt(KEY_ADVICE_COUNT, DEFAULT_COUNT);
     }
 
     /**

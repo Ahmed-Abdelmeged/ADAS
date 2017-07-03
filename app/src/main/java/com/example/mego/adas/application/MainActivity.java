@@ -20,7 +20,7 @@
  */
 
 
-package com.example.mego.adas;
+package com.example.mego.adas.application;
 
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -52,6 +52,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.NotAuthEntryActivity;
 import com.example.mego.adas.auth.User;
@@ -93,7 +94,6 @@ import static com.example.mego.adas.utils.Constant.FIREBASE_USERS;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Communicator {
-
 
     /**
      * UI Element

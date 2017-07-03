@@ -67,7 +67,6 @@ public class DirectionsLoader  extends AsyncTaskLoader<ArrayList<Directions>> {
         if (mUrl == null) {
             return null;
         }
-        Log.e(LOG_TAG,mUrl);
         ArrayList<Directions> directions = QueryUtils.fetchDirectionsData(mUrl);
         return directions;
     }

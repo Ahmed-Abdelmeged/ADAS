@@ -419,5 +419,4 @@ public class QueryUtils {
         }
         return output.toString();
     }
-
 }
