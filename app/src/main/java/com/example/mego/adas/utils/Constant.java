@@ -25,7 +25,7 @@ package com.example.mego.adas.utils;
 /**
  * hold all the program Constant
  */
-public class Constant {
+public final class Constant {
 
     /**
      * key for get the video id key bundle extra
@@ -208,6 +208,5 @@ public class Constant {
      */
     public static final String FCM_LONGITUDE_EXTRA = "fcm_longitude_extra";
     public static final String FCM_LATITUDE_EXTRA = "fcm_latitude_extra";
-
 
 }

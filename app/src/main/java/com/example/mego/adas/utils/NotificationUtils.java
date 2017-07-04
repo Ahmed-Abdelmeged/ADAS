@@ -34,7 +34,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
-import com.example.mego.adas.MainActivity;
+import com.example.mego.adas.application.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.sync.AdasSyncTasks;
 import com.example.mego.adas.sync.CarAdviceAssistantIntentService;
@@ -42,7 +42,7 @@ import com.example.mego.adas.sync.CarAdviceAssistantIntentService;
 /**
  * Utility class for creating ADAS notifications
  */
-public class NotificationUtils {
+public final class NotificationUtils {
 
     /**
      * This notification ID can be used to access our notification after we've displayed it. This

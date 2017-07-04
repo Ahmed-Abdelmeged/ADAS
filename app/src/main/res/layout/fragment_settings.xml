@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="60dp"
+    android:paddingTop="@dimen/fragment_settings_padding_top"
     tools:context="com.example.mego.adas.ui.SettingsFragment">
 
 

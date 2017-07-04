@@ -6,6 +6,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fragment_main_padding_top">64dp</dimen>
+    <dimen name="fragment_settings_padding_top">60dp</dimen>
 
     <!-- Nav header -->
     <dimen name="nav_user_image_size">65dp</dimen>

@@ -43,7 +43,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.mego.adas.MainActivity;
+import com.example.mego.adas.application.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.adapter.BluetoothDevicesAdapter;
 
@@ -140,7 +140,8 @@ public class ConnectFragment extends Fragment {
 
 
         //request location permission for bluetooth scanning for android API 23 and above
-        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ENABLE_FINE_LOCATION);
+        ActivityCompat.requestPermissions(getActivity(),
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ENABLE_FINE_LOCATION);
 
 
         //press the button to start search new Devices
@@ -170,7 +171,7 @@ public class ConnectFragment extends Fragment {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //permission granted!
                 } else {
-                    makeText(getContext(), "Access Location must be allowed for bluetooth Search", Toast.LENGTH_LONG).show();
+                    makeText(getContext(), getString(R.string.bluetooth_access_location_required), Toast.LENGTH_LONG).show();
                 }
         }
     }
@@ -227,7 +228,7 @@ public class ConnectFragment extends Fragment {
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 searchForNewDevices.setEnabled(true);
                 if (pairedDevices.size() == bluetoothDevicesAdapter.getCount()) {
-                    makeText(getContext(), "No devices found", Toast.LENGTH_SHORT).show();
+                    makeText(getContext(), getString(R.string.bluetooth_no_device_found), Toast.LENGTH_SHORT).show();
                 }
             }
         }

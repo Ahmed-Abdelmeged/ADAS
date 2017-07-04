@@ -57,8 +57,7 @@ public final class AdasUtils {
      * @return Temperature in degrees Fahrenheit (°F)
      */
     public static double celsiusToFahrenheit(int temperatureInCelsius) {
-        double temperatureInFahrenheit = (temperatureInCelsius * 1.8) + 32;
-        return temperatureInFahrenheit;
+        return (temperatureInCelsius * 1.8) + 32;
     }
 
     /**
@@ -68,10 +67,7 @@ public final class AdasUtils {
      * @return true if it's Fahrenheit
      */
     public static boolean isCelsiusOrFahrenheit(String state, Context context) {
-        if (state.equals(context.getString(R.string.settings_temp_units_imperial_key))) {
-            return true;
-        }
-        return false;
+        return state.equals(context.getString(R.string.settings_temp_units_imperial_key));
     }
 
     /**
@@ -183,8 +179,7 @@ public final class AdasUtils {
     public static String getCurrentUserImagePath(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        String savedUserImagePath = preferences.getString(USER_IMAGE_PATH, USER_DEFAULT_IMAGE_PATH);
-        return savedUserImagePath;
+        return preferences.getString(USER_IMAGE_PATH, USER_DEFAULT_IMAGE_PATH);
     }
 
     /**

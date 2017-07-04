@@ -35,7 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alimuzaffar.lib.pin.PinEntryEditText;
-import com.example.mego.adas.MainActivity;
+import com.example.mego.adas.application.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.tasks.OnCompleteListener;

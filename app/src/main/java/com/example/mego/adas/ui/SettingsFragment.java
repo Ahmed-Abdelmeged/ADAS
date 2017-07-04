@@ -64,6 +64,8 @@ public class SettingsFragment extends Fragment {
             Preference.OnPreferenceChangeListener,
             SharedPreferences.OnSharedPreferenceChangeListener {
 
+        private Toast toast;
+
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -115,36 +117,36 @@ public class SettingsFragment extends Fragment {
                 try {
                     float zoom = Float.parseFloat(stringValue);
                     if (zoom > 21 || zoom <= 0) {
-                        msg("Please select a number between 1 and 21");
+                        showToast(getString(R.string.select_number_1_21));
                         return false;
                     }
                 } catch (NumberFormatException nfe) {
                     // If whatever the user entered can't be parsed to a number, show an error
-                    msg("Please select a number between 1 and 21");
+                    showToast(getString(R.string.select_number_1_21));
                     return false;
                 }
             } else if (preference.getKey().equals(tiltKey)) {
                 try {
                     float tilt = Float.parseFloat(stringValue);
                     if (tilt > 90 || tilt < 0) {
-                        msg("Please select a number between 0 and 90");
+                        showToast(getString(R.string.select_number_0_90));
                         return false;
                     }
                 } catch (NumberFormatException nfe) {
                     // If whatever the user entered can't be parsed to a number, show an error
-                    msg("Please select a number between 0 and 90");
+                    showToast(getString(R.string.select_number_0_90));
                     return false;
                 }
             } else if (preference.getKey().equals(bearingKey)) {
                 try {
                     float bearing = Float.parseFloat(stringValue);
                     if (bearing > 360 || bearing < 0) {
-                        msg("Please select a number between 0 and 360");
+                        showToast(getString(R.string.select_number_0_360));
                         return false;
                     }
                 } catch (NumberFormatException nfe) {
                     // If whatever the user entered can't be parsed to a number, show an error
-                    msg("Please select a number between 0 and 360");
+                    showToast(getString(R.string.select_number_0_360));
                     return false;
                 }
             }
@@ -208,13 +210,21 @@ public class SettingsFragment extends Fragment {
             super.onDestroyView();
             getPreferenceScreen().getSharedPreferences()
                     .unregisterOnSharedPreferenceChangeListener(this);
+
+            if (toast != null) {
+                toast.cancel();
+            }
         }
 
         /**
-         * Helper method to call a Toast
+         * Fast way to call Toast
          */
-        private void msg(String message) {
-            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        private void showToast(String message) {
+            if (toast != null) {
+                toast.cancel();
+            }
+            toast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 

@@ -32,9 +32,9 @@ import com.example.mego.adas.R;
 /**
  * This class contains utility methods which update advices counts in SharedPreferences
  */
-public class PreferenceUtilities {
+public final class PreferenceUtilities {
 
-    public static final String KEY_ADVICE_COUNT = "advice-count";
+    private static final String KEY_ADVICE_COUNT = "advice-count";
     private static final int DEFAULT_COUNT = -1;
 
 
@@ -62,12 +62,11 @@ public class PreferenceUtilities {
      * get the current advices count
      *
      * @param context
-     * @return
+     * @return the current device count
      */
     public static int getAdviceCount(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int adviceCount = sharedPreferences.getInt(KEY_ADVICE_COUNT, DEFAULT_COUNT);
-        return adviceCount;
+        return sharedPreferences.getInt(KEY_ADVICE_COUNT, DEFAULT_COUNT);
     }
 
     /**

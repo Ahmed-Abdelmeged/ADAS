@@ -1,33 +1,43 @@
+/*
+ * Copyright (c) 2017 Ahmed-Abdelmeged
+ *
+ * github: https://github.com/Ahmed-Abdelmeged
+ * email: ahmed.abdelmeged.vm@gamil.com
+ * Facebook: https://www.facebook.com/ven.rto
+ * Twitter: https://twitter.com/A_K_Abd_Elmeged
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 package com.example.mego.adas.fcm;
 
 import android.app.LoaderManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -35,7 +45,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.mego.adas.MainActivity;
+import com.example.mego.adas.application.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.adapter.StepAdapter;
 import com.example.mego.adas.api.DirectionsAPI;
@@ -43,9 +53,8 @@ import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.loader.DirectionsLoader;
 import com.example.mego.adas.model.Directions;
 import com.example.mego.adas.model.Steps;
-import com.example.mego.adas.ui.DirectionsFragment;
-import com.example.mego.adas.user.EditUserInfoActivity;
 import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.DirectionsUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -57,7 +66,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -97,13 +105,6 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
      * Tag fro the Log and debug
      */
     private static final String LOG_TAG = AccidentActivity.class.getSimpleName();
-
-    /**
-     * Request code for location permission request.
-     *
-     * @see #onRequestPermissionsResult(int, String[], int[])
-     */
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 8;
 
     /**
      * Accident location
@@ -148,25 +149,6 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
     Polyline carWayPolyLine;
 
     /**
-     * step variables
-     */
-    String html_instructions;
-
-    String points;
-
-    int stepDistanceValue;
-    String stepDistanceText;
-
-    int stepDurationValue;
-    String stepDurationText;
-
-    double stepStartLatitude;
-    double stepStartLongitude;
-
-    double stepEndLatitude;
-    double stepEndLongitude;
-
-    /**
      * adapter for step list view
      */
     private StepAdapter mAdapter;
@@ -201,7 +183,6 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
         if (intent != null) {
             accidentLongitude = intent.getDoubleExtra(Constant.FCM_LONGITUDE_EXTRA, 0.0);
             accidentLatitude = intent.getDoubleExtra(Constant.FCM_LATITUDE_EXTRA, 0.0);
-            Log.e(LOG_TAG, "lng: " + accidentLongitude + " lat: " + accidentLatitude);
         }
 
         //get the current settings for the camera settings
@@ -233,11 +214,6 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onStop() {
         super.onStop();
-        //remove google map fragment
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.google_map_location_accident_activity);
-        if (mapFragment != null) {
-            getFragmentManager().beginTransaction().remove(mapFragment).commit();
-        }
         if (mGoogleApiClient != null) {
             mGoogleApiClient.stopAutoManage(this);
             mGoogleApiClient.disconnect();
@@ -292,7 +268,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
         } else {
             Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
         }
-        enableSetLocation();
+        LocationUtilities.enableSetLocation(this, mMap);
         if (AuthenticationUtilities.isAvailableInternetConnection(this)) {
             mGoogleApiClient.connect();
         }
@@ -300,7 +276,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onConnected(Bundle bundle) {
-        enableMyLocation();
+        location = LocationUtilities.enableMyLocation(this, mGoogleApiClient);
 
         if (location != null) {
             //get the longitude and the  latitude from the location object
@@ -331,7 +307,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
         mLocationRequest.setFastestInterval(3000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        enableUpdateMyLocation();
+        LocationUtilities.enableUpdateMyLocation(this, mGoogleApiClient, mLocationRequest, this);
     }
 
     /**
@@ -344,7 +320,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
 
             carPlace = new LatLng(location.getLatitude(), location.getLongitude());
 
-            animateMarker(myLocationMarker, carPlace, false);
+            DirectionsUtilities.AnimateMarker(myLocationMarker, carPlace, false, mMap);
             myLocaitonCameraPosition = new CameraPosition.Builder()
                     .target(carPlace).zoom(zoom).bearing(bearing).tilt(tilt).build();
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(myLocaitonCameraPosition));
@@ -358,7 +334,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case LOCATION_PERMISSION_REQUEST_CODE: {
+            case LocationUtilities.LOCATION_PERMISSION_REQUEST_CODE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -424,22 +400,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
 
                     overview_polyline_string = directionsData.getOverview_polyline_string();
 
-                    html_instructions = directionsData.getHtml_instructions();
-                    points = directionsData.getPoints();
-                    stepDistanceValue = directionsData.getStepDistanceValue();
-                    stepDistanceText = directionsData.getStepDistanceText();
-                    stepDurationValue = directionsData.getStepDurationValue();
-                    stepDurationText = directionsData.getStepDurationText();
-                    stepStartLatitude = directionsData.getStepStartLatitude();
-                    stepStartLongitude = directionsData.getStepStartLongitude();
-                    stepEndLatitude = directionsData.getStepEndLatitude();
-                    stepEndLongitude = directionsData.getStepEndLongitude();
-
-                    Steps steps = new Steps(html_instructions, points, stepDistanceValue, stepDistanceText,
-                            stepDurationValue, stepDurationText, stepStartLatitude, stepStartLongitude,
-                            stepEndLatitude, stepEndLongitude);
-
-                    stepsArrayList.add(steps);
+                    stepsArrayList.add(DirectionsUtilities.getStepInformation(directionsData));
 
                     if (carWayPolyLine != null) {
                         carWayPolyLine.remove();
@@ -450,7 +411,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
                     destinationTextView.setText(accidentLatitude + "," + accidentLongitude);
                     drawPolyline(overview_polyline_string);
                 } else {
-                    showToast(LocationUtilities.checkResponseState(statues));
+                    showToast(DirectionsUtilities.checkResponseState(statues));
                 }
             }
 
@@ -504,50 +465,6 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /**
-     * helper method to check the permission and find the current location
-     */
-    private void enableMyLocation() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-
-        {
-            location = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    /**
-     * helper method to check the permission and find the current location
-     */
-    private void enableSetLocation() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    /**
-     * helper method to check the permission and find the current location
-     */
-    private void enableUpdateMyLocation() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    /**
      * Method to set current accident to the map
      */
     private void setCurrentAccidentToMap() {
@@ -583,50 +500,6 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
      */
     private void flyTo(CameraPosition target) {
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
-    }
-
-    /**
-     * a function to move the marker from place to other
-     *
-     * @param marker     marker object
-     * @param toPosition to the position i want from started one
-     * @param hideMarker set true if i want to hide the marker
-     */
-    public void animateMarker(final Marker marker, final LatLng toPosition,
-                              final boolean hideMarker) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        Projection proj = mMap.getProjection();
-        Point startPoint = proj.toScreenLocation(marker.getPosition());
-        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-        final long duration = 500;
-
-        final Interpolator interpolator = new LinearInterpolator();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed
-                        / duration);
-                double lng = t * toPosition.longitude + (1 - t)
-                        * startLatLng.longitude;
-                double lat = t * toPosition.latitude + (1 - t)
-                        * startLatLng.latitude;
-                marker.setPosition(new LatLng(lat, lng));
-
-                if (t < 1.0) {
-                    // Post again 16ms later.
-                    handler.postDelayed(this, 16);
-                } else {
-                    if (hideMarker) {
-                        marker.setVisible(false);
-                    } else {
-                        marker.setVisible(true);
-                    }
-                }
-            }
-        });
     }
 
 
@@ -677,7 +550,9 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
             switch (v.getId()) {
                 case R.id.my_location_fab_accident_activity:
                     atAccidentLocation = false;
-                    flyTo(myLocaitonCameraPosition);
+                    if (mapReady && mGoogleApiClient.isConnected()) {
+                        flyTo(myLocaitonCameraPosition);
+                    }
                     break;
                 case R.id.accident_location_fab_accident_activity:
                     setCurrentAccidentToMap();

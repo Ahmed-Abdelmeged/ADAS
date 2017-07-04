@@ -38,6 +38,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -56,10 +57,13 @@ import android.widget.Toast;
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
+import com.example.mego.adas.fcm.AccidentActivity;
 import com.example.mego.adas.model.MappingServices;
 import com.example.mego.adas.model.SensorsValues;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.DirectionsUtilities;
+import com.example.mego.adas.utils.LocationUtilities;
 import com.example.mego.adas.utils.NotificationUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -120,13 +124,10 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
      */
     private TextView tempSensorValueTextView, lDRSensorValueTextView, potSensorValueTextView,
             tempTextView, ldrTextView, potTextView;
-
-
     private LinearLayout userFragment;
-
     private ProgressBar tempProgressBar, potProgressBar, ldrProgressBar;
-
     private FloatingActionButton lightsButton, startButton, lockButton, userLocationButton;
+    private Toast toast;
 
     /**
      * Handler to set the progressbar progress
@@ -343,7 +344,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         userLongitude = location.getLongitude();
         userLatitude = location.getLatitude();
         if (userConnected == 1 && locationButtonClicked == 1) {
-            animateMarker(userMarker, accidentPlace, false);
+            DirectionsUtilities.AnimateMarker(userMarker, accidentPlace, false, mMap);
         }
 
     }
@@ -353,7 +354,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
      */
     @Override
     public void onConnected(Bundle bundle) {
-        enableMyLocation();
+        location = LocationUtilities.enableMyLocation(getActivity(), mGoogleApiClient);
         if (location != null) {
             //get the longitude and the  latitude from the location object
             userLongitude = location.getLongitude();
@@ -367,7 +368,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         mLocationRequest.setFastestInterval(3000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        enableUpdateMyLocation();
+        LocationUtilities.enableUpdateMyLocation(getActivity(), mGoogleApiClient, mLocationRequest, this);
     }
 
     /**
@@ -398,55 +399,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         }
     }
 
-    /**
-     * helper method to check the permission and find the current location
-     */
-    private void enableMyLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-
-        {
-            location = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    /**
-     * helper method to check the permission and find the current location
-     */
-    private void enableSetLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-
-        {
-            mMap.setMyLocationEnabled(true);
-
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    /**
-     * helper method to check the permission and find the current location
-     */
-    private void enableUpdateMyLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-
-        {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-
     @Override
     public void onDestroyView() {
 
@@ -463,6 +415,10 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         MapFragment mapFragment = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.my_location_fragment_user);
         if (mapFragment != null) {
             getActivity().getFragmentManager().beginTransaction().remove(mapFragment).commit();
+        }
+
+        if (toast != null) {
+            toast.cancel();
         }
     }
 
@@ -754,7 +710,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
      */
     @Override
     public void onConnectionSuspended(int i) {
-        msg("Connection With Google Maps Suspended");
+        showToast(getString(R.string.connection_maps_suspend));
 
     }
 
@@ -762,8 +718,8 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
      * call when the connection with google api client failed
      */
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        msg("Connection With Google Maps Failed");
+    public void onConnectionFailed(@Nullable ConnectionResult connectionResult) {
+        showToast(getString(R.string.connection_maps_failed));
     }
 
 
@@ -871,7 +827,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
                     refreshUI();
                 } else {
-                    msg("There is't a car for this user");
+                    showToast(getString(R.string.no_car_for_this_user));
                     //progressDialog.dismiss();
                 }
             }
@@ -923,7 +879,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                         }
 
                         if (onLocationChangedFlag == 1) {
-                            animateMarker(marker, accidentPlace, false);
+                            DirectionsUtilities.AnimateMarker(marker, accidentPlace, false, mMap);
                             cameraPosition = new CameraPosition.Builder()
                                     .target(accidentPlace).zoom(zoom).bearing(bearing).tilt(tilt).build();
                             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -956,7 +912,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                                     .radius(50)
                                     .strokeColor(getResources().getColor((R.color.red)))
                                     .fillColor(Color.argb(64, 255, 0, 0)));
-                            NotificationUtils.showAccidentNotification(getContext());
+                            //NotificationUtils.showAccidentNotification(getContext());
                         }
 
                     } else if (accidentState == 0) {
@@ -1017,9 +973,9 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         mapReady = true;
         mMap = googleMap;
 
-        enableSetLocation();
-        //check the internet connection
+        LocationUtilities.enableSetLocation(getActivity(), mMap);
 
+        //check the internet connection
         if (networkInfo != null && networkInfo.isConnected()) {
             mGoogleApiClient.connect();
         }
@@ -1035,51 +991,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-    }
-
-
-    /**
-     * a function to move the marker from place to other
-     *
-     * @param marker     marker object
-     * @param toPosition to the position i want from started one
-     * @param hideMarker set true if i want to hide the marker
-     */
-    public void animateMarker(final Marker marker, final LatLng toPosition,
-                              final boolean hideMarker) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        Projection proj = mMap.getProjection();
-        Point startPoint = proj.toScreenLocation(marker.getPosition());
-        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-        final long duration = 500;
-
-        final Interpolator interpolator = new LinearInterpolator();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed
-                        / duration);
-                double lng = t * toPosition.longitude + (1 - t)
-                        * startLatLng.longitude;
-                double lat = t * toPosition.latitude + (1 - t)
-                        * startLatLng.latitude;
-                marker.setPosition(new LatLng(lat, lng));
-
-                if (t < 1.0) {
-                    // Post again 16ms later.
-                    handler.postDelayed(this, 16);
-                } else {
-                    if (hideMarker) {
-                        marker.setVisible(false);
-                    } else {
-                        marker.setVisible(true);
-                    }
-                }
-            }
-        });
     }
 
     /**
@@ -1128,20 +1039,19 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
     }
 
-
     /**
-     * fast way to call Toast
+     * Fast way to call Toast
      */
-    private void msg(String message) {
+    private void showToast(String message) {
         if (userFragments.isAdded()) {
-            Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
-            if (toast == null) {
-                toast.show();
-            } else {
+            if (toast != null) {
                 toast.cancel();
             }
+            toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
+
 
     /**
      * Show a dialog that warns the user that an accident happen

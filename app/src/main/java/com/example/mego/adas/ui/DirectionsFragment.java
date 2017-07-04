@@ -67,11 +67,13 @@ import com.example.mego.adas.adapter.StepAdapter;
 import com.example.mego.adas.api.DirectionsAPI;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
+import com.example.mego.adas.fcm.AccidentActivity;
 import com.example.mego.adas.loader.DirectionsLoader;
 import com.example.mego.adas.model.Directions;
 import com.example.mego.adas.model.Steps;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.DirectionsUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -124,6 +126,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
     private LinearLayout revealView, detailView;
     private ImageView stepsListButton;
     private LinearLayout mapView;
+    private Toast toast;
 
     /**
      * Tag fro the Log and debug
@@ -200,25 +203,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
     Polyline carWayPolyLine;
 
     /**
-     * step variables
-     */
-    String html_instructions;
-
-    String points;
-
-    int stepDistanceValue;
-    String stepDistanceText;
-
-    int stepDurationValue;
-    String stepDurationText;
-
-    double stepStartLatitude;
-    double stepStartLongitude;
-
-    double stepEndLatitude;
-    double stepEndLongitude;
-
-    /**
      * adapter for step list view
      */
     private StepAdapter mAdapter;
@@ -240,12 +224,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
     private DatabaseReference mStepsDatabaseReference, mStartLocationDatabaseReference,
             mGoingLocationDatabaseReference, mLegDistanceTextDatabaseReference, mLegDurationTextDatabaseReference,
             mOverViewPolylineDatabaseReference, mDirecionsDatabaseReference, mCurrentLocationDatabaseReference;
-
-    /**
-     * check the internet state
-     */
-    ConnectivityManager connectivityManager;
-    NetworkInfo networkInfo;
 
     private static final int PLACE_PICKER_REQUEST = 2576;
 
@@ -279,12 +257,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         mAdapter = new StepAdapter(getContext(), new ArrayList<Steps>());
         stepListView.setAdapter(mAdapter);
 
-        //check the internet connection
-        connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        networkInfo = connectivityManager.getActiveNetworkInfo();
-
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             //set up the firebase
             mFirebaseDatabase = FirebaseDatabase.getInstance();
 
@@ -318,6 +291,10 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         if (mapFragment != null) {
             getActivity().getFragmentManager().beginTransaction().remove(mapFragment).commit();
         }
+
+        if (toast != null) {
+            toast.cancel();
+        }
         if (mGoogleApiClient != null) {
             mGoogleApiClient.stopAutoManage(getActivity());
             mGoogleApiClient.disconnect();
@@ -333,20 +310,20 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         mMap = googleMap;
         //check the internet connection
         //if the internet is work start the loader if not show toast message
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             buildGoogleApiClient();
         } else {
             Toast.makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
         }
-        enableSetLocation();
-        if (networkInfo != null && networkInfo.isConnected()) {
+        LocationUtilities.enableSetLocation(getActivity(), mMap);
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             mGoogleApiClient.connect();
         }
     }
 
     @Override
     public void onConnected(Bundle bundle) {
-        enableMyLocation();
+        location = LocationUtilities.enableMyLocation(getActivity(), mGoogleApiClient);
 
         if (location != null) {
             //get the longitude and the  latitude from the location object
@@ -379,7 +356,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         mLocationRequest.setFastestInterval(3000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        enableUpdateMyLocation();
+        LocationUtilities.enableUpdateMyLocation(getActivity(), mGoogleApiClient, mLocationRequest, this);
     }
 
     /**
@@ -387,7 +364,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      */
     @Override
     public void onConnectionSuspended(int i) {
-        msg(getString(R.string.connection_maps_suspend));
+        showToast(getString(R.string.connection_maps_suspend));
 
     }
 
@@ -396,7 +373,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        msg(getString(R.string.connection_maps_failed));
+        showToast(getString(R.string.connection_maps_failed));
     }
 
     /**
@@ -411,18 +388,21 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         //put the current location in the firebase
         mCurrentLocationDatabaseReference.setValue(startLocation);
 
-        animateMarker(marker, carPlace, false);
+        DirectionsUtilities.AnimateMarker(marker, carPlace, false, mMap);
         cameraPosition = new CameraPosition.Builder()
                 .target(carPlace).zoom(zoom).bearing(bearing).tilt(tilt).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     /**
-     * fast way to call Toast
+     * Fast way to call Toast
      */
-    private void msg(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-
+    private void showToast(String message) {
+        if (toast != null) {
+            toast.cancel();
+        }
+        toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     /**
@@ -462,7 +442,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      */
     @Override
     public void onClick(View v) {
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             switch (v.getId()) {
                 case R.id.add_new_location_fab:
                     if (!isEditTextVisible) {
@@ -501,13 +481,13 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                         //check for the internet connection if is ok init the loader
                         loadingbar.setVisibility(View.VISIBLE);
 
-                        if (networkInfo != null && networkInfo.isConnected()) {
+                        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
                             //create the uri request with the specific query parameters
 
                             LoaderManager loaderManager = getActivity().getLoaderManager();
                             loaderManager.restartLoader(DIRECTIONS_LOADER_ID, null, DirectionsFragment.this).forceLoad();
                         } else {
-                            msg("No Internet Connection");
+                            showToast(getString(R.string.no_internet_connection));
                             loadingbar.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -581,93 +561,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    /**
-     * a function to move the marker from place to other
-     *
-     * @param marker     marker object
-     * @param toPosition to the position i want from started one
-     * @param hideMarker set true if i want to hide the marker
-     */
-    public void animateMarker(final Marker marker, final LatLng toPosition,
-                              final boolean hideMarker) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        Projection proj = mMap.getProjection();
-        Point startPoint = proj.toScreenLocation(marker.getPosition());
-        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-        final long duration = 500;
-
-        final Interpolator interpolator = new LinearInterpolator();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed
-                        / duration);
-                double lng = t * toPosition.longitude + (1 - t)
-                        * startLatLng.longitude;
-                double lat = t * toPosition.latitude + (1 - t)
-                        * startLatLng.latitude;
-                marker.setPosition(new LatLng(lat, lng));
-
-                if (t < 1.0) {
-                    // Post again 16ms later.
-                    handler.postDelayed(this, 16);
-                } else {
-                    if (hideMarker) {
-                        marker.setVisible(false);
-                    } else {
-                        marker.setVisible(true);
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * helper method to check the permission and find the current location
-     */
-    private void enableMyLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
-
-        {
-            location = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    /**
-     * helper method to check the permission and find the current location
-     */
-    private void enableSetLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    /**
-     * helper method to check the permission and find the current location
-     */
-    private void enableUpdateMyLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
 
     @Override
     public Loader<ArrayList<Directions>> onCreateLoader(int id, Bundle args) {
@@ -682,8 +575,9 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         //put the start location in the firebase
         mStartLocationDatabaseReference.setValue(startLocation);
 
-        if (getLatLang(goingPlace) != null) {
-            uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_DESTINATION, getLatLang(goingPlace));
+        if (LocationUtilities.getLatLang(goingPlace) != null) {
+            uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_DESTINATION,
+                    LocationUtilities.getLatLang(goingPlace));
             uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_KEY, Constant.API_KEY);
         }
         //Log.e(LOG_TAG, uriBuilder.toString());
@@ -714,25 +608,10 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                     legDurationText = directionsData.getLegDurationText();
                     overview_polyline_string = directionsData.getOverview_polyline_string();
 
-                    html_instructions = directionsData.getHtml_instructions();
-                    points = directionsData.getPoints();
-                    stepDistanceValue = directionsData.getStepDistanceValue();
-                    stepDistanceText = directionsData.getStepDistanceText();
-                    stepDurationValue = directionsData.getStepDurationValue();
-                    stepDurationText = directionsData.getStepDurationText();
-                    stepStartLatitude = directionsData.getStepStartLatitude();
-                    stepStartLongitude = directionsData.getStepStartLongitude();
-                    stepEndLatitude = directionsData.getStepEndLatitude();
-                    stepEndLongitude = directionsData.getStepEndLongitude();
-
-                    Steps steps = new Steps(html_instructions, points, stepDistanceValue, stepDistanceText,
-                            stepDurationValue, stepDurationText, stepStartLatitude, stepStartLongitude,
-                            stepEndLatitude, stepEndLongitude);
-
-                    stepsArrayList.add(steps);
+                    stepsArrayList.add(DirectionsUtilities.getStepInformation(directionsData));
 
                     //put the steps in the firebase
-                    mStepsDatabaseReference.push().setValue(steps);
+                    mStepsDatabaseReference.push().setValue(DirectionsUtilities.getStepInformation(directionsData));
 
                     if (carWayPolyLine != null) {
                         carWayPolyLine.remove();
@@ -748,7 +627,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                     mOverViewPolylineDatabaseReference.setValue(overview_polyline_string);
 
                 } else {
-                    msg(LocationUtilities.checkResponseState(statues));
+                    showToast(DirectionsUtilities.checkResponseState(statues));
                 }
             }
 
@@ -876,23 +755,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                 .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_STEPS);
     }
 
-    /**
-     * Method to get the lat , lang from the places API
-     * And format to be call in the direction API request
-     */
-    private String getLatLang(Place place) {
-        if (place != null) {
-            String latLang = String.valueOf(place.getLatLng());
-            String goingLatLang = "";
-            for (int i = 0; i < latLang.length(); i++) {
-                if (latLang.charAt(i) == '(') {
-                    goingLatLang = latLang.substring(i + 1, latLang.length() - 1);
-                }
-            }
-            return goingLatLang;
-        }
-        return null;
-    }
 
     /**
      * Method used to initialize the UI element
