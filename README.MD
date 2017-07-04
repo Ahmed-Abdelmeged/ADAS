@@ -177,7 +177,7 @@ Edit Phone number
 
 Edit location
 
-![Edit location](http://i.imgur.com/ZVcnV9h.png)
+![Edit location](http://i.imgur.com/ZVcnV9h.png?1)
 
 Edit name
 
