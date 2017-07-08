@@ -25,35 +25,23 @@ package com.example.mego.adas.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.LoaderManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.drawable.Animatable;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -64,16 +52,16 @@ import android.widget.Toast;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.adapter.StepAdapter;
-import com.example.mego.adas.api.DirectionsAPI;
+import com.example.mego.adas.api.directions.DirectionsAPIConstants;
+import com.example.mego.adas.api.directions.DirectionsApiClient;
+import com.example.mego.adas.api.directions.DirectionsApiInterface;
+import com.example.mego.adas.api.directions.model.Direction;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
-import com.example.mego.adas.fcm.AccidentActivity;
-import com.example.mego.adas.loader.DirectionsLoader;
-import com.example.mego.adas.model.Directions;
-import com.example.mego.adas.model.Steps;
+import com.example.mego.adas.api.directions.model.Step;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Constant;
-import com.example.mego.adas.utils.DirectionsUtilities;
+import com.example.mego.adas.api.directions.DirectionsUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -89,7 +77,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -104,6 +91,10 @@ import com.google.maps.android.PolyUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -112,8 +103,7 @@ import static android.app.Activity.RESULT_OK;
  * for the directions
  */
 public class DirectionsFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, LocationListener, GoogleApiClient.OnConnectionFailedListener,
-        LoaderManager.LoaderCallbacks<ArrayList<Directions>> {
+        GoogleApiClient.ConnectionCallbacks, LocationListener, GoogleApiClient.OnConnectionFailedListener {
 
     /**
      * UI Element
@@ -151,12 +141,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
     private String startLocation;
 
     /**
-     * loader id
-     */
-    private static final int DIRECTIONS_LOADER_ID = 2;
-
-
-    /**
      * Animatable object to cae the ripple effect
      */
     private Animatable mAnimatable;
@@ -169,7 +153,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
     /**
      * Array list to hold the step information
      */
-    ArrayList<Steps> stepsArrayList = new ArrayList<>();
+    ArrayList<Step> stepsArrayList = new ArrayList<>();
 
     /**
      * Google Maps Objects
@@ -188,14 +172,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      * the current position of the car
      */
     double longitude, latitude = 0;
-
-    /**
-     * variables for the directions
-     */
-    String statues;
-    String legDurationText;
-    String legDistanceText;
-    String overview_polyline_string;
 
     /**
      * PolyLine that will draw the car way
@@ -223,10 +199,11 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
 
     private DatabaseReference mStepsDatabaseReference, mStartLocationDatabaseReference,
             mGoingLocationDatabaseReference, mLegDistanceTextDatabaseReference, mLegDurationTextDatabaseReference,
-            mOverViewPolylineDatabaseReference, mDirecionsDatabaseReference, mCurrentLocationDatabaseReference;
+            mOverViewPolylineDatabaseReference, mCurrentLocationDatabaseReference;
 
     private static final int PLACE_PICKER_REQUEST = 2576;
 
+    private DirectionsApiInterface directionsApiInterface;
 
     public DirectionsFragment() {
         // Required empty public constructor
@@ -254,7 +231,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         revealView.setVisibility(View.INVISIBLE);
 
         //set the adapter
-        mAdapter = new StepAdapter(getContext(), new ArrayList<Steps>());
+        mAdapter = new StepAdapter(getContext(), new ArrayList<Step>());
         stepListView.setAdapter(mAdapter);
 
         if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
@@ -482,10 +459,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                         loadingbar.setVisibility(View.VISIBLE);
 
                         if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
-                            //create the uri request with the specific query parameters
-
-                            LoaderManager loaderManager = getActivity().getLoaderManager();
-                            loaderManager.restartLoader(DIRECTIONS_LOADER_ID, null, DirectionsFragment.this).forceLoad();
+                            fetchDirectionsData();
                         } else {
                             showToast(getString(R.string.no_internet_connection));
                             loadingbar.setVisibility(View.INVISIBLE);
@@ -511,7 +485,63 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         } else {
             Toast.makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
         }
+    }
 
+    private void fetchDirectionsData() {
+
+        mAdapter.clear();
+        stepsArrayList.clear();
+
+        if (carWayPolyLine != null) {
+            carWayPolyLine.remove();
+        }
+
+        //put the start location in the firebase
+        mStartLocationDatabaseReference.setValue(startLocation);
+
+        directionsApiInterface = DirectionsApiClient.getDirectionApiClient()
+                .create(DirectionsApiInterface.class);
+
+        Call<Direction> call = directionsApiInterface.
+                getDirections(startLocation, LocationUtilities.getLatLang(goingPlace));
+
+        call.enqueue(new Callback<Direction>() {
+            @Override
+            public void onResponse(Call<Direction> call, Response<Direction> response) {
+                mStepsDatabaseReference.removeValue();
+
+                loadingbar.setVisibility(View.INVISIBLE);
+
+                Animation slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
+                if (detailView.getVisibility() == View.INVISIBLE) {
+                    detailView.startAnimation(slideUp);
+                    detailView.setVisibility(View.VISIBLE);
+                }
+                if (response.body().getStatus().equals(DirectionsAPIConstants.STATUES_OK)) {
+                    distanceTextView.setText(DirectionsUtilities.getLegDistance(response.body()));
+                    durationTextView.setText(DirectionsUtilities.getLegDuration(response.body()));
+                    drawPolyline(DirectionsUtilities.getOverViewPolyLine(response.body()));
+                    mAdapter.addAll(DirectionsUtilities.getSteps(response.body()));
+
+                    //Put the value in the firebase
+                    mStepsDatabaseReference.push().setValue(DirectionsUtilities.getSteps(response.body()));
+
+                    mLegDurationTextDatabaseReference.setValue(DirectionsUtilities.getLegDuration(response.body()));
+                    mLegDistanceTextDatabaseReference.setValue(DirectionsUtilities.getLegDistance(response.body()));
+                    mOverViewPolylineDatabaseReference.setValue(DirectionsUtilities.getOverViewPolyLine(response.body()));
+
+
+                } else {
+                    showToast(DirectionsUtilities.checkResponseState(response.body().getStatus()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Direction> call, Throwable t) {
+                loadingbar.setVisibility(View.INVISIBLE);
+                Log.e(LOG_TAG, t.getLocalizedMessage());
+            }
+        });
     }
 
     /**
@@ -559,95 +589,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         if (anim != null) {
             anim.start();
         }
-    }
-
-
-    @Override
-    public Loader<ArrayList<Directions>> onCreateLoader(int id, Bundle args) {
-
-
-        //create the uri request with the specific query parameters
-        Uri baseUri = Uri.parse(DirectionsAPI.GOOGLE_DIRECTION_API_REQUEST_URL);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-
-        uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_ORIGIN, startLocation);
-
-        //put the start location in the firebase
-        mStartLocationDatabaseReference.setValue(startLocation);
-
-        if (LocationUtilities.getLatLang(goingPlace) != null) {
-            uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_DESTINATION,
-                    LocationUtilities.getLatLang(goingPlace));
-            uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_KEY, Constant.API_KEY);
-        }
-        //Log.e(LOG_TAG, uriBuilder.toString());
-        return new DirectionsLoader(getContext(), uriBuilder.toString());
-
-    }
-
-    @Override
-    public void onLoadFinished(Loader<ArrayList<Directions>> loader, ArrayList<Directions> data) {
-
-        String step_detials = "";
-
-        mAdapter.clear();
-        stepsArrayList.clear();
-
-        loadingbar.setVisibility(View.INVISIBLE);
-        if (data != null && !data.isEmpty()) {
-            ArrayList<Directions> directions = data;
-            Directions directionsData;
-
-            mStepsDatabaseReference.removeValue();
-
-            for (int i = 0; i < directions.size(); i++) {
-                directionsData = directions.get(i);
-                statues = directionsData.getStatues();
-                if (statues.equals(DirectionsAPI.STATUES_OK)) {
-                    legDistanceText = directionsData.getLegDistanceText();
-                    legDurationText = directionsData.getLegDurationText();
-                    overview_polyline_string = directionsData.getOverview_polyline_string();
-
-                    stepsArrayList.add(DirectionsUtilities.getStepInformation(directionsData));
-
-                    //put the steps in the firebase
-                    mStepsDatabaseReference.push().setValue(DirectionsUtilities.getStepInformation(directionsData));
-
-                    if (carWayPolyLine != null) {
-                        carWayPolyLine.remove();
-                    }
-
-                    distanceTextView.setText(legDistanceText);
-                    durationTextView.setText(legDurationText);
-                    drawPolyline(overview_polyline_string);
-
-                    //put the led information in the firebase
-                    mLegDurationTextDatabaseReference.setValue(legDurationText);
-                    mLegDistanceTextDatabaseReference.setValue(legDistanceText);
-                    mOverViewPolylineDatabaseReference.setValue(overview_polyline_string);
-
-                } else {
-                    showToast(DirectionsUtilities.checkResponseState(statues));
-                }
-            }
-
-            Animation slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
-            if (detailView.getVisibility() == View.INVISIBLE) {
-                detailView.startAnimation(slideUp);
-                detailView.setVisibility(View.VISIBLE);
-            }
-
-        }
-        mAdapter.addAll(stepsArrayList);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<ArrayList<Directions>> loader) {
-        distanceTextView.setText("");
-        durationTextView.setText("");
-        distanceTextView.setText("");
-        mAdapter.clear();
-        stepsArrayList.clear();
     }
 
     /**
@@ -713,11 +654,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      * Method to set firebase references
      */
     private void setFirebaseReferences(String uid) {
-        mDirecionsDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_DIRECTIONS);
-
         //the childes for the direction root
         mStartLocationDatabaseReference = mFirebaseDatabase.getReference()
                 .child(Constant.FIREBASE_USERS)

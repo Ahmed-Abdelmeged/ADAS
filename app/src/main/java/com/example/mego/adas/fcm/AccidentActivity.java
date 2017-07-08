@@ -34,6 +34,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -45,16 +46,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mego.adas.api.directions.DirectionsApiClient;
+import com.example.mego.adas.api.directions.DirectionsApiInterface;
+import com.example.mego.adas.api.directions.model.Direction;
 import com.example.mego.adas.application.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.adapter.StepAdapter;
-import com.example.mego.adas.api.DirectionsAPI;
+import com.example.mego.adas.api.directions.DirectionsAPIConstants;
 import com.example.mego.adas.auth.AuthenticationUtilities;
-import com.example.mego.adas.loader.DirectionsLoader;
-import com.example.mego.adas.model.Directions;
-import com.example.mego.adas.model.Steps;
+import com.example.mego.adas.api.directions.model.Step;
 import com.example.mego.adas.utils.Constant;
-import com.example.mego.adas.utils.DirectionsUtilities;
+import com.example.mego.adas.api.directions.DirectionsUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -79,13 +81,16 @@ import com.google.maps.android.PolyUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
  * Accident activity open form FCM notification to show user
  * accident location and can go to it using directions API
  */
 public class AccidentActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, LocationListener, GoogleApiClient.OnConnectionFailedListener,
-        LoaderManager.LoaderCallbacks<ArrayList<Directions>> {
+        GoogleApiClient.ConnectionCallbacks, LocationListener, GoogleApiClient.OnConnectionFailedListener {
 
     /**
      * UI Element
@@ -112,15 +117,11 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
     private double accidentLongitude;
     private double accidentLatitude;
 
-    /**
-     * direction loader id
-     */
-    private static final int DIRECTIONS_LOADER_ID = 19;
 
     /**
      * Array list to hold the step information
      */
-    ArrayList<Steps> stepsArrayList = new ArrayList<>();
+    ArrayList<Step> stepsArrayList = new ArrayList<>();
 
     /**
      * Google Maps Objects
@@ -134,14 +135,6 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
     LatLng carPlace, accidentPlace;
     Marker myLocationMarker;
     LocationRequest mLocationRequest;
-
-    /**
-     * variables for the directions
-     */
-    String statues;
-    String legDurationText;
-    String legDistanceText;
-    String overview_polyline_string;
 
     /**
      * PolyLine that will draw the car way
@@ -170,6 +163,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
 
     private boolean atAccidentLocation = true;
 
+    private DirectionsApiInterface directionsApiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,7 +192,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
         stepsListButton.setOnClickListener(this);
 
         //set the adapter
-        mAdapter = new StepAdapter(AccidentActivity.this, new ArrayList<Steps>());
+        mAdapter = new StepAdapter(AccidentActivity.this, new ArrayList<Step>());
         stepListView.setAdapter(mAdapter);
 
         if (!AuthenticationUtilities.isAvailableInternetConnection(this)) {
@@ -359,81 +353,6 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
         carWayPolyLine = mMap.addPolyline(new PolylineOptions().geodesic(true).addAll(points));
     }
 
-    @Override
-    public Loader<ArrayList<Directions>> onCreateLoader(int id, Bundle args) {
-
-
-        //create the uri request with the specific query parameters
-        Uri baseUri = Uri.parse(DirectionsAPI.GOOGLE_DIRECTION_API_REQUEST_URL);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-
-        uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_ORIGIN, startLocation);
-
-        uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_DESTINATION,
-                accidentLatitude + "," + accidentLongitude);
-        uriBuilder.appendQueryParameter(DirectionsAPI.QUERY_PARAMETER_KEY, Constant.API_KEY);
-
-        //Log.e(LOG_TAG, uriBuilder.toString());
-        return new DirectionsLoader(this, uriBuilder.toString());
-
-    }
-
-    @Override
-    public void onLoadFinished(Loader<ArrayList<Directions>> loader, ArrayList<Directions> data) {
-
-        String step_detials = "";
-
-        mAdapter.clear();
-        stepsArrayList.clear();
-
-        loadingbar.setVisibility(View.INVISIBLE);
-        if (data != null && !data.isEmpty()) {
-            ArrayList<Directions> directions = data;
-            Directions directionsData;
-
-            for (int i = 0; i < directions.size(); i++) {
-                directionsData = directions.get(i);
-                statues = directionsData.getStatues();
-                if (statues.equals(DirectionsAPI.STATUES_OK)) {
-                    legDistanceText = directionsData.getLegDistanceText();
-                    legDurationText = directionsData.getLegDurationText();
-
-                    overview_polyline_string = directionsData.getOverview_polyline_string();
-
-                    stepsArrayList.add(DirectionsUtilities.getStepInformation(directionsData));
-
-                    if (carWayPolyLine != null) {
-                        carWayPolyLine.remove();
-                    }
-
-                    distanceTextView.setText(legDistanceText);
-                    durationTextView.setText(legDurationText);
-                    destinationTextView.setText(accidentLatitude + "," + accidentLongitude);
-                    drawPolyline(overview_polyline_string);
-                } else {
-                    showToast(DirectionsUtilities.checkResponseState(statues));
-                }
-            }
-
-            Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
-            if (detailView.getVisibility() == View.INVISIBLE) {
-                detailView.startAnimation(slideUp);
-                detailView.setVisibility(View.VISIBLE);
-            }
-
-        }
-        mAdapter.addAll(stepsArrayList);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<ArrayList<Directions>> loader) {
-        distanceTextView.setText("");
-        durationTextView.setText("");
-        distanceTextView.setText("");
-        mAdapter.clear();
-        stepsArrayList.clear();
-    }
-
     /**
      * helper method to build google api client
      */
@@ -561,8 +480,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
                 case R.id.location_directions_fab_accident_activity:
                     locationImageView.setVisibility(View.INVISIBLE);
                     loadingbar.setVisibility(View.VISIBLE);
-                    LoaderManager loaderManager = getLoaderManager();
-                    loaderManager.restartLoader(DIRECTIONS_LOADER_ID, null, AccidentActivity.this).forceLoad();
+                    fetchDirectionsData();
                     break;
                 case R.id.down_page_Image_View_accident_activity:
                     //setup the animation
@@ -587,5 +505,51 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
         } else {
             loadingbar.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void fetchDirectionsData() {
+
+        mAdapter.clear();
+        stepsArrayList.clear();
+
+        if (carWayPolyLine != null) {
+            carWayPolyLine.remove();
+        }
+
+        directionsApiInterface = DirectionsApiClient.getDirectionApiClient()
+                .create(DirectionsApiInterface.class);
+
+        Call<Direction> call = directionsApiInterface.
+                getDirections(startLocation, accidentLatitude + "," + accidentLongitude);
+
+        call.enqueue(new Callback<Direction>() {
+            @Override
+            public void onResponse(Call<Direction> call, Response<Direction> response) {
+
+                loadingbar.setVisibility(View.INVISIBLE);
+
+                Animation slideUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up);
+                if (detailView.getVisibility() == View.INVISIBLE) {
+                    detailView.startAnimation(slideUp);
+                    detailView.setVisibility(View.VISIBLE);
+                }
+
+                if (response.body().getStatus().equals(DirectionsAPIConstants.STATUES_OK)) {
+                    distanceTextView.setText(DirectionsUtilities.getLegDistance(response.body()));
+                    durationTextView.setText(DirectionsUtilities.getLegDuration(response.body()));
+                    drawPolyline(DirectionsUtilities.getOverViewPolyLine(response.body()));
+                    destinationTextView.setText(accidentLatitude + "," + accidentLongitude);
+                    mAdapter.addAll(DirectionsUtilities.getSteps(response.body()));
+                } else {
+                    showToast(DirectionsUtilities.checkResponseState(response.body().getStatus()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Direction> call, Throwable t) {
+                loadingbar.setVisibility(View.INVISIBLE);
+                Log.e(LOG_TAG, t.getLocalizedMessage());
+            }
+        });
     }
 }

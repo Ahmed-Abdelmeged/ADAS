@@ -23,22 +23,17 @@
 package com.example.mego.adas.ui;
 
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,14 +46,13 @@ import android.widget.Toast;
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
-import com.example.mego.adas.fcm.AccidentActivity;
 import com.example.mego.adas.model.Accident;
 import com.example.mego.adas.model.MappingServices;
 import com.example.mego.adas.model.SensorsValues;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Communicator;
 import com.example.mego.adas.utils.Constant;
-import com.example.mego.adas.utils.DirectionsUtilities;
+import com.example.mego.adas.api.directions.DirectionsUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.example.mego.adas.utils.NotificationUtils;
 import com.google.android.gms.common.ConnectionResult;
@@ -260,23 +254,21 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
         communicator = (Communicator) getActivity();
 
+        //set up the firebase
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+        //get the current user uid
+        User currentUser = AuthenticationUtilities.getCurrentUser(getContext());
+        String uid = currentUser.getUserUid();
+
+        //get the references for the childes
+        //the main child for the car services
+        getFirebaseObjectReferences(uid);
+
+
         if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             buildGoogleApiClient();
-
-            //set up the firebase
-            mFirebaseDatabase = FirebaseDatabase.getInstance();
-
-            //get the current user uid
-            User currentUser = AuthenticationUtilities.getCurrentUser(getContext());
-            String uid = currentUser.getUserUid();
-
-            //get the references for the childes
-            //the main child for the car services
-            getFirebaseObjectReferences(uid);
-
             connectionStateDatabaseReference.setValue(1);
-
-
         }
         //show toast  if there is no internet net connection
         else {
@@ -771,22 +763,26 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
                     accidentState = (Integer.parseInt(sensorsValueList.get(3)));
 
-
                     if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
                         accidentStateDatabaseReference.setValue(accidentState);
-                        if (accidentState == 1) {
-                            accidentNotificationFlag++;
-                            if (accidentNotificationFlag == 1 && !AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
-                                NotificationUtils.showAccidentNotification(getContext());
-                            }
+                    }
+
+                    if (accidentState == 1) {
+                        accidentNotificationFlag++;
+                        if (accidentNotificationFlag == 1 && !AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                            NotificationUtils.showAccidentNotification(getContext());
+                        }
+                        if (accidentNotificationFlag == 1) {
                             //send a new accident with the current data,time ,longitude and latitude
                             String currentDate = DateFormat.getDateInstance().format(new Date());
                             String currentTime = DateFormat.getTimeInstance().format(new Date());
                             Accident accident = new Accident(currentDate, currentTime, "Accident", longitude, latitude);
-                            accidentsDatabaseReference.push().setValue(accident);
-                        } else if (accidentState == 0) {
-                            accidentNotificationFlag = 0;
+                            if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                                accidentsDatabaseReference.push().setValue(accident);
+                            }
                         }
+                    } else if (accidentState == 0) {
+                        accidentNotificationFlag = 0;
                     }
 
                     lDRSensorValueTextView.setText(ldrSensorValue + "");
@@ -835,7 +831,6 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         }
     }
 
-
     /**
      * background thread to show the progress of the pot sensor in the progress bar
      */
@@ -869,8 +864,6 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
                                 }
                             }
-
-
                         }
                     });
                     try {

@@ -32,7 +32,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.model.Steps;
+import com.example.mego.adas.api.directions.model.Step;
 import com.example.mego.adas.utils.Constant;
 
 import java.util.ArrayList;
@@ -40,12 +40,12 @@ import java.util.ArrayList;
 /**
  * custom array adapter to view the list of steps
  */
-public class StepAdapter extends ArrayAdapter<Steps> {
+public class StepAdapter extends ArrayAdapter<Step> {
 
     /**
      * Required public constructor
      */
-    public StepAdapter(Context context, ArrayList<Steps> stepses) {
+    public StepAdapter(Context context, ArrayList<Step> stepses) {
         super(context, 0, stepses);
     }
 
@@ -69,14 +69,15 @@ public class StepAdapter extends ArrayAdapter<Steps> {
 
 
         //get the current step to extract DataSend from it
-        Steps currentStep = getItem(position);
+        Step currentStep = getItem(position);
 
         //set the current step instructions
-        String instructions = Html.fromHtml(currentStep.getHtml_instructions()).toString();
+        String instructions = Html.fromHtml(currentStep.getHtmlInstructions()).toString();
         holder.instructionsTextView.setText(instructions.trim());
 
         //set the step distance
-        String stepDistance = convertDistance(currentStep.getStepDistanceValue(), currentStep.getStepDistanceText());
+        String stepDistance = convertDistance(currentStep.getDistance().getValue(),
+                currentStep.getDistance().getText());
         holder.distanceTextView.setText(stepDistance.trim());
 
         //set the direction Photo

@@ -24,31 +24,22 @@ package com.example.mego.adas.ui;
 
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -57,12 +48,11 @@ import android.widget.Toast;
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
-import com.example.mego.adas.fcm.AccidentActivity;
 import com.example.mego.adas.model.MappingServices;
 import com.example.mego.adas.model.SensorsValues;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Constant;
-import com.example.mego.adas.utils.DirectionsUtilities;
+import com.example.mego.adas.api.directions.DirectionsUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.example.mego.adas.utils.NotificationUtils;
 import com.google.android.gms.common.ConnectionResult;
@@ -74,7 +64,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
@@ -194,11 +183,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
     boolean fragmentIsRunning = false;
 
-    /**
-     * check internet state
-     */
-    ConnectivityManager connectivityManager;
-    NetworkInfo networkInfo;
 
     UserFragment userFragments;
 
@@ -248,30 +232,22 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
         userFragments = (UserFragment) getFragmentManager().findFragmentById(R.id.fragment_container);
 
+        //set up the firebase
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
 
-        //check the internet connection
-        connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        networkInfo = connectivityManager.getActiveNetworkInfo();
+        //get the current user uid
+        User currentUser = AuthenticationUtilities.getCurrentUser(getContext());
+        String uid = currentUser.getUserUid();
 
-        if (networkInfo != null && networkInfo.isConnected()) {
+        //get the references for the childes
+        //the main child for the directions services
+        getFirebaseObjectReferences(uid);
+
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             //show a progress dialog in the BluetoothServerActivity
             //progressDialog = ProgressDialog.show(getContext(),
             //    "Connecting...", "Please wait!!!");
-
             buildGoogleApiClient();
-
-
-            //set up the firebase
-            mFirebaseDatabase = FirebaseDatabase.getInstance();
-
-            //get the current user uid
-            User currentUser = AuthenticationUtilities.getCurrentUser(getContext());
-            String uid = currentUser.getUserUid();
-
-            //get the references for the childes
-            //the main child for the directions services
-            getFirebaseObjectReferences(uid);
-
         }
 
         //show toast  if there is no internet net connection
@@ -299,7 +275,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         userLocationButton.setOnClickListener(this);
         startButton.setOnClickListener(this);
 
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             actionResolver();
         }
 
@@ -317,7 +293,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         super.onStart();
         //check the internet connection
 
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             mGoogleApiClient.connect();
         }
 
@@ -328,7 +304,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         super.onStop();
         //check the internet connection
 
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             if (mGoogleApiClient != null) {
                 mGoogleApiClient.disconnect();
             }
@@ -428,7 +404,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
      */
     @Override
     public void onClick(View v) {
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
 
             switch (v.getId()) {
                 case R.id.lights_on_button_user:
@@ -953,7 +929,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
             }
         };
 
-
         //add a listener to the reference
         mappingServicesDatabaseReference.addValueEventListener(mappingServicesEventListener);
         accidentStateDatabaseReference.addValueEventListener(accidentStateEventListener);
@@ -976,7 +951,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         LocationUtilities.enableSetLocation(getActivity(), mMap);
 
         //check the internet connection
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             mGoogleApiClient.connect();
         }
     }

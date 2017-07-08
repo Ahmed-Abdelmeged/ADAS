@@ -19,13 +19,13 @@
  * limitations under the License.
  */
 
-package com.example.mego.adas.api;
+package com.example.mego.adas.api.directions;
 
 
 /**
  * the class have the constant of  direction api json response
  */
-public class DirectionsAPI {
+public class DirectionsAPIConstants {
 
     /**
      * origin query parameter
@@ -115,7 +115,6 @@ public class DirectionsAPI {
     public static final String ELEMENT_LATITUDE = "lat";
     public static final String ELEMENT_LONGITUDE = "lng";
 
-
     /**
      * indicates the response contains a valid result.
      */
@@ -125,39 +124,39 @@ public class DirectionsAPI {
      * indicates at least one of the locations specified in the request's origin,
      * destination, or waypoints could not be geocoded.
      */
-    public static final String STATUES_NOT_FOUND = "NOT_FOUND";
+    static final String STATUES_NOT_FOUND = "NOT_FOUND";
 
     /**
      * indicates no route could be found between the origin and destination.
      */
-    public static final String STATUES_ZERO_RESULTS = "ZERO_RESULTS";
+    static final String STATUES_ZERO_RESULTS = "ZERO_RESULTS";
 
     /**
      * indicates the requested route is too long and cannot be processed.
      */
-    public static final String STATUES_MAX_ROUTE_LENGTH_EXCEEDED = "MAX_ROUTE_LENGTH_EXCEEDED";
+    static final String STATUES_MAX_ROUTE_LENGTH_EXCEEDED = "MAX_ROUTE_LENGTH_EXCEEDED";
 
     /**
      * indicates that the provided request was invalid. Common causes of this
      * status include an invalid parameter or parameter value.
      */
-    public static final String STATUES_INVALID_REQUEST = "INVALID_REQUEST";
+    static final String STATUES_INVALID_REQUEST = "INVALID_REQUEST";
 
     /**
      * indicates the service has received too many requests from the
      * application within the allowed time period.
      */
-    public static final String STATUES_OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
+    static final String STATUES_OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
 
     /**
      * indicates that the service denied use of the directions service by the application.
      */
-    public static final String STATUES_REQUEST_DENIED = "REQUEST_DENIED";
+    static final String STATUES_REQUEST_DENIED = "REQUEST_DENIED";
 
     /**
      * indicates a directions request could not be processed due to a server error.
      * The request may succeed if you try again.
      */
-    public static final String STATUES_UNKNOWN_ERROR = "UNKNOWN_ERROR";
+    static final String STATUES_UNKNOWN_ERROR = "UNKNOWN_ERROR";
 
 }

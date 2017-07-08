@@ -52,7 +52,7 @@ public class YoutubeAPI {
     public static final String QUERY_PARAMETER_MAX_RESULTS = "maxResults";
 
     /**
-     * The Google Directions API Request URL
+     * The Youtube API Request URL
      */
     public static final String YOUTUBE_DATA_API_REQUEST_URL =
             "https://www.googleapis.com/youtube/v3/playlistItems?";
