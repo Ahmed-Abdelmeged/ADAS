@@ -9,4 +9,5 @@
 .externalNativeBuild
 /app/google-services.json
 /ADASFunctions/functions/node_modules
+/ADASADASFunctions/.firebaserc
 
