@@ -52,8 +52,8 @@ import android.widget.Toast;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.adapter.StepAdapter;
-import com.example.mego.adas.api.directions.DirectionsAPIConstants;
 import com.example.mego.adas.api.directions.DirectionsApiClient;
+import com.example.mego.adas.api.directions.DirectionsApiConstants;
 import com.example.mego.adas.api.directions.DirectionsApiInterface;
 import com.example.mego.adas.api.directions.model.Direction;
 import com.example.mego.adas.auth.AuthenticationUtilities;
@@ -61,7 +61,7 @@ import com.example.mego.adas.auth.User;
 import com.example.mego.adas.api.directions.model.Step;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Constant;
-import com.example.mego.adas.api.directions.DirectionsUtilities;
+import com.example.mego.adas.api.directions.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -365,7 +365,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         //put the current location in the firebase
         mCurrentLocationDatabaseReference.setValue(startLocation);
 
-        DirectionsUtilities.AnimateMarker(marker, carPlace, false, mMap);
+        DirectionsApiUtilities.AnimateMarker(marker, carPlace, false, mMap);
         cameraPosition = new CameraPosition.Builder()
                 .target(carPlace).zoom(zoom).bearing(bearing).tilt(tilt).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -508,31 +508,33 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         call.enqueue(new Callback<Direction>() {
             @Override
             public void onResponse(Call<Direction> call, Response<Direction> response) {
-                mStepsDatabaseReference.removeValue();
-
                 loadingbar.setVisibility(View.INVISIBLE);
 
-                Animation slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
-                if (detailView.getVisibility() == View.INVISIBLE) {
-                    detailView.startAnimation(slideUp);
-                    detailView.setVisibility(View.VISIBLE);
-                }
-                if (response.body().getStatus().equals(DirectionsAPIConstants.STATUES_OK)) {
-                    distanceTextView.setText(DirectionsUtilities.getLegDistance(response.body()));
-                    durationTextView.setText(DirectionsUtilities.getLegDuration(response.body()));
-                    drawPolyline(DirectionsUtilities.getOverViewPolyLine(response.body()));
-                    mAdapter.addAll(DirectionsUtilities.getSteps(response.body()));
+                if (response.body() != null) {
+                    mStepsDatabaseReference.removeValue();
 
-                    //Put the value in the firebase
-                    mStepsDatabaseReference.push().setValue(DirectionsUtilities.getSteps(response.body()));
+                    Animation slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
+                    if (detailView.getVisibility() == View.INVISIBLE) {
+                        detailView.startAnimation(slideUp);
+                        detailView.setVisibility(View.VISIBLE);
+                    }
+                    if (response.body().getStatus().equals(DirectionsApiConstants.STATUES_OK)) {
+                        distanceTextView.setText(DirectionsApiUtilities.getLegDistance(response.body()));
+                        durationTextView.setText(DirectionsApiUtilities.getLegDuration(response.body()));
+                        drawPolyline(DirectionsApiUtilities.getOverViewPolyLine(response.body()));
+                        mAdapter.addAll(DirectionsApiUtilities.getSteps(response.body()));
 
-                    mLegDurationTextDatabaseReference.setValue(DirectionsUtilities.getLegDuration(response.body()));
-                    mLegDistanceTextDatabaseReference.setValue(DirectionsUtilities.getLegDistance(response.body()));
-                    mOverViewPolylineDatabaseReference.setValue(DirectionsUtilities.getOverViewPolyLine(response.body()));
+                        //Put the value in the firebase
+                        mStepsDatabaseReference.push().setValue(DirectionsApiUtilities.getSteps(response.body()));
+
+                        mLegDurationTextDatabaseReference.setValue(DirectionsApiUtilities.getLegDuration(response.body()));
+                        mLegDistanceTextDatabaseReference.setValue(DirectionsApiUtilities.getLegDistance(response.body()));
+                        mOverViewPolylineDatabaseReference.setValue(DirectionsApiUtilities.getOverViewPolyLine(response.body()));
 
 
-                } else {
-                    showToast(DirectionsUtilities.checkResponseState(response.body().getStatus()));
+                    } else {
+                        showToast(DirectionsApiUtilities.checkResponseState(response.body().getStatus()));
+                    }
                 }
             }
 

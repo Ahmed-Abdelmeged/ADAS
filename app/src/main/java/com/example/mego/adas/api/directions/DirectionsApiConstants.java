@@ -25,7 +25,7 @@ package com.example.mego.adas.api.directions;
 /**
  * the class have the constant of  direction api json response
  */
-public class DirectionsAPIConstants {
+public class DirectionsApiConstants {
 
     /**
      * origin query parameter

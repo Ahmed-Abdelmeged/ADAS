@@ -20,19 +20,35 @@
  */
 
 
-package com.example.mego.adas.api.directions;
+package com.example.mego.adas.api.youtube.model;
 
-import com.example.mego.adas.api.directions.model.Direction;
-
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 
-public interface DirectionsApiInterface {
-    @GET("maps/api/directions/json?key=AIzaSyDzUFC3PRm7vehzlCZdhoCxq2awhEY3sZ0")
-    Call<Direction> getDirections(
-            @Query("origin") String origin,
-            @Query("destination") String destination
-    );
+public class PageInfo {
+
+    @SerializedName("totalResults")
+    @Expose
+    private Integer totalResults;
+    @SerializedName("resultsPerPage")
+    @Expose
+    private Integer resultsPerPage;
+
+    public Integer getTotalResults() {
+        return totalResults;
+    }
+
+    public void setTotalResults(Integer totalResults) {
+        this.totalResults = totalResults;
+    }
+
+    public Integer getResultsPerPage() {
+        return resultsPerPage;
+    }
+
+    public void setResultsPerPage(Integer resultsPerPage) {
+        this.resultsPerPage = resultsPerPage;
+    }
+
 }

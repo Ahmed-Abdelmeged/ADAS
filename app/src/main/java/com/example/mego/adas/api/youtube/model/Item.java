@@ -20,34 +20,56 @@
  */
 
 
-package com.example.mego.adas.api.directions.model;
+package com.example.mego.adas.api.youtube.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
-public class Duration_ {
+public class Item {
 
-    @SerializedName("text")
+    @SerializedName("kind")
     @Expose
-    private String text;
-    @SerializedName("value")
+    private String kind;
+    @SerializedName("etag")
     @Expose
-    private Integer value;
+    private String etag;
+    @SerializedName("id")
+    @Expose
+    private String id;
+    @SerializedName("snippet")
+    @Expose
+    private Snippet snippet;
 
-    public String getText() {
-        return text;
+    public String getKind() {
+        return kind;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
-    public Integer getValue() {
-        return value;
+    public String getEtag() {
+        return etag;
     }
 
-    public void setValue(Integer value) {
-        this.value = value;
+    public void setEtag(String etag) {
+        this.etag = etag;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Snippet getSnippet() {
+        return snippet;
+    }
+
+    public void setSnippet(Snippet snippet) {
+        this.snippet = snippet;
     }
 }

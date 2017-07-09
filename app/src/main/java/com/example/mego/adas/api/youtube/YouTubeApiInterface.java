@@ -20,19 +20,18 @@
  */
 
 
-package com.example.mego.adas.api.directions;
+package com.example.mego.adas.api.youtube;
 
-import com.example.mego.adas.api.directions.model.Direction;
+
+import com.example.mego.adas.api.youtube.model.YouTubeVideo;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-
-public interface DirectionsApiInterface {
-    @GET("maps/api/directions/json?key=AIzaSyDzUFC3PRm7vehzlCZdhoCxq2awhEY3sZ0")
-    Call<Direction> getDirections(
-            @Query("origin") String origin,
-            @Query("destination") String destination
+public interface YouTubeApiInterface {
+    @GET("v3/playlistItems?part=snippet&maxResults=50&key=AIzaSyBKyxvJIHYfhjsvINFgF3fwvCiViQ5Ie7c")
+    Call<YouTubeVideo> getVideos(
+            @Query("playlistId") String playlistId
     );
 }

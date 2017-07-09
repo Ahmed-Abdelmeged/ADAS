@@ -22,14 +22,11 @@
 
 package com.example.mego.adas.fcm;
 
-import android.app.LoaderManager;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -52,11 +49,11 @@ import com.example.mego.adas.api.directions.model.Direction;
 import com.example.mego.adas.application.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.adapter.StepAdapter;
-import com.example.mego.adas.api.directions.DirectionsAPIConstants;
+import com.example.mego.adas.api.directions.DirectionsApiConstants;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.api.directions.model.Step;
 import com.example.mego.adas.utils.Constant;
-import com.example.mego.adas.api.directions.DirectionsUtilities;
+import com.example.mego.adas.api.directions.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -314,7 +311,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
 
             carPlace = new LatLng(location.getLatitude(), location.getLongitude());
 
-            DirectionsUtilities.AnimateMarker(myLocationMarker, carPlace, false, mMap);
+            DirectionsApiUtilities.AnimateMarker(myLocationMarker, carPlace, false, mMap);
             myLocaitonCameraPosition = new CameraPosition.Builder()
                     .target(carPlace).zoom(zoom).bearing(bearing).tilt(tilt).build();
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(myLocaitonCameraPosition));
@@ -525,23 +522,24 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
         call.enqueue(new Callback<Direction>() {
             @Override
             public void onResponse(Call<Direction> call, Response<Direction> response) {
-
                 loadingbar.setVisibility(View.INVISIBLE);
 
-                Animation slideUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up);
-                if (detailView.getVisibility() == View.INVISIBLE) {
-                    detailView.startAnimation(slideUp);
-                    detailView.setVisibility(View.VISIBLE);
-                }
+                if (response.body() != null) {
+                    Animation slideUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up);
+                    if (detailView.getVisibility() == View.INVISIBLE) {
+                        detailView.startAnimation(slideUp);
+                        detailView.setVisibility(View.VISIBLE);
+                    }
 
-                if (response.body().getStatus().equals(DirectionsAPIConstants.STATUES_OK)) {
-                    distanceTextView.setText(DirectionsUtilities.getLegDistance(response.body()));
-                    durationTextView.setText(DirectionsUtilities.getLegDuration(response.body()));
-                    drawPolyline(DirectionsUtilities.getOverViewPolyLine(response.body()));
-                    destinationTextView.setText(accidentLatitude + "," + accidentLongitude);
-                    mAdapter.addAll(DirectionsUtilities.getSteps(response.body()));
+                    if (response.body().getStatus().equals(DirectionsApiConstants.STATUES_OK)) {
+                        distanceTextView.setText(DirectionsApiUtilities.getLegDistance(response.body()));
+                        durationTextView.setText(DirectionsApiUtilities.getLegDuration(response.body()));
+                        drawPolyline(DirectionsApiUtilities.getOverViewPolyLine(response.body()));
+                        destinationTextView.setText(accidentLatitude + "," + accidentLongitude);
+                        mAdapter.addAll(DirectionsApiUtilities.getSteps(response.body()));
+                    }
                 } else {
-                    showToast(DirectionsUtilities.checkResponseState(response.body().getStatus()));
+                    showToast(DirectionsApiUtilities.checkResponseState(response.body().getStatus()));
                 }
             }
 

@@ -21,6 +21,7 @@
 
 package com.example.mego.adas.adapter;
 
+
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.Html;
@@ -45,8 +46,8 @@ public class StepAdapter extends ArrayAdapter<Step> {
     /**
      * Required public constructor
      */
-    public StepAdapter(Context context, ArrayList<Step> stepses) {
-        super(context, 0, stepses);
+    public StepAdapter(Context context, ArrayList<Step> steps) {
+        super(context, 0, steps);
     }
 
     @NonNull
@@ -80,7 +81,7 @@ public class StepAdapter extends ArrayAdapter<Step> {
                 currentStep.getDistance().getText());
         holder.distanceTextView.setText(stepDistance.trim());
 
-        //set the direction Photo
+        //set the direction VideoPhoto
         holder.directionImage.setImageResource(getCarDirection(instructions));
 
 

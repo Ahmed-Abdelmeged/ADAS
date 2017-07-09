@@ -22,16 +22,11 @@
 
 package com.example.mego.adas.ui;
 
-import android.app.LoaderManager;
-import android.content.Context;
-import android.content.Loader;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,19 +38,28 @@ import android.widget.Toast;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.adapter.YoutubeVideoAdapter;
-import com.example.mego.adas.api.YoutubeAPI;
-import com.example.mego.adas.loader.VideosLoader;
-import com.example.mego.adas.model.YouTubeVideo;
+import com.example.mego.adas.api.youtube.YouTubeApiClient;
+import com.example.mego.adas.api.youtube.YouTubeApiInterface;
+import com.example.mego.adas.api.youtube.YouTubeApiUtilities;
+import com.example.mego.adas.api.youtube.model.Item;
+import com.example.mego.adas.api.youtube.model.YouTubeVideo;
+import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.utils.Constant;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static android.view.View.Y;
 
 /**
  * A simple {@link Fragment} subclass.
  * <p>
  * to show list of videos
  */
-public class VideosFragments extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<YouTubeVideo>> {
+public class VideosFragments extends Fragment {
 
 
     /**
@@ -75,10 +79,7 @@ public class VideosFragments extends Fragment implements LoaderManager.LoaderCal
      */
     private static final String LOG_TAG = VideosFragments.class.getSimpleName();
 
-    /**
-     * unique id to identify videos loader
-     */
-    private static final int VIDEOS_LOADER_ID = 1;
+    private YouTubeApiInterface youTubeApiInterface;
 
 
     public VideosFragments() {
@@ -94,19 +95,14 @@ public class VideosFragments extends Fragment implements LoaderManager.LoaderCal
         initializeScreen(rootView);
 
         //setup the adapter
-        mAdapter = new YoutubeVideoAdapter(getContext(), new ArrayList<YouTubeVideo>());
+        mAdapter = new YoutubeVideoAdapter(getContext(), new ArrayList<Item>());
         videosListView.setAdapter(mAdapter);
         videosListView.setEmptyView(emptyText);
 
-        //check the internet connection
-        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
         //if the internet is work start the loader if not show toast message
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             loadingBar.setVisibility(View.VISIBLE);
-            LoaderManager loaderManager = getActivity().getLoaderManager();
-            loaderManager.initLoader(VIDEOS_LOADER_ID, null, VideosFragments.this);
+            fetchVideosData();
         } else {
             Toast.makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
             emptyText.setText(getString(R.string.no_internet_connection));
@@ -118,16 +114,16 @@ public class VideosFragments extends Fragment implements LoaderManager.LoaderCal
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 //get the current video
-                YouTubeVideo currentVideo = mAdapter.getItem(position);
+                Item currentVideo = mAdapter.getItem(position);
 
                 WatchVideoFragment watchVideoFragment = new WatchVideoFragment();
 
                 //set the video information to the next fragment
                 Bundle args = new Bundle();
 
-                args.putString(Constant.VIDEO_KEY, currentVideo.getVideoId());
-                args.putString(Constant.TITLE_KEY, currentVideo.getTitle());
-                args.putString(Constant.PUBLISHED_AT_KEY, currentVideo.getPublishedAt());
+                args.putString(Constant.VIDEO_KEY, YouTubeApiUtilities.getVideoId(currentVideo));
+                args.putString(Constant.TITLE_KEY, YouTubeApiUtilities.getVideoTitle(currentVideo));
+                args.putString(Constant.PUBLISHED_AT_KEY, YouTubeApiUtilities.getVideoPublishTime(currentVideo));
 
                 watchVideoFragment.setArguments(args);
 
@@ -153,20 +149,7 @@ public class VideosFragments extends Fragment implements LoaderManager.LoaderCal
         emptyText = (TextView) view.findViewById(R.id.empty_text_videos);
     }
 
-
-    /**
-     * call when the fragment is created to build the uri and create the loader
-     *
-     * @param id
-     * @param args
-     * @return
-     */
-    @Override
-    public Loader<ArrayList<YouTubeVideo>> onCreateLoader(int id, Bundle args) {
-
-        Uri baseUri = Uri.parse(YoutubeAPI.YOUTUBE_DATA_API_REQUEST_URL);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-
+    private void fetchVideosData() {
 
         //get the current settings for the video settings
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -176,39 +159,26 @@ public class VideosFragments extends Fragment implements LoaderManager.LoaderCal
                 getString(R.string.settings_playlist_id_key),
                 getString(R.string.settings_playlist_id_default));
 
-        uriBuilder.appendQueryParameter(YoutubeAPI.QUERY_PARAMETER_PART, YoutubeAPI.ELEMENT_SNIPPET);
-        uriBuilder.appendQueryParameter(YoutubeAPI.QUERY_PARAMETER_PLAYLISTID, playlistId);
-        uriBuilder.appendQueryParameter(YoutubeAPI.QUERY_PARAMETER_MAX_RESULTS, "50");
-        uriBuilder.appendQueryParameter(YoutubeAPI.QUERY_PARAMETER_KEY, Constant.API_KEY);
 
+        youTubeApiInterface = YouTubeApiClient.getYoutubeApiClient()
+                .create(YouTubeApiInterface.class);
+        Call<YouTubeVideo> call = youTubeApiInterface.getVideos(playlistId);
+        call.enqueue(new Callback<YouTubeVideo>() {
+            @Override
+            public void onResponse(Call<YouTubeVideo> call, Response<YouTubeVideo> response) {
+                loadingBar.setVisibility(View.INVISIBLE);
+                mAdapter.clear();
+                emptyText.setText(getString(R.string.no_videos));
+                if (response.body() != null) {
+                    mAdapter.addAll(YouTubeApiUtilities.getVideos(response.body()));
+                }
+            }
 
-        //Log.e(LOG_TAG, uriBuilder.toString());
-        return new VideosLoader(getContext(), uriBuilder.toString());
-    }
-
-    /**
-     * call when the fetching DataSend finish and add all the video to  the adpter
-     *
-     * @param loader
-     * @param videos
-     */
-    @Override
-    public void onLoadFinished(Loader<ArrayList<YouTubeVideo>> loader, ArrayList<YouTubeVideo> videos) {
-        loadingBar.setVisibility(View.INVISIBLE);
-        mAdapter.clear();
-        emptyText.setText(getString(R.string.no_videos));
-        if (videos != null && !videos.isEmpty()) {
-            mAdapter.addAll(videos);
-        }
-    }
-
-    /**
-     * call when restart the loader and clear the list
-     *
-     * @param loader
-     */
-    @Override
-    public void onLoaderReset(Loader<ArrayList<YouTubeVideo>> loader) {
-        mAdapter.clear();
+            @Override
+            public void onFailure(Call<YouTubeVideo> call, Throwable t) {
+                loadingBar.setVisibility(View.INVISIBLE);
+                emptyText.setText(getString(R.string.no_videos));
+            }
+        });
     }
 }

@@ -52,7 +52,7 @@ import com.example.mego.adas.model.SensorsValues;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Communicator;
 import com.example.mego.adas.utils.Constant;
-import com.example.mego.adas.api.directions.DirectionsUtilities;
+import com.example.mego.adas.api.directions.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.example.mego.adas.utils.NotificationUtils;
 import com.google.android.gms.common.ConnectionResult;
@@ -709,7 +709,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
             if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
                 MappingServices mappingServicesSend = new MappingServices(longitude, latitude, onConnectedFlag, onLocationChangedFlag);
                 mappingServicesDatabaseReference.setValue(mappingServicesSend);
-                DirectionsUtilities.AnimateMarker(marker, accidentPlace, false, mMap);
+                DirectionsApiUtilities.AnimateMarker(marker, accidentPlace, false, mMap);
                 cameraPosition = new CameraPosition.Builder()
                         .target(accidentPlace).zoom(zoom).tilt(tilt).bearing(bearing).build();
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));

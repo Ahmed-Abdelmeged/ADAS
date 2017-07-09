@@ -43,31 +43,31 @@ import java.util.List;
 /**
  * Class offer utility methods to location services
  */
-public final class DirectionsUtilities {
+public final class DirectionsApiUtilities {
 
-    private static final String LOG_TAG = DirectionsUtilities.class.getSimpleName();
+    private static final String LOG_TAG = DirectionsApiUtilities.class.getSimpleName();
 
     /**
      * helper method to check the response code form the direction API Response State
      */
     public static String checkResponseState(String statues) {
         switch (statues) {
-            case DirectionsAPIConstants.STATUES_INVALID_REQUEST:
-                return (DirectionsAPIConstants.STATUES_INVALID_REQUEST);
-            case DirectionsAPIConstants.STATUES_MAX_ROUTE_LENGTH_EXCEEDED:
-                return (DirectionsAPIConstants.STATUES_MAX_ROUTE_LENGTH_EXCEEDED);
-            case DirectionsAPIConstants.STATUES_NOT_FOUND:
-                return (DirectionsAPIConstants.STATUES_NOT_FOUND);
-            case DirectionsAPIConstants.STATUES_OVER_QUERY_LIMIT:
-                return (DirectionsAPIConstants.STATUES_OVER_QUERY_LIMIT);
-            case DirectionsAPIConstants.STATUES_REQUEST_DENIED:
-                return (DirectionsAPIConstants.STATUES_REQUEST_DENIED);
-            case DirectionsAPIConstants.STATUES_UNKNOWN_ERROR:
-                return (DirectionsAPIConstants.STATUES_UNKNOWN_ERROR);
-            case DirectionsAPIConstants.STATUES_ZERO_RESULTS:
-                return (DirectionsAPIConstants.STATUES_ZERO_RESULTS);
+            case DirectionsApiConstants.STATUES_INVALID_REQUEST:
+                return (DirectionsApiConstants.STATUES_INVALID_REQUEST);
+            case DirectionsApiConstants.STATUES_MAX_ROUTE_LENGTH_EXCEEDED:
+                return (DirectionsApiConstants.STATUES_MAX_ROUTE_LENGTH_EXCEEDED);
+            case DirectionsApiConstants.STATUES_NOT_FOUND:
+                return (DirectionsApiConstants.STATUES_NOT_FOUND);
+            case DirectionsApiConstants.STATUES_OVER_QUERY_LIMIT:
+                return (DirectionsApiConstants.STATUES_OVER_QUERY_LIMIT);
+            case DirectionsApiConstants.STATUES_REQUEST_DENIED:
+                return (DirectionsApiConstants.STATUES_REQUEST_DENIED);
+            case DirectionsApiConstants.STATUES_UNKNOWN_ERROR:
+                return (DirectionsApiConstants.STATUES_UNKNOWN_ERROR);
+            case DirectionsApiConstants.STATUES_ZERO_RESULTS:
+                return (DirectionsApiConstants.STATUES_ZERO_RESULTS);
             default:
-                return (DirectionsAPIConstants.STATUES_OK);
+                return (DirectionsApiConstants.STATUES_OK);
         }
     }
 

@@ -19,12 +19,12 @@
  * limitations under the License.
  */
 
-package com.example.mego.adas.api;
+package com.example.mego.adas.api.youtube;
 
 /**
  * the class have the constant of  youtube api json response
  */
-public class YoutubeAPI {
+public class YoutubeApiConstants {
 
     /**
      * part query parameter

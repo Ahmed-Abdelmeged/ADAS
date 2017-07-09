@@ -20,33 +20,34 @@
  */
 
 
-package com.example.mego.adas.api.directions.model;
+package com.example.mego.adas.api.youtube.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
-public class EndLocation_ {
-    @SerializedName("lat")
+public class ResourceId {
+
+    @SerializedName("kind")
     @Expose
-    private Double lat;
-    @SerializedName("lng")
+    private String kind;
+    @SerializedName("videoId")
     @Expose
-    private Double lng;
+    private String videoId;
 
-    public Double getLat() {
-        return lat;
+    public String getKind() {
+        return kind;
     }
 
-    public void setLat(Double lat) {
-        this.lat = lat;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
-    public Double getLng() {
-        return lng;
+    public String getVideoId() {
+        return videoId;
     }
 
-    public void setLng(Double lng) {
-        this.lng = lng;
+    public void setVideoId(String videoId) {
+        this.videoId = videoId;
     }
 }

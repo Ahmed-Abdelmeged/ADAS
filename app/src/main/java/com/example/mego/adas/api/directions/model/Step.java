@@ -30,13 +30,13 @@ public class Step {
 
     @SerializedName("distance")
     @Expose
-    private Distance_ distance;
+    private Distance distance;
     @SerializedName("duration")
     @Expose
-    private Duration_ duration;
+    private Duration duration;
     @SerializedName("end_location")
     @Expose
-    private EndLocation_ endLocation;
+    private EndLocation endLocation;
     @SerializedName("html_instructions")
     @Expose
     private String htmlInstructions;
@@ -45,7 +45,7 @@ public class Step {
     private Polyline polyline;
     @SerializedName("start_location")
     @Expose
-    private StartLocation_ startLocation;
+    private StartLocation startLocation;
     @SerializedName("travel_mode")
     @Expose
     private String travelMode;
@@ -53,27 +53,27 @@ public class Step {
     @Expose
     private String maneuver;
 
-    public Distance_ getDistance() {
+    public Distance getDistance() {
         return distance;
     }
 
-    public void setDistance(Distance_ distance) {
+    public void setDistance(Distance distance) {
         this.distance = distance;
     }
 
-    public Duration_ getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 
-    public void setDuration(Duration_ duration) {
+    public void setDuration(Duration duration) {
         this.duration = duration;
     }
 
-    public EndLocation_ getEndLocation() {
+    public EndLocation getEndLocation() {
         return endLocation;
     }
 
-    public void setEndLocation(EndLocation_ endLocation) {
+    public void setEndLocation(EndLocation endLocation) {
         this.endLocation = endLocation;
     }
 
@@ -93,11 +93,11 @@ public class Step {
         this.polyline = polyline;
     }
 
-    public StartLocation_ getStartLocation() {
+    public StartLocation getStartLocation() {
         return startLocation;
     }
 
-    public void setStartLocation(StartLocation_ startLocation) {
+    public void setStartLocation(StartLocation startLocation) {
         this.startLocation = startLocation;
     }
 

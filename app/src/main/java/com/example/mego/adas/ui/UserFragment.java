@@ -52,7 +52,7 @@ import com.example.mego.adas.model.MappingServices;
 import com.example.mego.adas.model.SensorsValues;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Constant;
-import com.example.mego.adas.api.directions.DirectionsUtilities;
+import com.example.mego.adas.api.directions.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.example.mego.adas.utils.NotificationUtils;
 import com.google.android.gms.common.ConnectionResult;
@@ -320,7 +320,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         userLongitude = location.getLongitude();
         userLatitude = location.getLatitude();
         if (userConnected == 1 && locationButtonClicked == 1) {
-            DirectionsUtilities.AnimateMarker(userMarker, accidentPlace, false, mMap);
+            DirectionsApiUtilities.AnimateMarker(userMarker, accidentPlace, false, mMap);
         }
 
     }
@@ -855,7 +855,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                         }
 
                         if (onLocationChangedFlag == 1) {
-                            DirectionsUtilities.AnimateMarker(marker, accidentPlace, false, mMap);
+                            DirectionsApiUtilities.AnimateMarker(marker, accidentPlace, false, mMap);
                             cameraPosition = new CameraPosition.Builder()
                                     .target(accidentPlace).zoom(zoom).bearing(bearing).tilt(tilt).build();
                             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));

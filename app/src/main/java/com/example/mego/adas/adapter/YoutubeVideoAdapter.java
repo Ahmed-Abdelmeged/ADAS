@@ -33,7 +33,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.mego.adas.R;
-import com.example.mego.adas.model.YouTubeVideo;
+import com.example.mego.adas.api.youtube.YouTubeApiUtilities;
+import com.example.mego.adas.api.youtube.model.Item;
+import com.example.mego.adas.api.youtube.model.YouTubeVideo;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import java.text.ParseException;
@@ -45,13 +47,13 @@ import java.util.Locale;
 /**
  * custom array adapter to view the list of videos
  */
-public class YoutubeVideoAdapter extends ArrayAdapter<YouTubeVideo> {
+public class YoutubeVideoAdapter extends ArrayAdapter<Item> {
 
     /**
      * Required public constructor
      */
-    public YoutubeVideoAdapter(Context context, ArrayList<YouTubeVideo> youTubeVideos) {
-        super(context, 0, youTubeVideos);
+    public YoutubeVideoAdapter(Context context, ArrayList<Item> items) {
+        super(context, 0, items);
     }
 
     @NonNull
@@ -74,15 +76,15 @@ public class YoutubeVideoAdapter extends ArrayAdapter<YouTubeVideo> {
         listView.setTag(holder);
 
         //get the current video object to extract DataSend from it
-        YouTubeVideo currentVideo = getItem(position);
+        Item currentVideo = getItem(position);
 
         //set the current video title
-        String title = currentVideo.getTitle();
+        String title = YouTubeApiUtilities.getVideoTitle(currentVideo);
         holder.videoTitle.setText(title);
 
 
         //get the publish date and convert it to date object
-        Date dateObject = fromISO8601(currentVideo.getPublishedAt());
+        Date dateObject = fromISO8601(YouTubeApiUtilities.getVideoPublishTime(currentVideo));
 
 
         //set the current video date
@@ -96,7 +98,7 @@ public class YoutubeVideoAdapter extends ArrayAdapter<YouTubeVideo> {
 
         //set the video Thumbnail photo
         Glide.with(holder.videoThumbnail.getContext())
-                .load(currentVideo.getImageUrl())
+                .load(YouTubeApiUtilities.getVideoImageUrl(currentVideo))
                 .into(holder.videoThumbnail);
 
         return listView;

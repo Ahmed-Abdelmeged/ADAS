@@ -20,19 +20,31 @@
  */
 
 
-package com.example.mego.adas.api.directions;
-
-import com.example.mego.adas.api.directions.model.Direction;
-
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
+package com.example.mego.adas.api.youtube;
 
 
-public interface DirectionsApiInterface {
-    @GET("maps/api/directions/json?key=AIzaSyDzUFC3PRm7vehzlCZdhoCxq2awhEY3sZ0")
-    Call<Direction> getDirections(
-            @Query("origin") String origin,
-            @Query("destination") String destination
-    );
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class YouTubeApiClient {
+
+    /**
+     * Base URl for google youtube api
+     */
+    private static final String BASE_URL = "https://www.googleapis.com/youtube/";
+
+    private static Retrofit retrofit = null;
+
+    /**
+     * Method to get a instance of retrofit
+     *
+     * @return retrofit instance
+     */
+    public static Retrofit getYoutubeApiClient() {
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create()).build();
+        }
+        return retrofit;
+    }
 }

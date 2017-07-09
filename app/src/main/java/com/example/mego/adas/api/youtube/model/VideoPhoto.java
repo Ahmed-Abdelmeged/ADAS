@@ -20,34 +20,45 @@
  */
 
 
-package com.example.mego.adas.api.directions.model;
+package com.example.mego.adas.api.youtube.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
-public class Distance_ {
+public class VideoPhoto {
 
-    @SerializedName("text")
+    @SerializedName("url")
     @Expose
-    private String text;
-    @SerializedName("value")
+    private String url;
+    @SerializedName("width")
     @Expose
-    private Integer value;
+    private Integer width;
+    @SerializedName("height")
+    @Expose
+    private Integer height;
 
-    public String getText() {
-        return text;
+    public String getUrl() {
+        return url;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public Integer getValue() {
-        return value;
+    public Integer getWidth() {
+        return width;
     }
 
-    public void setValue(Integer value) {
-        this.value = value;
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
     }
 }
