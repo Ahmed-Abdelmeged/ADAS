@@ -8,6 +8,5 @@
 /captures
 .externalNativeBuild
 /app/google-services.json
-**/node_modules/*
-**/.firebaserc
+/ADASFunctions/functions/node_modules
 
