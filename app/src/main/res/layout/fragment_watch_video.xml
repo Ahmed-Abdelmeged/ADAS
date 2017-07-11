@@ -28,6 +28,7 @@
             android:id="@+id/image2"
             android:layout_width="@dimen/watf_channel_logo_size"
             android:layout_height="@dimen/watf_channel_logo_size"
+            android:contentDescription="@string/accessibility_channel_logo"
             android:src="@drawable/car_profile_icon" />
 
 
@@ -38,9 +39,9 @@
             android:layout_marginLeft="6dp"
             android:layout_marginStart="6dp"
             android:layout_weight="1"
-            android:textSize="@dimen/watf_video_label"
             android:gravity="center_vertical"
             android:textColor="@android:color/white"
+            android:textSize="@dimen/watf_video_label"
             tools:text="Car Record 1 " />
 
         <LinearLayout
@@ -65,8 +66,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                tools:text="6:30pm"
                 android:textColor="@color/open_white"
+                tools:text="6:30pm"
                 tools:textSize="@dimen/watf_video_info" />
 
 

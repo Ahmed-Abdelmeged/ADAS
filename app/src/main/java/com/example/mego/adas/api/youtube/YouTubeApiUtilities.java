@@ -25,8 +25,13 @@ package com.example.mego.adas.api.youtube;
 
 import com.example.mego.adas.api.youtube.model.Item;
 import com.example.mego.adas.api.youtube.model.YouTubeVideo;
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public final class YouTubeApiUtilities {
 
@@ -82,5 +87,35 @@ public final class YouTubeApiUtilities {
      */
     public static String getVideoId(Item item) {
         return item.getSnippet().getResourceId().getVideoId();
+    }
+
+    /**
+     * return a DataSend object to parse it to extract the time and date
+     */
+    public static Date fromISO8601(String publishedDate) {
+        Date date = null;
+        ISO8601DateFormat dateFormat = new ISO8601DateFormat();
+        try {
+            date = dateFormat.parse(publishedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    /**
+     * Return the formatted date string (i.e. "Mar 3, 1984") from a Date object.
+     */
+    public static String formatDate(Date dateObject) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("LLL dd, yyyy", Locale.ENGLISH);
+        return dateFormat.format(dateObject);
+    }
+
+    /**
+     * Return the formatted date string (i.e. "4:30 PM") from a Date object.
+     */
+    public static String formatTime(Date dateObject) {
+        SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+        return timeFormat.format(dateObject);
     }
 }

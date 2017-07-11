@@ -36,18 +36,17 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.mego.adas.adapter.BluetoothDevicesAdapter;
 import com.example.mego.adas.application.MainActivity;
 import com.example.mego.adas.R;
-import com.example.mego.adas.adapter.BluetoothDevicesAdapter;
 
-import java.util.ArrayList;
 import java.util.Set;
 
 import static android.widget.Toast.makeText;
@@ -60,13 +59,13 @@ import static android.widget.Toast.makeText;
  * if it's a already paired devices using MAC address(Media Access Control)
  * then send the MAC address to the car Fragment as a bundle
  */
-public class ConnectFragment extends Fragment {
+public class ConnectFragment extends Fragment implements BluetoothDevicesAdapter.BluetoothDevicesAdapterOnClickHandler {
 
     /**
      * UI Element
      */
     private FloatingActionButton searchForNewDevices;
-    private ListView DevicesList;
+    private RecyclerView devicesRecycler;
     private Toast toast = null;
 
 
@@ -99,8 +98,6 @@ public class ConnectFragment extends Fragment {
      * Adapter for the devices list
      */
     private BluetoothDevicesAdapter bluetoothDevicesAdapter;
-    private ArrayList<String> bluetoothDevicesNamesList = new ArrayList<String>();
-
 
     public ConnectFragment() {
         // Required empty public constructor
@@ -118,7 +115,16 @@ public class ConnectFragment extends Fragment {
         //check if the device has a bluetooth or not
         //and show Toast message if it does't have
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        bluetoothDevicesAdapter = new BluetoothDevicesAdapter(getContext(), bluetoothDevicesNamesList);
+
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+
+        devicesRecycler.setLayoutManager(layoutManager);
+        devicesRecycler.setHasFixedSize(true);
+
+        bluetoothDevicesAdapter = new BluetoothDevicesAdapter(this);
+        devicesRecycler.setAdapter(bluetoothDevicesAdapter);
+
 
         if (mBluetoothAdapter == null) {
             if (toast != null) {
@@ -221,13 +227,13 @@ public class ConnectFragment extends Fragment {
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
 
                     if (device.getName() != null) {
-                        bluetoothDevicesAdapter.add(device.getName() + "\n" + device.getAddress());
+                        bluetoothDevicesAdapter.setDevice(device.getName() + "\n" + device.getAddress());
                     }
                 }
 
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 searchForNewDevices.setEnabled(true);
-                if (pairedDevices.size() == bluetoothDevicesAdapter.getCount()) {
+                if (pairedDevices.size() == bluetoothDevicesAdapter.getItemCount()) {
                     makeText(getContext(), getString(R.string.bluetooth_no_device_found), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -244,34 +250,14 @@ public class ConnectFragment extends Fragment {
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice bt : pairedDevices) {
                 //Get the device's name and the address
-                bluetoothDevicesAdapter.add(bt.getName() + "\n" + bt.getAddress());
+                bluetoothDevicesAdapter.setDevice(bt.getName() + "\n" + bt.getAddress());
             }
         } else {
             makeText(getContext(), R.string.no_paired_devices,
                     Toast.LENGTH_LONG).show();
         }
-
-        DevicesList.setAdapter(bluetoothDevicesAdapter);
-        DevicesList.setOnItemClickListener(bluetoothListClickListener);
     }
 
-    /**
-     * handle the click for the list view to get the MAC address
-     */
-    private AdapterView.OnItemClickListener bluetoothListClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
-            //Get the device MAC address , the last 17 char in the view
-            String info = (String) parent.getItemAtPosition(position);
-            String MACAddress = info.substring(info.length() - 17);
-
-            Intent connectIntent = new Intent(getContext(), MainActivity.class);
-            connectIntent.putExtra(EXTRA_DEVICE_ADDRESS, MACAddress);
-            startActivity(connectIntent);
-        }
-    };
 
     @Override
     public void onDestroyView() {
@@ -298,6 +284,16 @@ public class ConnectFragment extends Fragment {
      */
     private void initializeScreen(View view) {
         searchForNewDevices = (FloatingActionButton) view.findViewById(R.id.search_fab_button);
-        DevicesList = (ListView) view.findViewById(R.id.devices_list_listView);
+        devicesRecycler = (RecyclerView) view.findViewById(R.id.bluetooth_devices_recycler_view);
+    }
+
+    @Override
+    public void onClick(String address) {
+        //Get the device MAC address , the last 17 char in the view
+        String MACAddress = address.substring(address.length() - 17);
+
+        Intent connectIntent = new Intent(getContext(), MainActivity.class);
+        connectIntent.putExtra(EXTRA_DEVICE_ADDRESS, MACAddress);
+        startActivity(connectIntent);
     }
 }

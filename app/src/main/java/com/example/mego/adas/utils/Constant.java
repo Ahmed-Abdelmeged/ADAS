@@ -28,19 +28,9 @@ package com.example.mego.adas.utils;
 public final class Constant {
 
     /**
-     * key for get the video id key bundle extra
+     * Key for get teh video item bundle extra
      */
-    public static final String VIDEO_KEY = "video";
-
-    /**
-     * key for get the video published date key bundle extra
-     */
-    public static final String PUBLISHED_AT_KEY = "publishedAt";
-
-    /**
-     * key for get the video title key bundle extra
-     */
-    public static final String TITLE_KEY = "title";
+    public static final String KEY_ITEM_VIDEO = "item_video";
 
     /**
      * key for get the accident  title key bundle extra

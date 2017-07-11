@@ -9,16 +9,11 @@
     android:paddingTop="@dimen/fragment_main_padding_top"
     tools:context="com.example.mego.adas.ui.ConnectFragment">
 
-
-    <ListView
-        android:id="@+id/devices_list_listView"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/bluetooth_devices_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="12dp"
-        android:padding="16dp"
-        tools:listitem="@layout/item_device" />
+        android:padding="16dp" />
 
 
     <android.support.design.widget.FloatingActionButton

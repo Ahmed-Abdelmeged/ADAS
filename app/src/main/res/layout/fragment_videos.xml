@@ -5,6 +5,7 @@
     android:paddingBottom="6dp"
     android:paddingLeft="6dp"
     android:paddingRight="6dp"
+    android:background="@color/background_dark"
     android:paddingTop="@dimen/fragment_main_padding_top"
     tools:context="com.example.mego.adas.ui.VideosFragments">
 
@@ -17,15 +18,11 @@
         android:layout_centerInParent="true"
         android:visibility="invisible" />
 
-
-    <ListView
-        android:id="@+id/videos_listView"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/videos_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:divider="@android:color/white"
-        android:dividerHeight="10dp"
-        tools:listitem="@layout/youtube_video_list" />
+        android:clipToPadding="false" />
 
     <TextView
         android:id="@+id/empty_text_videos"

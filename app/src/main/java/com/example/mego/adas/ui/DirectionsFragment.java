@@ -35,6 +35,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +47,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -117,6 +118,9 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
     private ImageView stepsListButton;
     private LinearLayout mapView;
     private Toast toast;
+    private RecyclerView stepsRecyclerView;
+    private StepAdapter stepAdapter;
+
 
     /**
      * Tag fro the Log and debug
@@ -151,11 +155,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
     private boolean isEditTextVisible;
 
     /**
-     * Array list to hold the step information
-     */
-    ArrayList<Step> stepsArrayList = new ArrayList<>();
-
-    /**
      * Google Maps Objects
      */
     GoogleApiClient mGoogleApiClient;
@@ -177,13 +176,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      * PolyLine that will draw the car way
      */
     Polyline carWayPolyLine;
-
-    /**
-     * adapter for step list view
-     */
-    private StepAdapter mAdapter;
-
-    private ListView stepListView;
 
     /**
      * camera settings
@@ -231,8 +223,15 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         revealView.setVisibility(View.INVISIBLE);
 
         //set the adapter
-        mAdapter = new StepAdapter(getContext(), new ArrayList<Step>());
-        stepListView.setAdapter(mAdapter);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+
+        stepsRecyclerView.setLayoutManager(layoutManager);
+
+        stepsRecyclerView.setHasFixedSize(true);
+
+        stepAdapter = new StepAdapter();
+        stepsRecyclerView.setAdapter(stepAdapter);
 
         if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
             //set up the firebase
@@ -489,8 +488,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
 
     private void fetchDirectionsData() {
 
-        mAdapter.clear();
-        stepsArrayList.clear();
+        stepAdapter.clear();
 
         if (carWayPolyLine != null) {
             carWayPolyLine.remove();
@@ -522,7 +520,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                         distanceTextView.setText(DirectionsApiUtilities.getLegDistance(response.body()));
                         durationTextView.setText(DirectionsApiUtilities.getLegDuration(response.body()));
                         drawPolyline(DirectionsApiUtilities.getOverViewPolyLine(response.body()));
-                        mAdapter.addAll(DirectionsApiUtilities.getSteps(response.body()));
+                        stepAdapter.setSteps(DirectionsApiUtilities.getSteps(response.body()));
 
                         //Put the value in the firebase
                         mStepsDatabaseReference.push().setValue(DirectionsApiUtilities.getSteps(response.body()));
@@ -714,7 +712,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         durationTextView = (TextView) view.findViewById(R.id.duration_textView);
         destinationTextView = (TextView) view.findViewById(R.id.destination_textView);
 
-        stepListView = (ListView) view.findViewById(R.id.steps_listView);
+        stepsRecyclerView = (RecyclerView) view.findViewById(R.id.steps_recyclerView);
 
         mapView = (LinearLayout) view.findViewById(R.id.map_view);
     }

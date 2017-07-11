@@ -182,12 +182,10 @@
             android:background="@color/background_dark"
             android:visibility="gone">
 
-            <ListView
-                android:id="@+id/steps_listView"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/steps_recyclerView"
                 android:layout_width="match_parent"
-                tools:listitem="@layout/step_list"
                 android:layout_height="match_parent" />
-
 
         </LinearLayout>
     </FrameLayout>

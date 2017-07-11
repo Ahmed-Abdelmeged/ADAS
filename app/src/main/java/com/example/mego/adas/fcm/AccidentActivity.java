@@ -31,6 +31,8 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,12 +45,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mego.adas.adapter.StepAdapter;
 import com.example.mego.adas.api.directions.DirectionsApiClient;
 import com.example.mego.adas.api.directions.DirectionsApiInterface;
 import com.example.mego.adas.api.directions.model.Direction;
 import com.example.mego.adas.application.MainActivity;
 import com.example.mego.adas.R;
-import com.example.mego.adas.adapter.StepAdapter;
 import com.example.mego.adas.api.directions.DirectionsApiConstants;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.api.directions.model.Step;
@@ -99,7 +101,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
     private LinearLayout detailView;
     private ImageView stepsListButton;
     private LinearLayout mapView;
-    private ListView stepListView;
+    private RecyclerView stepsRecyclerView;
     private Toast toast;
 
 
@@ -113,12 +115,6 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
      */
     private double accidentLongitude;
     private double accidentLatitude;
-
-
-    /**
-     * Array list to hold the step information
-     */
-    ArrayList<Step> stepsArrayList = new ArrayList<>();
 
     /**
      * Google Maps Objects
@@ -139,11 +135,6 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
     Polyline carWayPolyLine;
 
     /**
-     * adapter for step list view
-     */
-    private StepAdapter mAdapter;
-
-    /**
      * camera settings
      */
     private float zoom = 0, bearing = 0, tilt = 0;
@@ -161,6 +152,8 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
     private boolean atAccidentLocation = true;
 
     private DirectionsApiInterface directionsApiInterface;
+
+    private StepAdapter stepAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,8 +182,15 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
         stepsListButton.setOnClickListener(this);
 
         //set the adapter
-        mAdapter = new StepAdapter(AccidentActivity.this, new ArrayList<Step>());
-        stepListView.setAdapter(mAdapter);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
+        stepsRecyclerView.setLayoutManager(layoutManager);
+
+        stepsRecyclerView.setHasFixedSize(true);
+
+        stepAdapter = new StepAdapter();
+        stepsRecyclerView.setAdapter(stepAdapter);
 
         if (!AuthenticationUtilities.isAvailableInternetConnection(this)) {
             showToast(getString(R.string.no_internet_connection));
@@ -438,7 +438,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
         durationTextView = (TextView) findViewById(R.id.duration_textView_accident_activity);
         destinationTextView = (TextView) findViewById(R.id.destination_textView_accident_activity);
 
-        stepListView = (ListView) findViewById(R.id.steps_listView_accident_activity);
+        stepsRecyclerView = (RecyclerView) findViewById(R.id.steps_recyclerView_accident_activity);
 
         mapView = (LinearLayout) findViewById(R.id.map_view_accident_activity);
     }
@@ -506,8 +506,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
 
     private void fetchDirectionsData() {
 
-        mAdapter.clear();
-        stepsArrayList.clear();
+        stepAdapter.clear();
 
         if (carWayPolyLine != null) {
             carWayPolyLine.remove();
@@ -536,7 +535,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
                         durationTextView.setText(DirectionsApiUtilities.getLegDuration(response.body()));
                         drawPolyline(DirectionsApiUtilities.getOverViewPolyLine(response.body()));
                         destinationTextView.setText(accidentLatitude + "," + accidentLongitude);
-                        mAdapter.addAll(DirectionsApiUtilities.getSteps(response.body()));
+                        stepAdapter.setSteps(DirectionsApiUtilities.getSteps(response.body()));
                     }
                 } else {
                     showToast(DirectionsApiUtilities.checkResponseState(response.body().getStatus()));

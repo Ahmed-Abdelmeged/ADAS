@@ -19,60 +19,82 @@
  * limitations under the License.
  */
 
+
 package com.example.mego.adas.adapter;
 
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.mego.adas.R;
 
 import java.util.ArrayList;
 
-/**
- * custom array adapter to view the list of bluetooth devices
- */
-public class BluetoothDevicesAdapter extends ArrayAdapter<String> {
+public class BluetoothDevicesAdapter extends RecyclerView.Adapter<BluetoothDevicesAdapter.BluetoothAdapterViewHolder> {
 
-    /**
-     * Required public constructor
-     */
-    public BluetoothDevicesAdapter(@NonNull Context context, ArrayList<String> devices) {
-        super(context, 0, devices);
-    }
+    private ArrayList<String> mDevices = new ArrayList<>();
 
-    @NonNull
+    private final BluetoothDevicesAdapterOnClickHandler mClickHandling;
+
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public BluetoothAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Context context = parent.getContext();
+        int layoutIdForListItem = R.layout.item_device;
+        LayoutInflater inflater = LayoutInflater.from(context);
+        boolean shouldAttachToParentImmediately = false;
 
-
-        //check if the view is created or not if not inflate new one
-        if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_device, parent, false);
-        }
-        //get a instance from the viewHolder class
-        ViewHolder holder = new ViewHolder();
-        holder.deviceName = (TextView) convertView.findViewById(R.id.device_name_textView);
-        convertView.setTag(holder);
-
-        //set the current device name
-        String deviceName = getItem(position);
-        if (deviceName != null) {
-            holder.deviceName.setText(deviceName);
-        }
-        return convertView;
+        View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
+        return new BluetoothAdapterViewHolder(view);
     }
 
-    /**
-     * View holder stores each of the component views inside the tag field of the Layout
-     */
-    private static class ViewHolder {
+    @Override
+    public void onBindViewHolder(BluetoothAdapterViewHolder holder, int position) {
+        holder.deviceName.setText(mDevices.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        if (mDevices == null) return 0;
+        return mDevices.size();
+    }
+
+    public interface BluetoothDevicesAdapterOnClickHandler {
+        void onClick(String address);
+    }
+
+    public BluetoothDevicesAdapter(BluetoothDevicesAdapterOnClickHandler bluetoothDevicesAdapterOnClickHandler) {
+        this.mClickHandling = bluetoothDevicesAdapterOnClickHandler;
+    }
+
+    public class BluetoothAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView deviceName;
+
+        private BluetoothAdapterViewHolder(View view) {
+            super(view);
+            deviceName = (TextView) view.findViewById(R.id.device_name_textView);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mDevices != null) {
+                mClickHandling.onClick(mDevices.get(getAdapterPosition()));
+            }
+        }
+    }
+
+    public void setDevice(String device) {
+        this.mDevices.add(device);
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        if (mDevices != null) {
+            this.mDevices.clear();
+            notifyDataSetChanged();
+        }
     }
 }

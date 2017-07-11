@@ -19,16 +19,16 @@
  * limitations under the License.
  */
 
+
 package com.example.mego.adas.adapter;
 
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,39 +38,27 @@ import com.example.mego.adas.utils.Constant;
 
 import java.util.ArrayList;
 
-/**
- * custom array adapter to view the list of steps
- */
-public class StepAdapter extends ArrayAdapter<Step> {
+public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepViewHolder> {
+    private ArrayList<Step> mSteps;
 
-    /**
-     * Required public constructor
-     */
-    public StepAdapter(Context context, ArrayList<Step> steps) {
-        super(context, 0, steps);
+
+    public StepAdapter() {
     }
 
-    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public StepViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Context context = parent.getContext();
+        int layoutIdForListItem = R.layout.step_list;
+        LayoutInflater inflater = LayoutInflater.from(context);
+        boolean shouldAttachToParentImmediately = false;
+        View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
+        return new StepViewHolder(view);
+    }
 
-        View listView = convertView;
-
-        //check if the view is created or not if not inflate new one
-        if (listView == null) {
-            listView = LayoutInflater.from(getContext()).inflate(R.layout.step_list, parent, false);
-        }
-
-        //get a instance from the viewHolder class
-        ViewHolder holder = new ViewHolder();
-        holder.instructionsTextView = (TextView) listView.findViewById(R.id.instructions_textView);
-        holder.distanceTextView = (TextView) listView.findViewById(R.id.step_distance_textView);
-        holder.directionImage = (ImageView) listView.findViewById(R.id.step_imageView_dir);
-        listView.setTag(holder);
-
-
+    @Override
+    public void onBindViewHolder(StepViewHolder holder, int position) {
         //get the current step to extract DataSend from it
-        Step currentStep = getItem(position);
+        Step currentStep = mSteps.get(position);
 
         //set the current step instructions
         String instructions = Html.fromHtml(currentStep.getHtmlInstructions()).toString();
@@ -83,9 +71,25 @@ public class StepAdapter extends ArrayAdapter<Step> {
 
         //set the direction VideoPhoto
         holder.directionImage.setImageResource(getCarDirection(instructions));
+    }
 
+    @Override
+    public int getItemCount() {
+        if (mSteps == null) return 0;
+        return mSteps.size();
+    }
 
-        return listView;
+    static class StepViewHolder extends RecyclerView.ViewHolder {
+        TextView instructionsTextView;
+        TextView distanceTextView;
+        ImageView directionImage;
+
+        private StepViewHolder(View view) {
+            super(view);
+            instructionsTextView = (TextView) view.findViewById(R.id.instructions_textView);
+            distanceTextView = (TextView) view.findViewById(R.id.step_distance_textView);
+            directionImage = (ImageView) view.findViewById(R.id.step_imageView_dir);
+        }
     }
 
     /**
@@ -100,15 +104,6 @@ public class StepAdapter extends ArrayAdapter<Step> {
         }
 
         return distance;
-    }
-
-    /**
-     * View holder stores each of the component views inside the tag field of the Layout
-     */
-    static class ViewHolder {
-        TextView instructionsTextView;
-        TextView distanceTextView;
-        ImageView directionImage;
     }
 
     /**
@@ -146,4 +141,17 @@ public class StepAdapter extends ArrayAdapter<Step> {
 
         return directionDrawableResourceId;
     }
+
+    public void setSteps(ArrayList<Step> steps) {
+        this.mSteps = steps;
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        if (mSteps != null) {
+            this.mSteps.clear();
+            notifyDataSetChanged();
+        }
+    }
+
 }

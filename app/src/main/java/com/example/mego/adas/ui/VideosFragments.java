@@ -26,18 +26,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.adapter.YoutubeVideoAdapter;
+import com.example.mego.adas.adapter.YouTubeVideosAdapter;
 import com.example.mego.adas.api.youtube.YouTubeApiClient;
 import com.example.mego.adas.api.youtube.YouTubeApiInterface;
 import com.example.mego.adas.api.youtube.YouTubeApiUtilities;
@@ -46,33 +45,29 @@ import com.example.mego.adas.api.youtube.model.YouTubeVideo;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.utils.Constant;
 
-import java.util.ArrayList;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.view.View.Y;
 
 /**
  * A simple {@link Fragment} subclass.
  * <p>
  * to show list of videos
  */
-public class VideosFragments extends Fragment {
+public class VideosFragments extends Fragment implements YouTubeVideosAdapter.YouTubeVideosAdapterOnClickHandler {
 
 
     /**
      * UI Elements
      */
-    private ListView videosListView;
     private ProgressBar loadingBar;
     private TextView emptyText;
+    private RecyclerView videosRecycler;
 
     /**
      * adapter for  video list view
      */
-    private YoutubeVideoAdapter mAdapter;
+    private YouTubeVideosAdapter youTubeVideosAdapter;
 
     /**
      * Tag for the log
@@ -91,13 +86,18 @@ public class VideosFragments extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_videos_fragments, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_videos, container, false);
         initializeScreen(rootView);
 
         //setup the adapter
-        mAdapter = new YoutubeVideoAdapter(getContext(), new ArrayList<Item>());
-        videosListView.setAdapter(mAdapter);
-        videosListView.setEmptyView(emptyText);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+
+        videosRecycler.setLayoutManager(layoutManager);
+        videosRecycler.setHasFixedSize(true);
+
+        youTubeVideosAdapter = new YouTubeVideosAdapter(this);
+        videosRecycler.setAdapter(youTubeVideosAdapter);
 
         //if the internet is work start the loader if not show toast message
         if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
@@ -109,7 +109,7 @@ public class VideosFragments extends Fragment {
         }
 
         //open a video fragment and shown it after the item in the list is clicked
-        videosListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+     /*   videosListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -120,11 +120,7 @@ public class VideosFragments extends Fragment {
 
                 //set the video information to the next fragment
                 Bundle args = new Bundle();
-
-                args.putString(Constant.VIDEO_KEY, YouTubeApiUtilities.getVideoId(currentVideo));
-                args.putString(Constant.TITLE_KEY, YouTubeApiUtilities.getVideoTitle(currentVideo));
-                args.putString(Constant.PUBLISHED_AT_KEY, YouTubeApiUtilities.getVideoPublishTime(currentVideo));
-
+                args.putSerializable(Constant.KEY_ITEM_VIDEO, currentVideo);
                 watchVideoFragment.setArguments(args);
 
                 getActivity().getSupportFragmentManager().beginTransaction()
@@ -133,7 +129,7 @@ public class VideosFragments extends Fragment {
                         .commit();
 
             }
-        });
+        });*/
 
 
         // Inflate the layout for this fragment
@@ -144,7 +140,7 @@ public class VideosFragments extends Fragment {
      * Link the UI Element with XML
      */
     private void initializeScreen(View view) {
-        videosListView = (ListView) view.findViewById(R.id.videos_listView);
+        videosRecycler = (RecyclerView) view.findViewById(R.id.videos_recycler_view);
         loadingBar = (ProgressBar) view.findViewById(R.id.loading_bar);
         emptyText = (TextView) view.findViewById(R.id.empty_text_videos);
     }
@@ -167,10 +163,10 @@ public class VideosFragments extends Fragment {
             @Override
             public void onResponse(Call<YouTubeVideo> call, Response<YouTubeVideo> response) {
                 loadingBar.setVisibility(View.INVISIBLE);
-                mAdapter.clear();
+                youTubeVideosAdapter.clear();
                 emptyText.setText(getString(R.string.no_videos));
                 if (response.body() != null) {
-                    mAdapter.addAll(YouTubeApiUtilities.getVideos(response.body()));
+                    youTubeVideosAdapter.setVideos(YouTubeApiUtilities.getVideos(response.body()));
                 }
             }
 
@@ -180,5 +176,22 @@ public class VideosFragments extends Fragment {
                 emptyText.setText(getString(R.string.no_videos));
             }
         });
+    }
+
+    @Override
+    public void onCLick(Item item) {
+        //get the current video
+
+        WatchVideoFragment watchVideoFragment = new WatchVideoFragment();
+
+        //set the video information to the next fragment
+        Bundle args = new Bundle();
+        args.putSerializable(Constant.KEY_ITEM_VIDEO, item);
+        watchVideoFragment.setArguments(args);
+
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, watchVideoFragment)
+                .addToBackStack(null)
+                .commit();
     }
 }

@@ -249,5 +249,10 @@
     <string name="bluetooth_please_wait">Please wait!</string>
     <string name="bluetooth_no_device_found">No devices found</string>
     <string name="bluetooth_access_location_required">Access Location must be allowed for bluetooth Search</string>
+    <string name="accessibility_bluetooth_device_logo">Device logo</string>
+
+    <!-- Videos fragment -->
+    <string name="accessibility_video_thumbnail">Video thumbnail</string>
+    <string name="accessibility_channel_logo">Channel logo</string>
 
 </resources>
