@@ -276,7 +276,9 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         startButton.setOnClickListener(this);
 
         if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
-            actionResolver();
+            if (userFragments.isAdded()) {
+                actionResolver();
+            }
         }
 
         //setup the map fragment
