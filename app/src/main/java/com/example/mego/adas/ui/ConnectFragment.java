@@ -41,6 +41,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mego.adas.adapter.BluetoothDevicesAdapter;
@@ -66,6 +67,7 @@ public class ConnectFragment extends Fragment implements BluetoothDevicesAdapter
      */
     private FloatingActionButton searchForNewDevices;
     private RecyclerView devicesRecycler;
+    private TextView emptyTextView;
     private Toast toast = null;
 
 
@@ -130,12 +132,15 @@ public class ConnectFragment extends Fragment implements BluetoothDevicesAdapter
             if (toast != null) {
                 toast.cancel();
             }
-            toast = Toast.makeText(getContext(), R.string.does_not_have_bluetooth, Toast.LENGTH_LONG);
-            toast.show();
-
+            if (connectFragment.isAdded()) {
+                toast = Toast.makeText(getContext(), R.string.does_not_have_bluetooth, Toast.LENGTH_LONG);
+                toast.show();
+                emptyTextView.setVisibility(View.VISIBLE);
+            }
         } else if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntentBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntentBluetooth, REQUEST_ENABLE_BT);
+            emptyTextView.setVisibility(View.VISIBLE);
         } else if (mBluetoothAdapter.isEnabled()) {
             PairedDevicesList();
         }
@@ -177,7 +182,9 @@ public class ConnectFragment extends Fragment implements BluetoothDevicesAdapter
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //permission granted!
                 } else {
-                    makeText(getContext(), getString(R.string.bluetooth_access_location_required), Toast.LENGTH_LONG).show();
+                    if (connectFragment.isAdded()) {
+                        makeText(getContext(), getString(R.string.bluetooth_access_location_required), Toast.LENGTH_LONG).show();
+                    }
                 }
         }
     }
@@ -249,12 +256,14 @@ public class ConnectFragment extends Fragment implements BluetoothDevicesAdapter
 
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice bt : pairedDevices) {
+                emptyTextView.setVisibility(View.INVISIBLE);
                 //Get the device's name and the address
                 bluetoothDevicesAdapter.setDevice(bt.getName() + "\n" + bt.getAddress());
             }
         } else {
             makeText(getContext(), R.string.no_paired_devices,
                     Toast.LENGTH_LONG).show();
+            emptyTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -285,6 +294,7 @@ public class ConnectFragment extends Fragment implements BluetoothDevicesAdapter
     private void initializeScreen(View view) {
         searchForNewDevices = (FloatingActionButton) view.findViewById(R.id.search_fab_button);
         devicesRecycler = (RecyclerView) view.findViewById(R.id.bluetooth_devices_recycler_view);
+        emptyTextView = (TextView) view.findViewById(R.id.empty_text_view_connect_fragment);
     }
 
     @Override

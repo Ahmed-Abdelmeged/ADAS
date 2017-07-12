@@ -30,8 +30,14 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface YouTubeApiInterface {
-    @GET("v3/playlistItems?part=snippet&maxResults=50&key=AIzaSyBKyxvJIHYfhjsvINFgF3fwvCiViQ5Ie7c")
+    @GET("v3/playlistItems?part=snippet&maxResults=10&key=AIzaSyBKyxvJIHYfhjsvINFgF3fwvCiViQ5Ie7c")
     Call<YouTubeVideo> getVideos(
             @Query("playlistId") String playlistId
+    );
+
+    @GET("v3/playlistItems?part=snippet&maxResults=10&key=AIzaSyBKyxvJIHYfhjsvINFgF3fwvCiViQ5Ie7c")
+    Call<YouTubeVideo> getMoreVideos(
+            @Query("playlistId") String playlistId,
+            @Query("pageToken") String nextPageToken
     );
 }

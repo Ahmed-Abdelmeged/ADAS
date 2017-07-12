@@ -143,6 +143,8 @@ public final class Constant {
     public static final String FIREBASE_USERS = "users";
     public static final String FIREBASE_USER_INFO = "userInfo";
 
+    public static final String FIREBASE_USER_PLAYLIST_ID = "playlistId";
+
 
     /**
      * Facebook Uri for the team

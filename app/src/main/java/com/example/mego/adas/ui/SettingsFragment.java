@@ -32,17 +32,32 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.mego.adas.R;
+import com.example.mego.adas.auth.AuthenticationUtilities;
+import com.example.mego.adas.auth.User;
+import com.example.mego.adas.utils.Constant;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class SettingsFragment extends Fragment {
+
+    /**
+     * Firebase objects
+     * to specific part of the database
+     */
+    private FirebaseDatabase mFirebaseDatabase;
+    static DatabaseReference playListIdDatabaseReference;
+    ValueEventListener playListIdValueEventListener;
 
 
     public SettingsFragment() {
@@ -55,6 +70,18 @@ public class SettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
+        //set up the firebase
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+        //get the current user uid
+        User currentUser = AuthenticationUtilities.getCurrentUser(getContext());
+        String uid = currentUser.getUserUid();
+
+        playListIdDatabaseReference = mFirebaseDatabase.getReference()
+                .child(Constant.FIREBASE_USERS)
+                .child(uid).child(Constant.FIREBASE_USER_INFO)
+                .child(Constant.FIREBASE_USER_PLAYLIST_ID);
+
         return rootView;
     }
 
@@ -178,6 +205,10 @@ public class SettingsFragment extends Fragment {
                 if (!(preference instanceof CheckBoxPreference)) {
                     String value = sharedPreferences.getString(preference.getKey(), "");
                     setPreferenceSummary(preference, value);
+
+                    /*SettingsFragment.playListIdDatabaseReference.setValue(sharedPreferences.
+                            getString(getString(R.string.settings_playlist_id_key),
+                                    getString(R.string.settings_playlist_id_default)));*/
                 }
             }
 

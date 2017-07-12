@@ -67,7 +67,7 @@ This a screen to make the car and mobile connection via Bluetooth to get the car
 * You can connect a previous connected car
 * You can search for new one to connect
 
-![Connect](http://i.imgur.com/V1DWD4O.png)
+![Connect](http://i.imgur.com/a416rYJ.png?1)
 
 ## Car
 This used when driving to show the user the car information like sensors , current location ..etc. It can also used to control the car like open the lights , the doors ..etc. And determine the car current location using google maps APIs and show in the application UI in real time and show the sensors reading in real time also. you can use it to disconnect the current car connection .It's upload the car data to our backend to use it in other areas in the application
@@ -107,7 +107,7 @@ This activity show the user old live streamed videos using Youtube API we integr
 it with our application to show the old videos as log for any event can happened
 and also if an accident happened. All videos saved in private playlist in youtube each user have his one playlist that he can change it form the app settings. The user also can view the video in the app without going to the youtube  app
 
-![Videos](http://i.imgur.com/kxTX7yj.png?)   
+![Videos](http://i.imgur.com/xdVU5ym.png?1)   
 
 Watch selected video
 

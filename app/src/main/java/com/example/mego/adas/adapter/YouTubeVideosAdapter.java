@@ -133,6 +133,11 @@ public class YouTubeVideosAdapter extends RecyclerView.Adapter<YouTubeVideosAdap
         notifyDataSetChanged();
     }
 
+    public void addVideos(ArrayList<Item> items) {
+        this.mItems.addAll(items);
+        notifyDataSetChanged();
+    }
+
     public void clear() {
         if (mItems != null) {
             this.mItems.clear();

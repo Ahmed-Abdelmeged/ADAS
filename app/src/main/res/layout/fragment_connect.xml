@@ -15,6 +15,15 @@
         android:layout_height="wrap_content"
         android:padding="16dp" />
 
+    <TextView
+        android:id="@+id/empty_text_view_connect_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/no_devices"
+        android:textColor="@android:color/white"
+        android:textSize="26sp"
+        android:visibility="invisible" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/search_fab_button"
