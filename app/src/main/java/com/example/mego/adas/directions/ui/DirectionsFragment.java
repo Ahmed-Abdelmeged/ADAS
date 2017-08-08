@@ -59,7 +59,7 @@ import com.example.mego.adas.directions.api.model.Direction;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.utils.AdasUtils;
-import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.Constants;
 import com.example.mego.adas.directions.api.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.google.android.gms.common.ConnectionResult;
@@ -643,39 +643,39 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
     private void setFirebaseReferences(String uid) {
         //the childes for the direction root
         mStartLocationDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_START_LOCATION);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_DIRECTIONS).child(Constants.FIREBASE_START_LOCATION);
 
         mGoingLocationDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_GOING_LOCATION);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_DIRECTIONS).child(Constants.FIREBASE_GOING_LOCATION);
 
         mCurrentLocationDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_CURRENT_LOCATION);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_DIRECTIONS).child(Constants.FIREBASE_CURRENT_LOCATION);
 
         mLegDistanceTextDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_LEG_DISTANCE_TEXT);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_DIRECTIONS).child(Constants.FIREBASE_LEG_DISTANCE_TEXT);
 
         mLegDurationTextDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_LEG_DURATION_TEXT);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_DIRECTIONS).child(Constants.FIREBASE_LEG_DURATION_TEXT);
 
         mOverViewPolylineDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_LEG_OVERVIEW_POLYLINE);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_DIRECTIONS).child(Constants.FIREBASE_LEG_OVERVIEW_POLYLINE);
 
         mStepsDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_DIRECTIONS).child(Constant.FIREBASE_STEPS);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_DIRECTIONS).child(Constants.FIREBASE_STEPS);
     }
 
 

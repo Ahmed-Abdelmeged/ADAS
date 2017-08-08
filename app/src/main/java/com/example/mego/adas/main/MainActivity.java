@@ -58,14 +58,13 @@ import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.NotAuthEntryActivity;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.auth.VerifyPhoneNumberActivity;
-import com.example.mego.adas.accidents.db.AccidentsDbHelper;
 import com.example.mego.adas.bluetooth.ConnectFragment;
 import com.example.mego.adas.directions.ui.DirectionsFragment;
 import com.example.mego.adas.car_advice_assistant.AdasSyncUtils;
 import com.example.mego.adas.user_info.EditUserInfoActivity;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Communicator;
-import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.Constants;
 import com.example.mego.adas.videos.ui.LiveStreamingFragment;
 import com.example.mego.adas.videos.ui.VideosFragments;
 import com.google.android.gms.maps.MapFragment;
@@ -85,7 +84,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static android.widget.Toast.makeText;
-import static com.example.mego.adas.utils.Constant.FIREBASE_USERS;
+import static com.example.mego.adas.utils.Constants.FIREBASE_USERS;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Communicator {
@@ -251,7 +250,7 @@ public class MainActivity extends AppCompatActivity
                 isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference()
                         .child(FIREBASE_USERS)
                         .child(mFirebaseAuth.getCurrentUser().getUid())
-                        .child(Constant.FIREBASE_IS_VERIFIED_PHONE);
+                        .child(Constants.FIREBASE_IS_VERIFIED_PHONE);
 
                 getPhoneVerificationState();
             }
@@ -382,7 +381,7 @@ public class MainActivity extends AppCompatActivity
 
                 //delete user accidents database
                 boolean isDeleted = getApplicationContext()
-                        .deleteDatabase(AccidentsDbHelper.DATABASE_NAME);
+                        .deleteDatabase("accidents.db");
 
                 Intent notAuthIntent = new Intent(MainActivity.this, NotAuthEntryActivity.class);
                 startActivity(notAuthIntent);
@@ -705,7 +704,7 @@ public class MainActivity extends AppCompatActivity
                             child(FIREBASE_USERS).child(uid);
 
                     mUsersImageDatabaseReference = mFirebaseDatabase.getReference().child(FIREBASE_USERS)
-                            .child(uid).child(Constant.FIREBASE_USER_IMAGE);
+                            .child(uid).child(Constants.FIREBASE_USER_IMAGE);
 
                     if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
                         getUserData(uid);
@@ -879,7 +878,7 @@ public class MainActivity extends AppCompatActivity
         mUserDeviceTokenDatabaseReference = mFirebaseDatabase.getReference()
                 .child(FIREBASE_USERS)
                 .child(mFirebaseAuth.getCurrentUser().getUid())
-                .child(Constant.FIREBASE_DEVICE_TOKEN);
+                .child(Constants.FIREBASE_DEVICE_TOKEN);
 
         if (deviceToken != null) {
             mUserDeviceTokenDatabaseReference.setValue(deviceToken);

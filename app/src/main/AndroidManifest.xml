@@ -54,10 +54,6 @@
         </service>
 
         <!-- Accident Content provider -->
-        <provider
-            android:name=".accidents.db.AccidentProvider"
-            android:authorities="com.example.mego.adas"
-            android:exported="false" />
 
         <!-- Id service -->
         <service android:name=".accidents.fcm.ADASFirebaseInstanceIdService">

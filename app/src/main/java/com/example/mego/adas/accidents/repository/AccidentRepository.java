@@ -20,7 +20,6 @@
  */
 
 
-
 package com.example.mego.adas.accidents.repository;
 
 import android.arch.lifecycle.LiveData;
@@ -48,6 +47,11 @@ public class AccidentRepository {
     public Completable insertAccidents(List<Accident> accidents) {
         return Completable.fromAction(() ->
                 AppDatabase.getDatabase(context).accidentDao().insertAllAccidents(accidents));
+    }
+
+    public Completable insertAccident(Accident accident) {
+        return Completable.fromAction(() ->
+                AppDatabase.getDatabase(context).accidentDao().insertAccident(accident));
     }
 
     public Completable deleteAccidents(List<Accident> accidents) {

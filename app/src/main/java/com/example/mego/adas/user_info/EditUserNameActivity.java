@@ -36,7 +36,7 @@ import android.widget.Toast;
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
-import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.Constants;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -75,8 +75,8 @@ public class EditUserNameActivity extends AppCompatActivity {
 
         User currentUser = AuthenticationUtilities.getCurrentUser(EditUserNameActivity.this);
         mUsersNameDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS).child(currentUser.getUserUid())
-                .child(Constant.FIREBASE_USER_NAME);
+                .child(Constants.FIREBASE_USERS).child(currentUser.getUserUid())
+                .child(Constants.FIREBASE_USER_NAME);
 
         saveNameButton.setOnClickListener(v -> {
             if (validateName()) {

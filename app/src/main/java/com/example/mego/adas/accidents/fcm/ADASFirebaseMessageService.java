@@ -33,7 +33,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.Constants;
 import com.example.mego.adas.utils.NotificationUtils;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -72,11 +72,11 @@ public class ADASFirebaseMessageService extends FirebaseMessagingService {
 
         //Check if the data contain a payload
         if (data.size() > 0) {
-            double longitude = Double.parseDouble(data.get(Constant.FCM_LONGITUDE));
-            double latitude = Double.parseDouble(data.get(Constant.FCM_LATITIDE));
-            boolean accidentState = Boolean.parseBoolean(data.get(Constant.FCM_STATE));
-            String title = data.get(Constant.FCM_TITLE);
-            String sound = data.get(Constant.FCM_SOUND);
+            double longitude = Double.parseDouble(data.get(Constants.FCM_LONGITUDE));
+            double latitude = Double.parseDouble(data.get(Constants.FCM_LATITIDE));
+            boolean accidentState = Boolean.parseBoolean(data.get(Constants.FCM_STATE));
+            String title = data.get(Constants.FCM_TITLE);
+            String sound = data.get(Constants.FCM_SOUND);
             sendAccidentNotification(this, longitude, latitude, accidentState, title);
         }
     }
@@ -131,8 +131,8 @@ public class ADASFirebaseMessageService extends FirebaseMessagingService {
      */
     private static PendingIntent contentIntent(Context context, double longitude, double latitude) {
         Intent startAccidentActivityIntent = new Intent(context, AccidentActivity.class);
-        startAccidentActivityIntent.putExtra(Constant.FCM_LONGITUDE_EXTRA, longitude);
-        startAccidentActivityIntent.putExtra(Constant.FCM_LATITUDE_EXTRA, latitude);
+        startAccidentActivityIntent.putExtra(Constants.FCM_LONGITUDE_EXTRA, longitude);
+        startAccidentActivityIntent.putExtra(Constants.FCM_LATITUDE_EXTRA, latitude);
         return PendingIntent.getActivity(
                 context,
                 ADAS_ACCIDENT_FCM_PENDING_INTENT_ID,

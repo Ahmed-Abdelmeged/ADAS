@@ -23,9 +23,9 @@
 package com.example.mego.adas.utils;
 
 /**
- * hold all the program Constant
+ * hold all the program Constants
  */
-public final class Constant {
+public final class Constants {
 
     /**
      * Key for get teh video item bundle extra
@@ -33,45 +33,9 @@ public final class Constant {
     public static final String KEY_ITEM_VIDEO = "item_video";
 
     /**
-     * key for get the accident  title key bundle extra
+     * key for get the accident id key bundle extra
      */
-    public static final String ACCIDENT_TITLE_KEY = "accident_title";
-
-    /**
-     * key for get the accident  longitude key bundle extra
-     */
-    public static final String ACCIDENT_LONGITUDE_KEY = "accident_longitude";
-
-    /**
-     * key for get the accident  latitude key bundle extra
-     */
-    public static final String ACCIDENT_LATITUDE_KEY = "accident_latitude";
-
-    /**
-     * key for get the accident  time key bundle extra
-     */
-    public static final String ACCIDENT_TIME_KEY = "accident_time";
-
-    /**
-     * key for get the accident  date key bundle extra
-     */
-    public static final String ACCIDENT_DATE_KEY = "accident_date";
-
-    /**
-     * Key for get the accident Uri key bundle extra
-     */
-    public static final String ACCIDENT_URI_KEY = "accident_uri";
-
-    /**
-     * Key for get th accident started in online of offline
-     */
-    public static final String ACCIDENT_START_MODE_KEY = "accident_start_mode";
-
-    /**
-     * Constants to determine the starting mode
-     */
-    public static final String ACCIDENT_MODE_OFFLINE = "accident_offline";
-    public static final String ACCIDENT_MODE_ONLINE = "accident_online";
+    public static final String ACCIDENT_ID_KEY = "accident_id";
 
     /**
      * Google Client API Key
@@ -79,7 +43,7 @@ public final class Constant {
     public static final String API_KEY = "AIzaSyBKyxvJIHYfhjsvINFgF3fwvCiViQ5Ie7c";
 
     /**
-     * directions Constant that get from the html instructions
+     * directions Constants that get from the html instructions
      * to determine the photo that will show in the list
      * and send the car direction vay bluetooth
      */
@@ -97,7 +61,7 @@ public final class Constant {
     public static final String DIRECTION_SHARP_LEFT = "Sharp left";
 
     /**
-     * Firebase database reference Constant for the directions
+     * Firebase database reference Constants for the directions
      */
     public static final String FIREBASE_DIRECTIONS = "directions";
 
@@ -113,18 +77,18 @@ public final class Constant {
     public static final String FIREBASE_STEPS = "steps";
 
     /**
-     * Firebase database reference Constant for the videos
+     * Firebase database reference Constants for the videos
      */
     public static final String FIREBASE_LIVE_STREAMING_VIDEO_ID = "liveStreamingVideoID";
 
 
     /**
-     * Constant to determine if there is a current streaming or not
+     * Constants to determine if there is a current streaming or not
      */
     public static final String LIVE_STREAMING_NO_LIVE_VIDEO = "no live video";
 
     /**
-     * Firebase database reference Constant for the car
+     * Firebase database reference Constants for the car
      */
     public static final String FIREBASE_CAR = "car";
 
@@ -155,18 +119,18 @@ public final class Constant {
 
 
     /**
-     * Constant for no live video
+     * Constants for no live video
      */
     public static final String NO_LIVE_VIDEO = "no live video";
 
     /**
-     * Constant for verify phone number
+     * Constants for verify phone number
      */
     public static final String FIREBASE_IS_VERIFIED_PHONE = "phoneVerified";
     public static final String FIREBASE_USER_PHONE = "phoneNumber";
 
     /**
-     * Constant for firebase storage user photo
+     * Constants for firebase storage user photo
      */
     public static final String FIREBASE_USER_IMAGE = "userImage";
 

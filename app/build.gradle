@@ -86,6 +86,7 @@ dependencies {
     compile "android.arch.lifecycle:extensions:$rootProject.arch_version"
     compile "android.arch.persistence.room:runtime:$rootProject.arch_version"
     annotationProcessor "android.arch.lifecycle:compiler:$rootProject.arch_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$rootProject.arch_version"
 
     //RX
     compile "io.reactivex.rxjava2:rxandroid:$rootProject.rxAndroid_version"

@@ -40,7 +40,7 @@ import android.widget.Toast;
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
-import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.Constants;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -75,9 +75,9 @@ public class SettingsFragment extends Fragment {
         String uid = currentUser.getUserUid();
 
         playListIdDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_USER_PLAYLIST_ID);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_USER_PLAYLIST_ID);
 
         return rootView;
     }

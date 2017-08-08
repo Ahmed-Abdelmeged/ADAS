@@ -50,7 +50,7 @@ import com.example.mego.adas.auth.User;
 import com.example.mego.adas.main.model.MappingServices;
 import com.example.mego.adas.main.model.SensorsValues;
 import com.example.mego.adas.utils.AdasUtils;
-import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.Constants;
 import com.example.mego.adas.directions.api.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.example.mego.adas.utils.NotificationUtils;
@@ -1050,45 +1050,45 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
      */
     private void getFirebaseObjectReferences(String uid) {
         carDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_CAR);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_CAR);
 
         //the childes for the direction root
         connectionStateDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_CONNECTION_STATE);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_CAR).child(Constants.FIREBASE_CONNECTION_STATE);
 
         accidentStateDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_ACCIDENT_STATE);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_CAR).child(Constants.FIREBASE_ACCIDENT_STATE);
 
         startStateStateDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_START_STATE);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_CAR).child(Constants.FIREBASE_START_STATE);
 
         lightsStateDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_LIGHTS_STATE);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_CAR).child(Constants.FIREBASE_LIGHTS_STATE);
 
         lockStateDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_LOCK_STATE);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_CAR).child(Constants.FIREBASE_LOCK_STATE);
 
         mappingServicesDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_MAPPING_SERVICES);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_CAR).child(Constants.FIREBASE_MAPPING_SERVICES);
 
         sensorsValuesDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO)
-                .child(Constant.FIREBASE_CAR).child(Constant.FIREBASE_SENSORES_VALUES);
+                .child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO)
+                .child(Constants.FIREBASE_CAR).child(Constants.FIREBASE_SENSORES_VALUES);
 
     }
 

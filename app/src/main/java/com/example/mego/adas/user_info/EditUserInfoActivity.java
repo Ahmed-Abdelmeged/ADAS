@@ -41,7 +41,7 @@ import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.utils.AdasUtils;
-import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.Constants;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -152,13 +152,13 @@ public class EditUserInfoActivity extends AppCompatActivity {
 
         //get instance for firebase objects
         mFirebaseStorage = FirebaseStorage.getInstance();
-        mUsersPhotosStorageReference = mFirebaseStorage.getReference().child(Constant.FIREBASE_USER_IMAGE)
+        mUsersPhotosStorageReference = mFirebaseStorage.getReference().child(Constants.FIREBASE_USER_IMAGE)
                 .child(user.getUserUid());
 
         //set up the firebase
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mUsersImageDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
-                .child(user.getUserUid()).child(Constant.FIREBASE_USER_IMAGE);
+        mUsersImageDatabaseReference = mFirebaseDatabase.getReference().child(Constants.FIREBASE_USERS)
+                .child(user.getUserUid()).child(Constants.FIREBASE_USER_IMAGE);
 
 
         //display current user image

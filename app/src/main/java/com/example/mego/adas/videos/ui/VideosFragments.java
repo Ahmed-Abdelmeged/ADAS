@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mego.adas.R;
+import com.example.mego.adas.utils.Constants;
 import com.example.mego.adas.videos.adapter.YouTubeVideosAdapter;
 import com.example.mego.adas.videos.api.YouTubeApiClient;
 import com.example.mego.adas.videos.api.YouTubeApiInterface;
@@ -43,7 +44,6 @@ import com.example.mego.adas.videos.api.YouTubeApiUtilities;
 import com.example.mego.adas.videos.api.model.Item;
 import com.example.mego.adas.videos.api.model.YouTubeVideo;
 import com.example.mego.adas.auth.AuthenticationUtilities;
-import com.example.mego.adas.utils.Constant;
 import com.example.mego.adas.utils.EndlessRecyclerViewScrollListener;
 
 import retrofit2.Call;
@@ -203,7 +203,7 @@ public class VideosFragments extends Fragment implements YouTubeVideosAdapter.Yo
 
         //set the video information to the next fragment
         Bundle args = new Bundle();
-        args.putSerializable(Constant.KEY_ITEM_VIDEO, item);
+        args.putSerializable(Constants.KEY_ITEM_VIDEO, item);
         watchVideoFragment.setArguments(args);
 
         getActivity().getSupportFragmentManager().beginTransaction()

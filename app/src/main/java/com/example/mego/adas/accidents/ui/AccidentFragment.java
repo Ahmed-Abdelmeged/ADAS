@@ -23,32 +23,26 @@
 package com.example.mego.adas.accidents.ui;
 
 
-import android.app.LoaderManager;
 import android.arch.lifecycle.LifecycleFragment;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.accidents.adapter.AccidentAdapter;
-import com.example.mego.adas.accidents.adapter.AccidentCursorAdapter;
+import com.example.mego.adas.accidents.adapter.AccidentAdapterRecycler;
+import com.example.mego.adas.accidents.adapter.AccidentClickCallBacks;
+import com.example.mego.adas.accidents.viewmodel.AccidentViewModel;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
-import com.example.mego.adas.accidents.db.AccidentsContract.AccidentsEntry;
 import com.example.mego.adas.accidents.db.entity.Accident;
-import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.Constants;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -56,6 +50,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,20 +59,22 @@ import java.util.ArrayList;
  * to show list of accidents
  */
 public class AccidentFragment extends LifecycleFragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        AccidentClickCallBacks {
 
     /**
      * UI Elements
      */
-    private ListView accidentsListView;
+    private RecyclerView accidentsRecycler;
     private ProgressBar loadingBar;
     private TextView emptyText;
 
     /**
      * adapter for accidents list
      */
-    private AccidentAdapter mAccidentAdapter;
+    private AccidentAdapterRecycler accidentAdapterRecycler;
     private AccidentFragment accidentFragment;
+    private AccidentViewModel viewModel;
+    private List<Accident> currentAccdeints = new ArrayList<>();
 
     /**
      * Firebase objects
@@ -88,18 +86,10 @@ public class AccidentFragment extends LifecycleFragment implements
 
     private ChildEventListener accidentsEventListener;
 
-    /**
-     * Identifier for the accident data loader
-     */
-    private static final int ACCIDENT_LOADER_ID = 2698;
-
-    private AccidentCursorAdapter mCursorAdapter;
-
 
     public AccidentFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,10 +98,14 @@ public class AccidentFragment extends LifecycleFragment implements
         initializeScreen(rootView);
 
         accidentFragment = (AccidentFragment) getFragmentManager().findFragmentById(R.id.fragment_container);
+        accidentAdapterRecycler = new AccidentAdapterRecycler(this);
+        viewModel = ViewModelProviders.of(this).get(AccidentViewModel.class);
 
-
-        accidentsListView.setAdapter(mAccidentAdapter);
-        accidentsListView.setEmptyView(emptyText);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
+                LinearLayoutManager.VERTICAL, false);
+        accidentsRecycler.setLayoutManager(layoutManager);
+        accidentsRecycler.setHasFixedSize(true);
+        accidentsRecycler.setAdapter(accidentAdapterRecycler);
 
         //set up the firebase
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -121,95 +115,36 @@ public class AccidentFragment extends LifecycleFragment implements
         String uid = currentUser.getUserUid();
 
         //get the references for the childes
-        accidentsDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
-                .child(uid).child(Constant.FIREBASE_USER_INFO).child(Constant.FIREBASE_ACCIDENTS);
+        accidentsDatabaseReference = mFirebaseDatabase.getReference().child(Constants.FIREBASE_USERS)
+                .child(uid).child(Constants.FIREBASE_USER_INFO).child(Constants.FIREBASE_ACCIDENTS);
 
         //if the internet is work start the loader if not show toast message
         if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
-            mAccidentAdapter = new AccidentAdapter(getContext(), new ArrayList<Accident>());
-            accidentsListView.setAdapter(mAccidentAdapter);
-            getAccidentsFromFromFirebase();
-            startAccidentDetailFragment();
+            if (accidentFragment.isAdded()) {
+                getAccidentsFromFromFirebase();
+            }
         } else {
-            mCursorAdapter = new AccidentCursorAdapter(getContext(), null);
-            accidentsListView.setAdapter(mCursorAdapter);
-
-            //Kick of the loader
-            getActivity().getLoaderManager().
-                    initLoader(ACCIDENT_LOADER_ID, null, AccidentFragment.this);
-
-            startAccidentDetailFragmentNoConnection();
+            viewModel.getAccidents().observe(this, accidents -> {
+                if (accidents != null) {
+                    emptyText.setVisibility(View.GONE);
+                    accidentAdapterRecycler.setAccidents(accidents);
+                } else {
+                    emptyText.setVisibility(View.VISIBLE);
+                }
+            });
         }
-
-        accidentsListView.setEmptyView(emptyText);
-
 
         // Inflate the layout for this fragment
         return rootView;
     }
 
-    /**
-     * Link the UI Element with XML
-     */
-    private void initializeScreen(View view) {
-        accidentsListView = view.findViewById(R.id.accident_listView);
-        loadingBar = view.findViewById(R.id.loading_bar_accident);
-        emptyText = view.findViewById(R.id.empty_text_accident);
-    }
-
-    /**
-     * Method to start the accident detail fragment with the accident details
-     * When an accident is pressed
-     */
-    private void startAccidentDetailFragment() {
-        accidentsListView.setOnItemClickListener((parent, view, position, id) -> {
-
-            //get the current accident
-            Accident currentAccident = mAccidentAdapter.getItem(position);
-            setAccidentDetails(currentAccident);
-        });
-    }
-
-    /**
-     * Method to start accident details fragment with no internet connection
-     */
-    private void startAccidentDetailFragmentNoConnection() {
-        accidentsListView.setOnItemClickListener((parent, view, position, id) -> {
-            AccidentDetailFragment accidentDetailFragment = new AccidentDetailFragment();
-
-            //set the accident information to the next fragment
-            Bundle args = new Bundle();
-            Uri currentAccidentUri = ContentUris.withAppendedId(AccidentsEntry.CONTENT_URI, id);
-
-            args.putParcelable(Constant.ACCIDENT_URI_KEY, currentAccidentUri);
-            args.putString(Constant.ACCIDENT_START_MODE_KEY, Constant.ACCIDENT_MODE_OFFLINE);
-
-            accidentDetailFragment.setArguments(args);
-
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, accidentDetailFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
-    }
-
-    /**
-     * Method to put the accident information and pass it as intent to the accident details fragment
-     */
-    private void setAccidentDetails(Accident currentAccident) {
+    @Override
+    public void onAccidentClick(String accidentID) {
         AccidentDetailFragment accidentDetailFragment = new AccidentDetailFragment();
-
         //set the accident information to the next fragment
         Bundle args = new Bundle();
-        args.putString(Constant.ACCIDENT_TITLE_KEY, currentAccident.getAccidentTitle());
-        args.putString(Constant.ACCIDENT_DATE_KEY, currentAccident.getDate());
-        args.putString(Constant.ACCIDENT_TIME_KEY, currentAccident.getTime());
-        args.putDouble(Constant.ACCIDENT_LONGITUDE_KEY, currentAccident.getAccidentLongitude());
-        args.putDouble(Constant.ACCIDENT_LATITUDE_KEY, currentAccident.getAccidentLatitude());
-        args.putString(Constant.ACCIDENT_START_MODE_KEY, Constant.ACCIDENT_MODE_ONLINE);
-
+        args.putString(Constants.ACCIDENT_ID_KEY, accidentID);
         accidentDetailFragment.setArguments(args);
-
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, accidentDetailFragment)
                 .addToBackStack(null)
@@ -220,19 +155,23 @@ public class AccidentFragment extends LifecycleFragment implements
      * Method to get th accidents form firebase
      */
     private void getAccidentsFromFromFirebase() {
+        loadingBar.setVisibility(View.VISIBLE);
         deleteAllAccidents();
         //initialize the child listener
         accidentsEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
-                    loadingBar.setVisibility(View.VISIBLE);
+                    emptyText.setVisibility(View.GONE);
                     Accident accident = dataSnapshot.getValue(Accident.class);
-                    insertAccident(accident, dataSnapshot.getKey());
-                    mAccidentAdapter.addAll(accident);
+                    accident.setAccidentId(dataSnapshot.getKey());
+                    viewModel.addAccident(accident);
+                    currentAccdeints.add(accident);
+                    accidentAdapterRecycler.addAccident(accident);
                     loadingBar.setVisibility(View.INVISIBLE);
                 } else {
                     loadingBar.setVisibility(View.INVISIBLE);
+                    emptyText.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -259,7 +198,6 @@ public class AccidentFragment extends LifecycleFragment implements
 
         //set a listener to the reference
         accidentsDatabaseReference.addChildEventListener(accidentsEventListener);
-
     }
 
     /**
@@ -267,75 +205,19 @@ public class AccidentFragment extends LifecycleFragment implements
      */
     private void deleteAllAccidents() {
         if (accidentFragment.isAdded()) {
-            int rowsDeleted = getActivity().getContentResolver()
-                    .delete(AccidentsEntry.CONTENT_URI, null, null);
+            if (currentAccdeints != null)
+                accidentAdapterRecycler.clearAccidents();
+            viewModel.deleteAccidents(currentAccdeints);
         }
     }
 
     /**
-     * Method to insert accident into the SQLite database
+     * Link the UI Element with XML
      */
-    private void insertAccident(Accident accident, String accidentID) {
-        //get data form accident object
-        String accidentTitle = accident.getAccidentTitle();
-        double accidentLongitude = accident.getAccidentLongitude();
-        double accidentLatitude = accident.getAccidentLatitude();
-        String accidentTime = accident.getTime();
-        String accidentDate = accident.getDate();
-
-        // Create a ContentValues object where column names are the keys,
-        ContentValues values = new ContentValues();
-        values.put(AccidentsEntry.COLUMN_ACCIDENT_LATITUDE, accidentLatitude);
-        values.put(AccidentsEntry.COLUMN_ACCIDENT_LONGITUDE, accidentLongitude);
-        values.put(AccidentsEntry.COLUMN_ACCIDENT_TITLE, accidentTitle);
-        values.put(AccidentsEntry.COLUMN_ACCIDENT_DATE, accidentDate);
-        values.put(AccidentsEntry.COLUMN_ACCIDENT_TIME, accidentTime);
-        values.put(AccidentsEntry.COLUMN_ACCIDENT_ID, accidentID);
-
-        // This is a NEW accident, so insert a new accident into the provider,
-        // returning the content URI for the new accident.
-        if (accidentFragment.isAdded()) {
-            Uri newUri = getActivity().getContentResolver().insert(AccidentsEntry.CONTENT_URI, values);
-            if (newUri == null) {
-                Toast.makeText(getContext(), "Error with saving accidents",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-
+    private void initializeScreen(View view) {
+        accidentsRecycler = view.findViewById(R.id.accident_recycler_view);
+        loadingBar = view.findViewById(R.id.loading_bar_accident);
+        emptyText = view.findViewById(R.id.empty_text_accident);
     }
 
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // Define a projection that specifies the columns from the table we care about.
-        String[] projection = {
-                AccidentsEntry._ID,
-                AccidentsEntry.COLUMN_ACCIDENT_LATITUDE,
-                AccidentsEntry.COLUMN_ACCIDENT_LONGITUDE,
-                AccidentsEntry.COLUMN_ACCIDENT_TITLE,
-                AccidentsEntry.COLUMN_ACCIDENT_DATE,
-                AccidentsEntry.COLUMN_ACCIDENT_TIME,
-                AccidentsEntry.COLUMN_ACCIDENT_ID};
-
-        // This loader will execute the ContentProvider's query method on a background thread
-        return new CursorLoader(getContext(),   // Parent activity context
-                AccidentsEntry.CONTENT_URI,   // Provider content URI to query
-                projection,             // Columns to include in the resulting Cursor
-                null,                   // No selection clause
-                null,                   // No selection arguments
-                null);                  // Default sort order
-
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        // Update {@link AccidentCursorAdapter} with this new cursor containing updated accident data
-        mCursorAdapter.swapCursor(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        // Callback called when the data needs to be deleted
-        mCursorAdapter.swapCursor(null);
-    }
 }

@@ -35,7 +35,7 @@ import android.widget.Toast;
 
 import com.example.mego.adas.main.MainActivity;
 import com.example.mego.adas.R;
-import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -125,9 +125,9 @@ public class SignInActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
 
                         isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference()
-                                .child(Constant.FIREBASE_USERS)
+                                .child(Constants.FIREBASE_USERS)
                                 .child(task.getResult().getUser().getUid())
-                                .child(Constant.FIREBASE_IS_VERIFIED_PHONE);
+                                .child(Constants.FIREBASE_IS_VERIFIED_PHONE);
 
                         getPhoneVerificationState();
                     }

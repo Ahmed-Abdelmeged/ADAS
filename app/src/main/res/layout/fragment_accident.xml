@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_dark"
     android:paddingBottom="6dp"
     android:paddingLeft="6dp"
     android:paddingRight="6dp"
@@ -18,14 +19,13 @@
         android:layout_centerInParent="true"
         android:visibility="invisible" />
 
-    <ListView
-        android:id="@+id/accident_listView"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/accident_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:divider="@android:color/white"
-        android:dividerHeight="5dp"
-        tools:listitem="@layout/accident_list" />
+        android:scrollbars="vertical"
+        tools:listitem="@layout/item_accident" />
 
     <TextView
         android:id="@+id/empty_text_accident"
@@ -35,6 +35,6 @@
         android:text="@string/no_accidents"
         android:textColor="@android:color/black"
         android:textSize="26sp"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
 </RelativeLayout>

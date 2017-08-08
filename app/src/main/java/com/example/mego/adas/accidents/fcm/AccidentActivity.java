@@ -51,7 +51,7 @@ import com.example.mego.adas.main.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.directions.api.DirectionsApiConstants;
 import com.example.mego.adas.auth.AuthenticationUtilities;
-import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.Constants;
 import com.example.mego.adas.directions.api.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.google.android.gms.common.ConnectionResult;
@@ -156,8 +156,8 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
 
         Intent intent = getIntent();
         if (intent != null) {
-            accidentLongitude = intent.getDoubleExtra(Constant.FCM_LONGITUDE_EXTRA, 0.0);
-            accidentLatitude = intent.getDoubleExtra(Constant.FCM_LATITUDE_EXTRA, 0.0);
+            accidentLongitude = intent.getDoubleExtra(Constants.FCM_LONGITUDE_EXTRA, 0.0);
+            accidentLatitude = intent.getDoubleExtra(Constants.FCM_LATITUDE_EXTRA, 0.0);
         }
 
         //get the current settings for the camera settings

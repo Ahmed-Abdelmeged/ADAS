@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.Constants;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,13 +60,13 @@ public class AboutFragment extends Fragment {
 
         //open the facebook account for the team member if the text view is pressed
         projectLeaderTextView.setOnClickListener(v ->
-                openFacebookIntent(Constant.FACEBOOK_URI_HUSSAM_MOSTAFA));
+                openFacebookIntent(Constants.FACEBOOK_URI_HUSSAM_MOSTAFA));
 
         androidDeveloperTextView.setOnClickListener(v ->
-                openFacebookIntent(Constant.FACEBOOK_URI_AHMED_ABD_ELMEGED));
+                openFacebookIntent(Constants.FACEBOOK_URI_AHMED_ABD_ELMEGED));
 
         computerVisionTextVeiw.setOnClickListener(v ->
-                openFacebookIntent(Constant.FACEBOOK_URI_DOAA_ELSHAZLY));
+                openFacebookIntent(Constants.FACEBOOK_URI_DOAA_ELSHAZLY));
 
 
         // Inflate the layout for this fragment

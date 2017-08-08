@@ -38,7 +38,7 @@ import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.auth.VerifyPhoneNumberActivity;
-import com.example.mego.adas.utils.Constant;
+import com.example.mego.adas.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -93,11 +93,11 @@ public class EditUserPhoneActivity extends AppCompatActivity {
 
         final User currentAuthUser = AuthenticationUtilities.getCurrentUser(EditUserPhoneActivity.this);
         mUsersPhoneNumberDatabaseReference = mFirebaseDatabase.getReference()
-                .child(Constant.FIREBASE_USERS).child(currentAuthUser.getUserUid())
-                .child(Constant.FIREBASE_USER_PHONE);
+                .child(Constants.FIREBASE_USERS).child(currentAuthUser.getUserUid())
+                .child(Constants.FIREBASE_USER_PHONE);
 
-        isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
-                .child(currentAuthUser.getUserUid()).child(Constant.FIREBASE_IS_VERIFIED_PHONE);
+        isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference().child(Constants.FIREBASE_USERS)
+                .child(currentAuthUser.getUserUid()).child(Constants.FIREBASE_IS_VERIFIED_PHONE);
 
         saveNumberPhoneButton.setOnClickListener(v -> {
             if (validatePhone()) {

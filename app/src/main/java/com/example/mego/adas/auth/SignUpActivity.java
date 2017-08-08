@@ -22,28 +22,19 @@
 package com.example.mego.adas.auth;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.utils.Constant;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.example.mego.adas.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -205,7 +196,7 @@ public class SignUpActivity extends AppCompatActivity {
                         Intent mainIntent = new Intent(SignUpActivity.this, VerifyPhoneNumberActivity.class);
                         //clear the application stack (clear all  former the activities)
                         mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        mainIntent.putExtra(Constant.VERIFY_NUMBER_INTENT_EXTRA_KEY,
+                        mainIntent.putExtra(Constants.VERIFY_NUMBER_INTENT_EXTRA_KEY,
                                 "+" + countryCodePicker.getSelectedCountryCode() + phoneNumber);
                         startActivity(mainIntent);
                         finish();

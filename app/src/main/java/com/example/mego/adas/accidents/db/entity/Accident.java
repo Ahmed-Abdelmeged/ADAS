@@ -24,6 +24,7 @@ package com.example.mego.adas.accidents.db.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 /**
@@ -48,9 +49,9 @@ public class Accident {
     /**
      * Required public constructor
      */
+    @Ignore
     public Accident() {
     }
-
 
     /**
      * Use the constructor to create new Accident
@@ -60,14 +61,16 @@ public class Accident {
      * @param accidentTitle
      * @param accidentLongitude
      * @param accidentLatitude
+     * @param accidentId
      */
     public Accident(String date, String time, String accidentTitle, double accidentLongitude,
-                    double accidentLatitude) {
+                    double accidentLatitude, String accidentId) {
         this.date = date;
         this.time = time;
         this.accidentTitle = accidentTitle;
         this.accidentLongitude = accidentLongitude;
         this.accidentLatitude = accidentLatitude;
+        this.accidentId = accidentId;
     }
 
     public String getDate() {

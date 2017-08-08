@@ -49,7 +49,7 @@ public class AuthenticationUtilities {
     private static final String USER_DEFAULT_LOCATION = null;
 
     /**
-     * Constant for the user uid that will store in the sharped preference to load user data in each fragment
+     * Constants for the user uid that will store in the sharped preference to load user data in each fragment
      */
     private static final String USER_UID = "user_uid";
     private static final String USER_NAME = "user_name";

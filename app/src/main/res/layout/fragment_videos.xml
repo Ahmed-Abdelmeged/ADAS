@@ -2,10 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_dark"
     android:paddingBottom="6dp"
     android:paddingLeft="6dp"
     android:paddingRight="6dp"
-    android:background="@color/background_dark"
     android:paddingTop="@dimen/fragment_main_padding_top"
     tools:context="com.example.mego.adas.videos.ui.VideosFragments">
 
@@ -22,7 +22,9 @@
         android:id="@+id/videos_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/youtube_video_list" />
 
     <TextView
         android:id="@+id/empty_text_videos"

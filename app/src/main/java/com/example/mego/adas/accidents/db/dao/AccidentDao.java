@@ -20,7 +20,6 @@
  */
 
 
-
 package com.example.mego.adas.accidents.db.dao;
 
 import android.arch.lifecycle.LiveData;
@@ -41,12 +40,15 @@ public interface AccidentDao {
     @Query("SELECT * FROM accidents")
     LiveData<List<Accident>> getAllAccidents();
 
-    @Query("select * from accidents where id = :accidentId")
+    @Query("SELECT * FROM accidents WHERE accidentId = :accidentId")
     LiveData<Accident> getAccident(String accidentId);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    long insertAllAccidents(List<Accident> accidents);
+    void insertAllAccidents(List<Accident> accidents);
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertAccident(Accident accident);
 
     @Delete
-    int[] deleteAccidents(List<Accident> accidents);
+    void deleteAccidents(List<Accident> accidents);
 }

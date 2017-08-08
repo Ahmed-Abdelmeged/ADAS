@@ -33,9 +33,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mego.adas.R;
+import com.example.mego.adas.utils.Constants;
 import com.example.mego.adas.videos.api.YouTubeApiUtilities;
 import com.example.mego.adas.videos.api.model.Item;
-import com.example.mego.adas.utils.Constant;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
@@ -67,7 +67,7 @@ public class WatchVideoFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         //get the video information from the other fragment
-        item = (Item) getArguments().getSerializable(Constant.KEY_ITEM_VIDEO);
+        item = (Item) getArguments().getSerializable(Constants.KEY_ITEM_VIDEO);
 
         View rootView = inflater.inflate(R.layout.fragment_watch_video, container, false);
         initializeScreen(rootView);
@@ -95,7 +95,7 @@ public class WatchVideoFragment extends Fragment {
             videoDateTextView.setText(date);
 
 
-            youTubePlayerFragment.initialize(Constant.API_KEY, new YouTubePlayer.OnInitializedListener() {
+            youTubePlayerFragment.initialize(Constants.API_KEY, new YouTubePlayer.OnInitializedListener() {
                 @Override
                 public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
 

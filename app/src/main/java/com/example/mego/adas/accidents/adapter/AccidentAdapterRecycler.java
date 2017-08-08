@@ -18,6 +18,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+
 package com.example.mego.adas.accidents.adapter;
 
 
@@ -32,6 +34,7 @@ import com.example.mego.adas.R;
 import com.example.mego.adas.accidents.db.entity.Accident;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * custom recycler view to view the list of accidents
@@ -64,7 +67,7 @@ public class AccidentAdapterRecycler extends RecyclerView.Adapter<AccidentAdapte
     public AccidentAdapterRecycler.AccidentViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
         Context context = viewGroup.getContext();
-        int layoutIdForListItem = R.layout.accident_list;
+        int layoutIdForListItem = R.layout.item_accident;
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
@@ -144,7 +147,7 @@ public class AccidentAdapterRecycler extends RecyclerView.Adapter<AccidentAdapte
     }
 
 
-    public void setAccidents(ArrayList<Accident> accidents) {
+    public void setAccidents(List<Accident> accidents) {
         accidentList.addAll(accidents);
         notifyDataSetChanged();
     }

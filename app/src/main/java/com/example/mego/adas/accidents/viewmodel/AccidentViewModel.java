@@ -20,7 +20,6 @@
  */
 
 
-
 package com.example.mego.adas.accidents.viewmodel;
 
 import android.app.Application;
@@ -40,7 +39,6 @@ import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 
-
 public class AccidentViewModel extends AndroidViewModel {
 
     private AccidentRepository repository;
@@ -50,7 +48,7 @@ public class AccidentViewModel extends AndroidViewModel {
         repository = new AccidentRepository(application);
     }
 
-    void addAccidents(List<Accident> accidents) {
+    public void addAccidents(List<Accident> accidents) {
         repository.insertAccidents(accidents)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -72,7 +70,29 @@ public class AccidentViewModel extends AndroidViewModel {
                 });
     }
 
-    void deleteAccidents(List<Accident> accidents) {
+    public void addAccident(Accident accident) {
+        repository.insertAccident(accident)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Timber.e("Accident inserted successfully");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e("Error inserting accident");
+                    }
+                });
+    }
+
+    public void deleteAccidents(List<Accident> accidents) {
         repository.deleteAccidents(accidents)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -94,11 +114,11 @@ public class AccidentViewModel extends AndroidViewModel {
                 });
     }
 
-    LiveData<List<Accident>> getAccidents() {
+    public LiveData<List<Accident>> getAccidents() {
         return repository.getAccidents();
     }
 
-    LiveData<Accident> getAccident(String accidentId) {
+    public LiveData<Accident> getAccident(String accidentId) {
         return repository.getAccident(accidentId);
     }
 }
