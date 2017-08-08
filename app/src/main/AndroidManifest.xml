@@ -40,13 +40,13 @@
             android:value="AIzaSyBKyxvJIHYfhjsvINFgF3fwvCiViQ5Ie7c" />
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".main.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
-            android:name=".sync.CarAdviceAssistantFirebaseJobService"
+            android:name=".car_advice_assistant.CarAdviceAssistantFirebaseJobService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
@@ -55,19 +55,19 @@
 
         <!-- Accident Content provider -->
         <provider
-            android:name=".db.AccidentProvider"
+            android:name=".accidents.db.AccidentProvider"
             android:authorities="com.example.mego.adas"
             android:exported="false" />
 
         <!-- Id service -->
-        <service android:name=".fcm.ADASFirebaseInstanceIdService">
+        <service android:name=".accidents.fcm.ADASFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
         <!-- Messaging service -->
-        <service android:name=".fcm.ADASFirebaseMessageService">
+        <service android:name=".accidents.fcm.ADASFirebaseMessageService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -126,45 +126,45 @@
             android:label="@string/verify_phone_number_label"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".user.EditUserInfoActivity"
+            android:name=".user_info.EditUserInfoActivity"
             android:label="@string/label_edit_account"
-            android:parentActivityName=".ui.MainActivity"
+            android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity" />
+                android:value=".main.MainActivity" />
         </activity>
         <activity
-            android:name=".user.EditUserNameActivity"
-            android:parentActivityName=".user.EditUserInfoActivity"
+            android:name=".user_info.EditUserNameActivity"
+            android:parentActivityName=".user_info.EditUserInfoActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".user.EditUserInfoActivity" />
+                android:value=".user_info.EditUserInfoActivity" />
         </activity>
         <activity
-            android:name=".user.EditUserPhoneActivity"
-            android:parentActivityName=".user.EditUserInfoActivity"
+            android:name=".user_info.EditUserPhoneActivity"
+            android:parentActivityName=".user_info.EditUserInfoActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".user.EditUserInfoActivity" />
+                android:value=".user_info.EditUserInfoActivity" />
         </activity>
         <activity
-            android:name=".user.EditUserLocationActivity"
-            android:parentActivityName=".user.EditUserInfoActivity"
+            android:name=".user_info.EditUserLocationActivity"
+            android:parentActivityName=".user_info.EditUserInfoActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".user.EditUserInfoActivity" />
+                android:value=".user_info.EditUserInfoActivity" />
         </activity>
         <activity
-            android:name=".user.EditUserPasswordActivity"
-            android:parentActivityName=".user.EditUserInfoActivity"
+            android:name=".user_info.EditUserPasswordActivity"
+            android:parentActivityName=".user_info.EditUserInfoActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".user.EditUserInfoActivity" />
+                android:value=".user_info.EditUserInfoActivity" />
         </activity>
         <activity
             android:name=".auth.ChangeCurrentNumber"
@@ -175,14 +175,14 @@
                 android:value=".auth.VerifyPhoneNumberActivity" />
         </activity>
         <activity
-            android:name=".fcm.AccidentActivity"
+            android:name=".accidents.fcm.AccidentActivity"
             android:label="@string/label_accident"
-            android:parentActivityName=".ui.MainActivity"
+            android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity" />
+                android:value=".main.MainActivity" />
 
         </activity>
     </application>

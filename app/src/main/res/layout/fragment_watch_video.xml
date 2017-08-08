@@ -6,7 +6,7 @@
     android:paddingLeft="6dp"
     android:paddingRight="6dp"
     android:paddingTop="@dimen/fragment_main_padding_top"
-    tools:context="com.example.mego.adas.ui.WatchVideoFragment">
+    tools:context="com.example.mego.adas.videos.ui.WatchVideoFragment">
 
     <FrameLayout
         android:id="@+id/watch_video_player"

@@ -6,7 +6,7 @@
     android:paddingLeft="6dp"
     android:paddingRight="6dp"
     android:paddingTop="@dimen/fragment_main_padding_top"
-    tools:context="com.example.mego.adas.ui.AccidentFragment">
+    tools:context="com.example.mego.adas.accidents.ui.AccidentFragment">
 
 
     <!-- progress bar visible at first and invisible when the accidents loaded -->

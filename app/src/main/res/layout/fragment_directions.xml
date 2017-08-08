@@ -6,7 +6,7 @@
     android:background="@color/background_dark"
     android:orientation="vertical"
     android:paddingTop="55dp"
-    tools:context="com.example.mego.adas.ui.DirectionsFragment">
+    tools:context="com.example.mego.adas.directions.ui.DirectionsFragment">
 
     <FrameLayout
         android:layout_width="wrap_content"

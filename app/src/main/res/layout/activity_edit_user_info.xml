@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:paddingBottom="16dp"
         android:paddingTop="16dp"
-        tools:context="com.example.mego.adas.user.EditUserInfoActivity">
+        tools:context="com.example.mego.adas.user_info.EditUserInfoActivity">
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="@dimen/fragment_settings_padding_top"
-    tools:context="com.example.mego.adas.ui.SettingsFragment">
+    tools:context="com.example.mego.adas.main.SettingsFragment">
 
 
 
     <fragment xmlns:tools="http://schemas.android.com/tools"
-        android:name="com.example.mego.adas.ui.SettingsFragment$adasPreferenceFragment"
+        android:name="com.example.mego.adas.main.SettingsFragment$adasPreferenceFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

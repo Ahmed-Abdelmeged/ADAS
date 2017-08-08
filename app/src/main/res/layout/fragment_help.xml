@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/background_dark"
     android:paddingTop="@dimen/fragment_settings_padding_top"
-    tools:context="com.example.mego.adas.ui.HelpFragment">
+    tools:context="com.example.mego.adas.main.HelpFragment">
 
 
     <android.support.v4.view.ViewPager

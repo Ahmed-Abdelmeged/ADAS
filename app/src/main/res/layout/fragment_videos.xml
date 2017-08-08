@@ -7,7 +7,7 @@
     android:paddingRight="6dp"
     android:background="@color/background_dark"
     android:paddingTop="@dimen/fragment_main_padding_top"
-    tools:context="com.example.mego.adas.ui.VideosFragments">
+    tools:context="com.example.mego.adas.videos.ui.VideosFragments">
 
     <!-- progress bar visible at first and invisible when the videos loaded -->
     <ProgressBar

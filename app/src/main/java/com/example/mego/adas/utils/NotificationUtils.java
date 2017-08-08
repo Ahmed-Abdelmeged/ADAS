@@ -34,10 +34,10 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
-import com.example.mego.adas.ui.MainActivity;
+import com.example.mego.adas.main.MainActivity;
 import com.example.mego.adas.R;
-import com.example.mego.adas.sync.AdasSyncTasks;
-import com.example.mego.adas.sync.CarAdviceAssistantIntentService;
+import com.example.mego.adas.car_advice_assistant.AdasSyncTasks;
+import com.example.mego.adas.car_advice_assistant.CarAdviceAssistantIntentService;
 
 /**
  * Utility class for creating ADAS notifications

@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:paddingBottom="8dp"
     android:paddingTop="@dimen/fragment_main_padding_top"
-    tools:context="com.example.mego.adas.ui.ConnectFragment">
+    tools:context="com.example.mego.adas.bluetooth.ConnectFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/bluetooth_devices_recycler_view"

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/background_dark"
     android:fillViewport="true"
-    tools:context="com.example.mego.adas.user.EditUserPhoneActivity">
+    tools:context="com.example.mego.adas.user_info.EditUserPhoneActivity">
 
 
     <LinearLayout

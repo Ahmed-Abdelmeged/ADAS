@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@color/background_dark"
         android:orientation="vertical"
-        tools:context="com.example.mego.adas.user.EditUserLocationActivity">
+        tools:context="com.example.mego.adas.user_info.EditUserLocationActivity">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/edit_user_location_toolBar"
