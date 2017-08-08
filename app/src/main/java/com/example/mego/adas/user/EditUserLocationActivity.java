@@ -47,11 +47,6 @@ import com.google.firebase.database.FirebaseDatabase;
 public class EditUserLocationActivity extends AppCompatActivity {
 
     /**
-     * Tag for the logs
-     */
-    private static final String LOG_TAG = EditUserLocationActivity.class.getSimpleName();
-
-    /**
      * UI Element
      */
     private EditText locationEditText;
@@ -82,20 +77,17 @@ public class EditUserLocationActivity extends AppCompatActivity {
         mUsersLocationDatabaseReference = mFirebaseDatabase.getReference()
                 .child(Constant.FIREBASE_USERS).child(currentUser.getUserUid()).child(Constant.FIREBASE_USER_LOCATION);
 
-        saveLocationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateLocation()) {
-                    if (AuthenticationUtilities.isAvailableInternetConnection(EditUserLocationActivity.this)) {
+        saveLocationButton.setOnClickListener(v -> {
+            if (validateLocation()) {
+                if (AuthenticationUtilities.isAvailableInternetConnection(EditUserLocationActivity.this)) {
 
-                        String location = locationEditText.getText().toString();
-                        mUsersLocationDatabaseReference.setValue(location);
-                        AuthenticationUtilities.setCurrentUserLocation(
-                                EditUserLocationActivity.this, location);
-                        finish();
-                    } else {
-                        showToast(getString(R.string.no_internet_connection));
-                    }
+                    String location = locationEditText.getText().toString();
+                    mUsersLocationDatabaseReference.setValue(location);
+                    AuthenticationUtilities.setCurrentUserLocation(
+                            EditUserLocationActivity.this, location);
+                    finish();
+                } else {
+                    showToast(getString(R.string.no_internet_connection));
                 }
             }
         });
@@ -130,11 +122,11 @@ public class EditUserLocationActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(drawable);
         getSupportActionBar().setTitle("");
 
-        locationEditText = (EditText) findViewById(R.id.location_editText_edit_location_activity);
+        locationEditText = findViewById(R.id.location_editText_edit_location_activity);
 
-        locationWrapper = (TextInputLayout) findViewById(R.id.location_wrapper_edit_location_activity);
+        locationWrapper = findViewById(R.id.location_wrapper_edit_location_activity);
 
-        saveLocationButton = (Button) findViewById(R.id.save_new_location_button);
+        saveLocationButton = findViewById(R.id.save_new_location_button);
     }
 
     /**

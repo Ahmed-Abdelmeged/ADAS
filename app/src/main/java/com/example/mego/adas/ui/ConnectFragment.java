@@ -69,7 +69,6 @@ public class ConnectFragment extends Fragment implements BluetoothDevicesAdapter
     private TextView emptyTextView;
     private Toast toast = null;
 
-
     /**
      * Return Intent extra (The device MAC address)
      */
@@ -155,17 +154,14 @@ public class ConnectFragment extends Fragment implements BluetoothDevicesAdapter
 
 
         //press the button to start search new Devices
-        searchForNewDevices.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mBluetoothAdapter != null) {
-                    searchForNewDevices.setEnabled(false);
-                    bluetoothDevicesAdapter.clear();
-                    PairedDevicesList();
-                    NewDevicesList();
-                } else {
-                    makeText(getContext(), R.string.does_not_have_bluetooth, Toast.LENGTH_LONG).show();
-                }
+        searchForNewDevices.setOnClickListener(v -> {
+            if (mBluetoothAdapter != null) {
+                searchForNewDevices.setEnabled(false);
+                bluetoothDevicesAdapter.clear();
+                PairedDevicesList();
+                NewDevicesList();
+            } else {
+                makeText(getContext(), R.string.does_not_have_bluetooth, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -291,9 +287,9 @@ public class ConnectFragment extends Fragment implements BluetoothDevicesAdapter
      * Link the layout element from XML to Java
      */
     private void initializeScreen(View view) {
-        searchForNewDevices = (FloatingActionButton) view.findViewById(R.id.search_fab_button);
-        devicesRecycler = (RecyclerView) view.findViewById(R.id.bluetooth_devices_recycler_view);
-        emptyTextView = (TextView) view.findViewById(R.id.empty_text_view_connect_fragment);
+        searchForNewDevices = view.findViewById(R.id.search_fab_button);
+        devicesRecycler = view.findViewById(R.id.bluetooth_devices_recycler_view);
+        emptyTextView = view.findViewById(R.id.empty_text_view_connect_fragment);
     }
 
     @Override

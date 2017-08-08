@@ -57,15 +57,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.TimeUnit;
 
+import timber.log.Timber;
+
 /**
  * Activity used for verify user phone number
  */
 public class VerifyPhoneNumberActivity extends AppCompatActivity {
-
-    /**
-     * Tag for the logs
-     */
-    private static final String LOG_TAG = VerifyPhoneNumberActivity.class.getSimpleName();
 
     /**
      * UI Element
@@ -145,13 +142,10 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
      * Method to start change phone number activity
      */
     private void startChangeCurrentNumber() {
-        changeNumberTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent changeCurrentNumber = new Intent(
-                        VerifyPhoneNumberActivity.this, ChangeCurrentNumber.class);
-                startActivity(changeCurrentNumber);
-            }
+        changeNumberTextView.setOnClickListener(v -> {
+            Intent changeCurrentNumber = new Intent(
+                    VerifyPhoneNumberActivity.this, ChangeCurrentNumber.class);
+            startActivity(changeCurrentNumber);
         });
     }
 
@@ -170,14 +164,14 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
                 // the verification complete and set the is phone auth to true
                 mVerificationInProgress = false;
-                Log.e(LOG_TAG, "success");
+                Timber.e("success");
                 linkEmailToPhoneNumber(phoneAuthCredential);
             }
 
             @Override
             public void onVerificationFailed(FirebaseException e) {
                 mVerificationInProgress = false;
-                Log.e(LOG_TAG, "failed");
+                Timber.e("failed");
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     pinCodeEditText.setText(null);
                     Toast.makeText(VerifyPhoneNumberActivity.this,
@@ -190,7 +184,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
 
             @Override
             public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                Log.e(LOG_TAG, "code send");
+                Timber.e("code send");
                 // Save verification ID and resending token
                 mVerificationId = verificationId;
                 mResendToken = forceResendingToken;
@@ -212,7 +206,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
      * Method to request that Firebase verify the user's phone number
      */
     private void startPhoneNumberVerification(String phoneNumber) {
-        Log.e(LOG_TAG, "start");
+        Timber.e("start");
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
                 60,                 // Timeout duration
@@ -239,7 +233,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
      */
     private void resendVerificationCode(String phoneNumber,
                                         PhoneAuthProvider.ForceResendingToken token) {
-        Log.e(LOG_TAG, "resend");
+        Timber.e("resend");
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
                 60,                 // Timeout duration
@@ -287,27 +281,21 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
      */
     private void startVerification() {
 
-        pinCodeEditText.setOnPinEnteredListener(new PinEntryEditText.OnPinEnteredListener() {
-            @Override
-            public void onPinEntered(CharSequence str) {
-                if (str.length() == 6) {
-                    continueVerifyingButton.setEnabled(true);
-                } else {
-                    continueVerifyingButton.setEnabled(false);
-                }
+        pinCodeEditText.setOnPinEnteredListener(str -> {
+            if (str.length() == 6) {
+                continueVerifyingButton.setEnabled(true);
+            } else {
+                continueVerifyingButton.setEnabled(false);
             }
         });
 
-        continueVerifyingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showProgressDialog();
-                String code = pinCodeEditText.getText().toString();
-                if (code.length() == 6) {
-                    verifyPhoneNumberWithCode(mVerificationId, code);
-                } else {
-                    hideProgressDialog();
-                }
+        continueVerifyingButton.setOnClickListener(v -> {
+            showProgressDialog();
+            String code = pinCodeEditText.getText().toString();
+            if (code.length() == 6) {
+                verifyPhoneNumberWithCode(mVerificationId, code);
+            } else {
+                hideProgressDialog();
             }
         });
     }
@@ -330,26 +318,20 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
      */
     private void linkEmailToPhoneNumber(final PhoneAuthCredential credential) {
         mFirebaseAuth.getCurrentUser().linkWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.e(LOG_TAG, "linking");
-                            hideProgressDialog();
-                            startApp();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Timber.e("linking");
+                        hideProgressDialog();
+                        startApp();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    hideProgressDialog();
-                    showErrorDialog("Invalid code.", INVALID_CODE_FLAG);
-                    pinCodeEditText.setText(null);
-                } else {
-                    hideProgressDialog();
-                    showErrorDialog(e.getLocalizedMessage(), INVALID_LINKING);
-                }
+                }).addOnFailureListener(e -> {
+            if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                hideProgressDialog();
+                showErrorDialog("Invalid code.", INVALID_CODE_FLAG);
+                pinCodeEditText.setText(null);
+            } else {
+                hideProgressDialog();
+                showErrorDialog(e.getLocalizedMessage(), INVALID_LINKING);
             }
         });
     }
@@ -358,52 +340,46 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
      * Method to start verification flow
      */
     private void startVerificationFlow() {
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                if (firebaseUser == null) {
-                    logOut();
-                    Intent mainIntent = new Intent(VerifyPhoneNumberActivity.this, NotAuthEntryActivity.class);
-                    //clear the application stack (clear all  former the activities)
-                    mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(mainIntent);
-                    finish();
-                } else {
-                    uid = firebaseUser.getUid();
-                    startChangeCurrentNumber();
-                    if (AuthenticationUtilities.isAvailableInternetConnection(VerifyPhoneNumberActivity.this)) {
-                        if (uid != null) {
-                            isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
-                                    .child(uid).child(Constant.FIREBASE_IS_VERIFIED_PHONE);
+        mAuthStateListener = firebaseAuth -> {
+            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+            if (firebaseUser == null) {
+                logOut();
+                Intent mainIntent = new Intent(VerifyPhoneNumberActivity.this, NotAuthEntryActivity.class);
+                //clear the application stack (clear all  former the activities)
+                mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(mainIntent);
+                finish();
+            } else {
+                uid = firebaseUser.getUid();
+                startChangeCurrentNumber();
+                if (AuthenticationUtilities.isAvailableInternetConnection(VerifyPhoneNumberActivity.this)) {
+                    if (uid != null) {
+                        isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
+                                .child(uid).child(Constant.FIREBASE_IS_VERIFIED_PHONE);
 
-                            phoneNumberDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
-                                    .child(uid).child(Constant.FIREBASE_USER_PHONE);
+                        phoneNumberDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
+                                .child(uid).child(Constant.FIREBASE_USER_PHONE);
 
-                            verificationStatesCallbacks();
-                            if (currentNumber == null) {
-                                getUserPhoneNumber();
-                            } else {
-                                userPhoneNumber = currentNumber;
-                                startPhoneNumberVerification(userPhoneNumber);
-                            }
-                            startVerification();
-
-                            resendTextView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (userPhoneNumber != null) {
-                                        resendVerificationCode(userPhoneNumber, mResendToken);
-                                    }
-                                }
-                            });
+                        verificationStatesCallbacks();
+                        if (currentNumber == null) {
+                            getUserPhoneNumber();
                         } else {
-                            logOut();
+                            userPhoneNumber = currentNumber;
+                            startPhoneNumberVerification(userPhoneNumber);
                         }
+                        startVerification();
+
+                        resendTextView.setOnClickListener(v -> {
+                            if (userPhoneNumber != null) {
+                                resendVerificationCode(userPhoneNumber, mResendToken);
+                            }
+                        });
                     } else {
-                        Toast.makeText(VerifyPhoneNumberActivity.this, R.string.error_message_failed_sign_in_no_network,
-                                Toast.LENGTH_SHORT).show();
+                        logOut();
                     }
+                } else {
+                    Toast.makeText(VerifyPhoneNumberActivity.this, R.string.error_message_failed_sign_in_no_network,
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -445,19 +421,16 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
         builder.setMessage(error);
         builder.setTitle(error);
 
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null) {
-                    if (closeAppFlag == INVALID_CODE_FLAG) {
-                        dialog.dismiss();
-                    } else if (closeAppFlag == INVALID_LINKING) {
-                        Intent mainIntent = new Intent(VerifyPhoneNumberActivity.this, NotAuthEntryActivity.class);
-                        //clear the application stack (clear all  former the activities)
-                        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(mainIntent);
-                        finish();
-                    }
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            if (dialog != null) {
+                if (closeAppFlag == INVALID_CODE_FLAG) {
+                    dialog.dismiss();
+                } else if (closeAppFlag == INVALID_LINKING) {
+                    Intent mainIntent = new Intent(VerifyPhoneNumberActivity.this, NotAuthEntryActivity.class);
+                    //clear the application stack (clear all  former the activities)
+                    mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(mainIntent);
+                    finish();
                 }
             }
         });
@@ -509,13 +482,13 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
      * Link the layout element from XML to Java
      */
     private void initializeScreen() {
-        resendTextView = (TextView) findViewById(R.id.resend_code_textView);
-        changeNumberTextView = (TextView) findViewById(R.id.change_phone_number_textView);
-        currentPhoneNumber = (TextView) findViewById(R.id.current_phone_number_textView);
+        resendTextView = findViewById(R.id.resend_code_textView);
+        changeNumberTextView = findViewById(R.id.change_phone_number_textView);
+        currentPhoneNumber = findViewById(R.id.current_phone_number_textView);
 
-        continueVerifyingButton = (Button) findViewById(R.id.continue_verifying_button);
+        continueVerifyingButton = findViewById(R.id.continue_verifying_button);
 
-        pinCodeEditText = (PinEntryEditText) findViewById(R.id.pin_code_editText);
+        pinCodeEditText = findViewById(R.id.pin_code_editText);
 
         continueVerifyingButton.setEnabled(false);
     }

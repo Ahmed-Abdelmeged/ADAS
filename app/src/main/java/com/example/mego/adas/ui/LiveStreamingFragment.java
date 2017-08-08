@@ -57,11 +57,6 @@ import com.google.firebase.database.ValueEventListener;
 public class LiveStreamingFragment extends Fragment {
 
     /**
-     * Tag fro the Log and debug
-     */
-    private static final String LOG_TAG = LiveStreamingFragment.class.getSimpleName();
-
-    /**
      * UI Element
      */
     private TextView noLiveVideoTextView;
@@ -198,13 +193,13 @@ public class LiveStreamingFragment extends Fragment {
      * Line the UI Element with the UI
      */
     private void initializeScreen(View view) {
-        noLiveVideoTextView = (TextView) view.findViewById(R.id.no_live_streaming_video_textView);
+        noLiveVideoTextView = view.findViewById(R.id.no_live_streaming_video_textView);
 
-        liveStreamingImageView = (ImageView) view.findViewById(R.id.live_streaming_image_view);
+        liveStreamingImageView = view.findViewById(R.id.live_streaming_image_view);
 
-        liveVideoContainer = (FrameLayout) view.findViewById(R.id.watch_live_video_player);
+        liveVideoContainer = view.findViewById(R.id.watch_live_video_player);
 
-        loadingBar = (ProgressBar) view.findViewById(R.id.loading_streaming_indicator_progress);
+        loadingBar = view.findViewById(R.id.loading_streaming_indicator_progress);
     }
 
 }

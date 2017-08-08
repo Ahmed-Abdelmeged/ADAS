@@ -73,11 +73,6 @@ public class VideosFragments extends Fragment implements YouTubeVideosAdapter.Yo
      */
     private YouTubeVideosAdapter youTubeVideosAdapter;
 
-    /**
-     * Tag for the log
-     */
-    private static final String LOG_TAG = VideosFragments.class.getSimpleName();
-
     private YouTubeApiInterface youTubeApiInterface;
     private EndlessRecyclerViewScrollListener scrollListener;
     private String playlistId;
@@ -147,9 +142,9 @@ public class VideosFragments extends Fragment implements YouTubeVideosAdapter.Yo
      * Link the UI Element with XML
      */
     private void initializeScreen(View view) {
-        videosRecycler = (RecyclerView) view.findViewById(R.id.videos_recycler_view);
-        loadingBar = (ProgressBar) view.findViewById(R.id.loading_bar);
-        emptyText = (TextView) view.findViewById(R.id.empty_text_videos);
+        videosRecycler = view.findViewById(R.id.videos_recycler_view);
+        loadingBar = view.findViewById(R.id.loading_bar);
+        emptyText = view.findViewById(R.id.empty_text_videos);
     }
 
     private void fetchVideosData() {

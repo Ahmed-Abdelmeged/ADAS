@@ -36,15 +36,12 @@ import android.util.Log;
 
 import com.example.mego.adas.db.AccidentsContract.AccidentsEntry;
 
+import timber.log.Timber;
+
 /**
  * {@link ContentProvider} for ADAS app
  */
 public class AccidentProvider extends ContentProvider {
-
-    /**
-     * Tag for debugging
-     */
-    private static final String LOG_TAG = AccidentProvider.class.getSimpleName();
 
     /**
      * URI matcher code for the content URI for the accidents table
@@ -211,7 +208,7 @@ public class AccidentProvider extends ContentProvider {
         //Insert a new accident with the given values
         long id = database.insert(AccidentsEntry.TABLE_NAME, null, values);
         if (id == -1) {
-            Log.e(LOG_TAG, "Failed to insert row for " + uri);
+            Timber.e("Failed to insert row for " + uri);
             return null;
         }
 

@@ -99,11 +99,6 @@ public class MainActivity extends AppCompatActivity
     BluetoothAdapter mBluetoothAdapter;
 
     /**
-     * Tag for the log (Debugging)
-     */
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
-
-    /**
      * request to enable bluetooth form activity result
      */
     private static final int REQUEST_ENABLE_BT = 1;
@@ -193,18 +188,18 @@ public class MainActivity extends AppCompatActivity
         deviceToken = FirebaseInstanceId.getInstance().getToken();
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        backgroundImageView = (ImageView) findViewById(R.id.start_program_imageView);
+        backgroundImageView = findViewById(R.id.start_program_imageView);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_main);
@@ -282,23 +277,20 @@ public class MainActivity extends AppCompatActivity
      * Link the UI Element with XML
      */
     private void initializeScreen(View view) {
-        userNameTextView = (TextView) view.findViewById(R.id.header_user_name);
+        userNameTextView = view.findViewById(R.id.header_user_name);
 
-        userEmailTextView = (TextView) view.findViewById(R.id.header_user_email);
+        userEmailTextView = view.findViewById(R.id.header_user_email);
 
-        userImageView = (ImageView) view.findViewById(R.id.header_user_imageView);
+        userImageView = view.findViewById(R.id.header_user_imageView);
     }
 
     /**
      * Method to open edit account activity
      */
     private void openEditAccountActivity() {
-        userImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent editAccountIntent = new Intent(MainActivity.this, EditUserInfoActivity.class);
-                startActivity(editAccountIntent);
-            }
+        userImageView.setOnClickListener(v -> {
+            Intent editAccountIntent = new Intent(MainActivity.this, EditUserInfoActivity.class);
+            startActivity(editAccountIntent);
         });
     }
 
@@ -577,22 +569,6 @@ public class MainActivity extends AppCompatActivity
         toast = Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT);
         toast.show();
     }
-
-
-    /**
-     * call when the back button is pressed
-     */
-   /* @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-
-            //show the user a dialog notifies the user want to close the app
-            showLoseConnectionDialog(getResources().getString(R.string.are_you_sure_to_close_the_app));
-            return false;
-        }
-        return super.onKeyDown(keyCode, event);
-    }*/
-
 
     /**
      * create a new class for connect thread

@@ -48,11 +48,6 @@ import com.google.firebase.database.FirebaseDatabase;
 public class EditUserNameActivity extends AppCompatActivity {
 
     /**
-     * Tag for the logs
-     */
-    private static final String LOG_TAG = EditUserNameActivity.class.getSimpleName();
-
-    /**
      * UI Element
      */
     private EditText nameEditText;
@@ -84,19 +79,16 @@ public class EditUserNameActivity extends AppCompatActivity {
                 .child(Constant.FIREBASE_USERS).child(currentUser.getUserUid())
                 .child(Constant.FIREBASE_USER_NAME);
 
-        saveNameButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateName()) {
-                    if (AuthenticationUtilities.isAvailableInternetConnection(EditUserNameActivity.this)) {
-                        String name = nameEditText.getText().toString();
-                        mUsersNameDatabaseReference.setValue(name);
-                        AuthenticationUtilities.setCurrentUserName(
-                                EditUserNameActivity.this, name);
-                        finish();
-                    } else {
-                        showToast(getString(R.string.no_internet_connection));
-                    }
+        saveNameButton.setOnClickListener(v -> {
+            if (validateName()) {
+                if (AuthenticationUtilities.isAvailableInternetConnection(EditUserNameActivity.this)) {
+                    String name = nameEditText.getText().toString();
+                    mUsersNameDatabaseReference.setValue(name);
+                    AuthenticationUtilities.setCurrentUserName(
+                            EditUserNameActivity.this, name);
+                    finish();
+                } else {
+                    showToast(getString(R.string.no_internet_connection));
                 }
             }
         });
@@ -108,7 +100,7 @@ public class EditUserNameActivity extends AppCompatActivity {
      */
     private void initializeScreen() {
         //to show white up button in the activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.edit_user_name_toolBar);
+        Toolbar toolbar = findViewById(R.id.edit_user_name_toolBar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Drawable drawable = toolbar.getNavigationIcon();
@@ -116,11 +108,11 @@ public class EditUserNameActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(drawable);
         getSupportActionBar().setTitle("");
 
-        nameEditText = (EditText) findViewById(R.id.name_editText_edit_name_activity);
+        nameEditText = findViewById(R.id.name_editText_edit_name_activity);
 
-        nameWrapper = (TextInputLayout) findViewById(R.id.name_wrapper_edit_name_activity);
+        nameWrapper = findViewById(R.id.name_wrapper_edit_name_activity);
 
-        saveNameButton = (Button) findViewById(R.id.save_new_name_button);
+        saveNameButton = findViewById(R.id.save_new_name_button);
     }
 
     /**

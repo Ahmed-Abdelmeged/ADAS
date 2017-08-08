@@ -63,11 +63,6 @@ import java.util.HashMap;
 public class SignUpActivity extends AppCompatActivity {
 
     /**
-     * Tag for the logs
-     */
-    private static final String LOG_TAG = SignUpActivity.class.getSimpleName();
-
-    /**
      * Constants for the saving the values in saved instance
      */
     private static final String USERS = "users";
@@ -117,29 +112,21 @@ public class SignUpActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
 
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = emailEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-                AuthenticationUtilities.hideKeyboard(SignUpActivity.this);
-                if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
-                    createAccount(email, password);
-                } else {
-                    Toast.makeText(SignUpActivity.this, R.string.error_message_failed_sign_in_no_network,
-                            Toast.LENGTH_SHORT).show();
-                }
+        signUpButton.setOnClickListener(v -> {
+            String email = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            AuthenticationUtilities.hideKeyboard(SignUpActivity.this);
+            if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
+                createAccount(email, password);
+            } else {
+                Toast.makeText(SignUpActivity.this, R.string.error_message_failed_sign_in_no_network,
+                        Toast.LENGTH_SHORT).show();
             }
-
-
         });
 
-        termsAndConditionTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent termsAndConditionsIntent = new Intent(SignUpActivity.this, TermsAndConditionsActivity.class);
-                startActivity(termsAndConditionsIntent);
-            }
+        termsAndConditionTextView.setOnClickListener(v -> {
+            Intent termsAndConditionsIntent = new Intent(SignUpActivity.this, TermsAndConditionsActivity.class);
+            startActivity(termsAndConditionsIntent);
         });
     }
 
@@ -157,27 +144,18 @@ public class SignUpActivity extends AppCompatActivity {
         showProgressDialog();
 
         mFirebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+                .addOnCompleteListener(this, task -> {
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                showErrorDialog(e.getLocalizedMessage());
-                hideProgressDialog();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-            @Override
-            public void onSuccess(AuthResult authResult) {
-                FirebaseUser user = authResult.getUser();
-                String uid = user.getUid();
-                getUserInfo();
-                createUserInFirebaseHelper(uid);
-                hideProgressDialog();
-                signIn(email, password);
-            }
+                }).addOnFailureListener(e -> {
+            showErrorDialog(e.getLocalizedMessage());
+            hideProgressDialog();
+        }).addOnSuccessListener(authResult -> {
+            FirebaseUser user = authResult.getUser();
+            String uid = user.getUid();
+            getUserInfo();
+            createUserInFirebaseHelper(uid);
+            hideProgressDialog();
+            signIn(email, password);
         });
     }
 
@@ -222,25 +200,17 @@ public class SignUpActivity extends AppCompatActivity {
      */
     private void signIn(String email, String password) {
         mFirebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Intent mainIntent = new Intent(SignUpActivity.this, VerifyPhoneNumberActivity.class);
-                            //clear the application stack (clear all  former the activities)
-                            mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            mainIntent.putExtra(Constant.VERIFY_NUMBER_INTENT_EXTRA_KEY,
-                                    "+" + countryCodePicker.getSelectedCountryCode() + phoneNumber);
-                            startActivity(mainIntent);
-                            finish();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Intent mainIntent = new Intent(SignUpActivity.this, VerifyPhoneNumberActivity.class);
+                        //clear the application stack (clear all  former the activities)
+                        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        mainIntent.putExtra(Constant.VERIFY_NUMBER_INTENT_EXTRA_KEY,
+                                "+" + countryCodePicker.getSelectedCountryCode() + phoneNumber);
+                        startActivity(mainIntent);
+                        finish();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                showErrorDialog(e.getLocalizedMessage());
-            }
-        });
+                }).addOnFailureListener(e -> showErrorDialog(e.getLocalizedMessage()));
     }
 
 
@@ -354,12 +324,9 @@ public class SignUpActivity extends AppCompatActivity {
         builder.setMessage(error);
         builder.setTitle(R.string.error);
 
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            if (dialog != null) {
+                dialog.dismiss();
             }
         });
 
@@ -372,22 +339,22 @@ public class SignUpActivity extends AppCompatActivity {
      * Link the layout element from XML to Java
      */
     private void initializeScreen() {
-        termsAndConditionTextView = (TextView) findViewById(R.id.terms_conditions_textView_sign_up_activity);
+        termsAndConditionTextView = findViewById(R.id.terms_conditions_textView_sign_up_activity);
 
-        signUpButton = (Button) findViewById(R.id.sign_up_Button_sign_up_activity);
+        signUpButton = findViewById(R.id.sign_up_Button_sign_up_activity);
 
-        fullNameEditText = (EditText) findViewById(R.id.full_name_editText_sign_up_activity);
-        emailEditText = (EditText) findViewById(R.id.email_editText_sign_up_activity);
-        passwordEditText = (EditText) findViewById(R.id.password_editText_sign_up_activity);
-        phoneNumberEditText = (EditText) findViewById(R.id.phone_number_editText_sign_up_activity);
-        locationEditText = (EditText) findViewById(R.id.location_editText_sign_up_activity);
+        fullNameEditText = findViewById(R.id.full_name_editText_sign_up_activity);
+        emailEditText = findViewById(R.id.email_editText_sign_up_activity);
+        passwordEditText = findViewById(R.id.password_editText_sign_up_activity);
+        phoneNumberEditText = findViewById(R.id.phone_number_editText_sign_up_activity);
+        locationEditText = findViewById(R.id.location_editText_sign_up_activity);
 
-        fullNameWrapper = (TextInputLayout) findViewById(R.id.full_name_wrapper_sign_up_activity);
-        emailWrapper = (TextInputLayout) findViewById(R.id.email_wrapper_sign_up_activity);
-        passwordWrapper = (TextInputLayout) findViewById(R.id.password_wrapper_sign_up_activity);
-        phoneNumberWrapper = (TextInputLayout) findViewById(R.id.phone_number_wrapper_sign_up_activity);
-        locationWrapper = (TextInputLayout) findViewById(R.id.location_wrapper_sign_up_activity);
+        fullNameWrapper = findViewById(R.id.full_name_wrapper_sign_up_activity);
+        emailWrapper = findViewById(R.id.email_wrapper_sign_up_activity);
+        passwordWrapper = findViewById(R.id.password_wrapper_sign_up_activity);
+        phoneNumberWrapper = findViewById(R.id.phone_number_wrapper_sign_up_activity);
+        locationWrapper = findViewById(R.id.location_wrapper_sign_up_activity);
 
-        countryCodePicker = (CountryCodePicker) findViewById(R.id.country_code_picker);
+        countryCodePicker = findViewById(R.id.country_code_picker);
     }
 }

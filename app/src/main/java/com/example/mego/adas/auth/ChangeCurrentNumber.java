@@ -46,11 +46,6 @@ import com.hbb20.CountryCodePicker;
 public class ChangeCurrentNumber extends AppCompatActivity {
 
     /**
-     * Tag for the logs
-     */
-    private static final String LOG_TAG = EditUserPhoneActivity.class.getSimpleName();
-
-    /**
      * UI Element
      */
     private EditText phoneNumberEditText;
@@ -97,22 +92,19 @@ public class ChangeCurrentNumber extends AppCompatActivity {
                 .child(currentAuthUser.getUserUid()).child(Constant.FIREBASE_IS_VERIFIED_PHONE);
 
         if (AuthenticationUtilities.isAvailableInternetConnection(ChangeCurrentNumber.this)) {
-            saveNumberPhoneButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (validatePhone()) {
-                        if (currentUser != null) {
-                            String phoneNumber = phoneNumberEditText.getText().toString();
+            saveNumberPhoneButton.setOnClickListener(v -> {
+                if (validatePhone()) {
+                    if (currentUser != null) {
+                        String phoneNumber = phoneNumberEditText.getText().toString();
 
-                            mUsersPhoneNumberDatabaseReference.setValue("+" +
-                                    countryCodePicker.getSelectedCountryCode() + phoneNumber);
+                        mUsersPhoneNumberDatabaseReference.setValue("+" +
+                                countryCodePicker.getSelectedCountryCode() + phoneNumber);
 
-                            isPhoneAuthDatabaseReference.setValue(false);
+                        isPhoneAuthDatabaseReference.setValue(false);
 
-                            AuthenticationUtilities.setCurrentUserPhone(
-                                    ChangeCurrentNumber.this, phoneNumber);
-                            finish();
-                        }
+                        AuthenticationUtilities.setCurrentUserPhone(
+                                ChangeCurrentNumber.this, phoneNumber);
+                        finish();
                     }
                 }
             });
@@ -134,13 +126,13 @@ public class ChangeCurrentNumber extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(drawable);
         getSupportActionBar().setTitle("");
 
-        phoneNumberEditText = (EditText) findViewById(R.id.change_number_editText_change_phone_number_activity);
+        phoneNumberEditText = findViewById(R.id.change_number_editText_change_phone_number_activity);
 
-        phoneNumberWrapper = (TextInputLayout) findViewById(R.id.change_number_wrapper_change_phone_number_activity);
+        phoneNumberWrapper = findViewById(R.id.change_number_wrapper_change_phone_number_activity);
 
-        saveNumberPhoneButton = (Button) findViewById(R.id.change_new_phone_number_button);
+        saveNumberPhoneButton = findViewById(R.id.change_new_phone_number_button);
 
-        countryCodePicker = (CountryCodePicker) findViewById(R.id.change_phone_number_country_code_picker);
+        countryCodePicker = findViewById(R.id.change_phone_number_country_code_picker);
     }
 
     /**

@@ -165,11 +165,6 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
     final int handlerState = 0;
 
     /**
-     * Tag for the log (Debugging)
-     */
-    private static final String LOG_TAG = CarFragment.class.getSimpleName();
-
-    /**
      * Firebase objects
      * to specific part of the database
      */
@@ -395,24 +390,24 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
      * Link the layout element from XML to Java
      */
     private void initializeScreen(View view) {
-        tempSensorValueTextView = (TextView) view.findViewById(R.id.sensor1_value_temp_id);
-        lDRSensorValueTextView = (TextView) view.findViewById(R.id.sensor2_value_LDR_id);
-        potSensorValueTextView = (TextView) view.findViewById(R.id.sensor3_value_pot_id);
+        tempSensorValueTextView = view.findViewById(R.id.sensor1_value_temp_id);
+        lDRSensorValueTextView = view.findViewById(R.id.sensor2_value_LDR_id);
+        potSensorValueTextView = view.findViewById(R.id.sensor3_value_pot_id);
 
-        tempProgressBar = (ProgressBar) view.findViewById(R.id.temp_progress_bar);
-        ldrProgressBar = (ProgressBar) view.findViewById(R.id.ldr_progress_bar);
-        potProgressBar = (ProgressBar) view.findViewById(R.id.pot_progress_bar);
+        tempProgressBar = view.findViewById(R.id.temp_progress_bar);
+        ldrProgressBar = view.findViewById(R.id.ldr_progress_bar);
+        potProgressBar = view.findViewById(R.id.pot_progress_bar);
 
-        tempTextView = (TextView) view.findViewById(R.id.temp_text_view);
-        ldrTextView = (TextView) view.findViewById(R.id.LDR_text_view);
-        potTextView = (TextView) view.findViewById(R.id.pot_text_view);
+        tempTextView = view.findViewById(R.id.temp_text_view);
+        ldrTextView = view.findViewById(R.id.LDR_text_view);
+        potTextView = view.findViewById(R.id.pot_text_view);
 
-        carFragment = (LinearLayout) view.findViewById(R.id.car_fragment);
+        carFragment = view.findViewById(R.id.car_fragment);
 
-        startButton = (FloatingActionButton) view.findViewById(R.id.start_car_button);
-        lockButton = (FloatingActionButton) view.findViewById(R.id.lock_car_button);
-        lightsButton = (FloatingActionButton) view.findViewById(R.id.lights_on_button);
-        disconnectButton = (FloatingActionButton) view.findViewById(R.id.disconnect_button);
+        startButton = view.findViewById(R.id.start_car_button);
+        lockButton = view.findViewById(R.id.lock_car_button);
+        lightsButton = view.findViewById(R.id.lights_on_button);
+        disconnectButton = view.findViewById(R.id.disconnect_button);
     }
 
     /**
@@ -844,25 +839,23 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                 if (fragmentIsRunning) {
 
                     // Update the progress bar
-                    potProgressBarHandler.post(new Runnable() {
-                        public void run() {
-                            potProgressBar.setProgress((int) potSensorValue);
+                    potProgressBarHandler.post(() -> {
+                        potProgressBar.setProgress(potSensorValue);
 
-                            if (carFragments.isAdded()) {
-                                if (potSensorValue >= 800) {
-                                    potProgressBar.setProgressDrawable(getActivity().
-                                            getResources().getDrawable(R.drawable.progressbarred));
-                                    notificationPotFlag++;
-                                    if (notificationPotFlag == 1) {
-                                        NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_waring_high_pot));
-                                    }
-
-                                } else {
-                                    potProgressBar.setProgressDrawable(getActivity().
-                                            getResources().getDrawable(R.drawable.progressbarblue));
-                                    notificationPotFlag = 0;
-
+                        if (carFragments.isAdded()) {
+                            if (potSensorValue >= 800) {
+                                potProgressBar.setProgressDrawable(getActivity().
+                                        getResources().getDrawable(R.drawable.progressbarred));
+                                notificationPotFlag++;
+                                if (notificationPotFlag == 1) {
+                                    NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_waring_high_pot));
                                 }
+
+                            } else {
+                                potProgressBar.setProgressDrawable(getActivity().
+                                        getResources().getDrawable(R.drawable.progressbarblue));
+                                notificationPotFlag = 0;
+
                             }
                         }
                     });
@@ -891,24 +884,22 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
                 if (fragmentIsRunning) {
                     // Update the progress bar
-                    tempProgressBarHandler.post(new Runnable() {
-                        public void run() {
-                            tempProgressBar.setProgress((int) tempSensorValue);
-                            if (carFragments.isAdded()) {
-                                if (tempSensorValue >= 40) {
-                                    tempProgressBar.setProgressDrawable(getActivity().
-                                            getResources().getDrawable(R.drawable.progressbarred));
-                                    notificationTempFlag++;
-                                    if (notificationTempFlag == 1) {
-                                        NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_warning_high_temp));
-                                    }
-
-                                } else {
-                                    tempProgressBar.setProgressDrawable(getActivity().
-                                            getResources().getDrawable(R.drawable.progressbarblue));
-                                    notificationTempFlag = 0;
-
+                    tempProgressBarHandler.post(() -> {
+                        tempProgressBar.setProgress(tempSensorValue);
+                        if (carFragments.isAdded()) {
+                            if (tempSensorValue >= 40) {
+                                tempProgressBar.setProgressDrawable(getActivity().
+                                        getResources().getDrawable(R.drawable.progressbarred));
+                                notificationTempFlag++;
+                                if (notificationTempFlag == 1) {
+                                    NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_warning_high_temp));
                                 }
+
+                            } else {
+                                tempProgressBar.setProgressDrawable(getActivity().
+                                        getResources().getDrawable(R.drawable.progressbarblue));
+                                notificationTempFlag = 0;
+
                             }
                         }
                     });
@@ -937,23 +928,21 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
                 if (fragmentIsRunning) {
                     // Update the progress bar
-                    ldrProgressBarHandler.post(new Runnable() {
-                        public void run() {
-                            ldrProgressBar.setProgress((int) ldrSensorValue);
-                            if (carFragments.isAdded()) {
-                                if (ldrSensorValue >= 800) {
-                                    ldrProgressBar.setProgressDrawable(getActivity().
-                                            getResources().getDrawable(R.drawable.progressbarred));
-                                    notificationLdrFlag++;
-                                    if (notificationLdrFlag == 1) {
-                                        NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_warning_high_ldr));
-                                    }
-
-                                } else {
-                                    ldrProgressBar.setProgressDrawable(getActivity().
-                                            getResources().getDrawable(R.drawable.progressbarblue));
-                                    notificationLdrFlag = 0;
+                    ldrProgressBarHandler.post(() -> {
+                        ldrProgressBar.setProgress(ldrSensorValue);
+                        if (carFragments.isAdded()) {
+                            if (ldrSensorValue >= 800) {
+                                ldrProgressBar.setProgressDrawable(getActivity().
+                                        getResources().getDrawable(R.drawable.progressbarred));
+                                notificationLdrFlag++;
+                                if (notificationLdrFlag == 1) {
+                                    NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_warning_high_ldr));
                                 }
+
+                            } else {
+                                ldrProgressBar.setProgressDrawable(getActivity().
+                                        getResources().getDrawable(R.drawable.progressbarblue));
+                                notificationLdrFlag = 0;
                             }
                         }
                     });
@@ -1084,27 +1073,21 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         // for the positive and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage(message);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                connectionState = 0;
-                disconnectButton.setBackgroundTintList(ColorStateList.
-                        valueOf(getResources().getColor(R.color.colorPrimary)));
-                communicator.disconnectListener(connectionState);
-                if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
-                    connectionStateDatabaseReference.setValue(startState);
-                }
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+            connectionState = 0;
+            disconnectButton.setBackgroundTintList(ColorStateList.
+                    valueOf(getResources().getColor(R.color.colorPrimary)));
+            communicator.disconnectListener(connectionState);
+            if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                connectionStateDatabaseReference.setValue(startState);
             }
         });
 
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // User clicked the "Cancel" button, so dismiss the dialog
-                // and continue in the BluetoothServerActivity
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
+            // User clicked the "Cancel" button, so dismiss the dialog
+            // and continue in the BluetoothServerActivity
+            if (dialog != null) {
+                dialog.dismiss();
             }
         });
 

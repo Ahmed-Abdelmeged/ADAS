@@ -70,7 +70,7 @@ public class HelpPageViewerAdapter extends PagerAdapter {
 
         int resId = 0;
         //set the help photo with current position
-        ImageView imageView = (ImageView) itemView.findViewById(R.id.imageView);
+        ImageView imageView = itemView.findViewById(R.id.imageView);
         switch (position) {
             case 0:
                 resId = R.drawable.help_start;
@@ -100,7 +100,7 @@ public class HelpPageViewerAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == ((LinearLayout) object);
+        return view == object;
     }
 
     @Override

@@ -46,11 +46,6 @@ import com.google.firebase.auth.FirebaseAuth;
 public class ResetPasswordActivity extends AppCompatActivity {
 
     /**
-     * Tag for the logs
-     */
-    private static final String LOG_TAG = ResetPasswordActivity.class.getSimpleName();
-
-    /**
      * UI Element
      */
     private Button sendNewPasswordButtton;
@@ -75,20 +70,15 @@ public class ResetPasswordActivity extends AppCompatActivity {
         //initialize the Firebase auth object
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        sendNewPasswordButtton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = emailEditText.getText().toString();
-                AuthenticationUtilities.hideKeyboard(ResetPasswordActivity.this);
-                if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
-                    resetPassword(email);
-                } else {
-                    Toast.makeText(ResetPasswordActivity.this, R.string.error_message_failed_sign_in_no_network,
-                            Toast.LENGTH_SHORT).show();
-                }
+        sendNewPasswordButtton.setOnClickListener(v -> {
+            String email = emailEditText.getText().toString();
+            AuthenticationUtilities.hideKeyboard(ResetPasswordActivity.this);
+            if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
+                resetPassword(email);
+            } else {
+                Toast.makeText(ResetPasswordActivity.this, R.string.error_message_failed_sign_in_no_network,
+                        Toast.LENGTH_SHORT).show();
             }
-
-
         });
     }
 
@@ -107,20 +97,13 @@ public class ResetPasswordActivity extends AppCompatActivity {
         showProgressDialog();
 
         mFirebaseAuth.sendPasswordResetEmail(email).
-                addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            showPasswordResetDialog();
-                        }
-                        hideProgressDialog();
+                addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        showPasswordResetDialog();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                showPasswordResetDialogFailed(e.getLocalizedMessage());
-            }
-        });
+                    hideProgressDialog();
+                }).addOnFailureListener(e ->
+                showPasswordResetDialogFailed(e.getLocalizedMessage()));
     }
 
     /**
@@ -177,11 +160,11 @@ public class ResetPasswordActivity extends AppCompatActivity {
      * Link the layout element from XML to Java
      */
     private void initializeScreen() {
-        sendNewPasswordButtton = (Button) findViewById(R.id.reset_password_button_reset_password_activity);
+        sendNewPasswordButtton = findViewById(R.id.reset_password_button_reset_password_activity);
 
-        emailEditText = (EditText) findViewById(R.id.email_editText_reset_password_activity);
+        emailEditText = findViewById(R.id.email_editText_reset_password_activity);
 
-        emailWrapper = (TextInputLayout) findViewById(R.id.email_wrapper_reset_password_activity);
+        emailWrapper = findViewById(R.id.email_wrapper_reset_password_activity);
     }
 
     /**
@@ -194,12 +177,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
         builder.setMessage(R.string.send_reset_request);
         builder.setTitle(R.string.reset_password_label);
 
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            if (dialog != null) {
+                dialog.dismiss();
             }
         });
 
@@ -218,12 +198,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
         builder.setMessage(error);
         builder.setTitle(R.string.error);
 
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            if (dialog != null) {
+                dialog.dismiss();
             }
         });
 

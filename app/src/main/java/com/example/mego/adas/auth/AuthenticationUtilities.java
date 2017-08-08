@@ -121,13 +121,6 @@ public class AuthenticationUtilities {
             , String email, String phoneNumber, String location, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        //get the current state for shared preference
-        String userUid = preferences.getString(USER_UID, USER_DEFAULT_UID);
-        String userName = preferences.getString(USER_NAME, USER_DEFAULT_NAME);
-        String userLocation = preferences.getString(USER_LOCATION, USER_DEFAULT_LOCATION);
-        String userPhone = preferences.getString(USER_PHONE, USER_DEFAULT_PHONE);
-        String userEmail = preferences.getString(USER_EMAIL, USER_DEFAULT_EMAIL);
-
         SharedPreferences.Editor editor = preferences.edit();
 
         editor.putString(USER_UID, uid);
@@ -156,7 +149,6 @@ public class AuthenticationUtilities {
      */
     synchronized public static void setCurrentUserLocation(Context context, String location) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String userLocation = preferences.getString(USER_LOCATION, USER_DEFAULT_LOCATION);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(USER_LOCATION, location);
         editor.apply();
@@ -167,7 +159,6 @@ public class AuthenticationUtilities {
      */
     synchronized public static void setCurrentUserName(Context context, String name) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String userName = preferences.getString(USER_NAME, USER_DEFAULT_NAME);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(USER_NAME, name);
         editor.apply();
@@ -178,7 +169,6 @@ public class AuthenticationUtilities {
      */
     synchronized public static void setCurrentUserPhone(Context context, String phone) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String userPhone = preferences.getString(USER_PHONE, USER_DEFAULT_PHONE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(USER_PHONE, phone);
         editor.apply();

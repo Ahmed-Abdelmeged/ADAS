@@ -24,6 +24,7 @@ package com.example.mego.adas.ui;
 
 
 import android.app.LoaderManager;
+import android.arch.lifecycle.LifecycleFragment;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -56,13 +57,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
  * <p>
  * Fragment to show single accident details
  */
-public class AccidentDetailFragment extends Fragment implements
+public class AccidentDetailFragment extends LifecycleFragment implements
         OnMapReadyCallback, LoaderManager.LoaderCallbacks<Cursor> {
-
-    /**
-     * Tag for debug
-     */
-    private static final String LOG_TAG = AccidentDetailFragment.class.getSimpleName();
 
     /**
      * UI Element

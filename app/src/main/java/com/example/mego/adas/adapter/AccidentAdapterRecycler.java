@@ -39,12 +39,6 @@ import java.util.ArrayList;
 public class AccidentAdapterRecycler extends RecyclerView.Adapter<AccidentAdapterRecycler.AccidentViewHolder> {
 
     /**
-     * Tag for the logs
-     */
-    private static final String LOG_TAG = AccidentAdapterRecycler.class.getSimpleName();
-
-
-    /**
      * An on-click handler that we've defined to make it easy for an Activity to interface with
      * our RecyclerView
      */
@@ -136,13 +130,13 @@ public class AccidentAdapterRecycler extends RecyclerView.Adapter<AccidentAdapte
         TextView accidentPositionTextView;
 
 
-        public AccidentViewHolder(View itemView) {
+        AccidentViewHolder(View itemView) {
             super(itemView);
 
-            dateTextView = (TextView) itemView.findViewById(R.id.accident_date_text_view);
-            timeTextView = (TextView) itemView.findViewById(R.id.accident_time_text_view);
-            accidentTitleTextView = (TextView) itemView.findViewById(R.id.accident_name_textView);
-            accidentPositionTextView = (TextView) itemView.findViewById(R.id.accident_position_textView);
+            dateTextView = itemView.findViewById(R.id.accident_date_text_view);
+            timeTextView = itemView.findViewById(R.id.accident_time_text_view);
+            accidentTitleTextView = itemView.findViewById(R.id.accident_name_textView);
+            accidentPositionTextView = itemView.findViewById(R.id.accident_position_textView);
 
             itemView.setOnClickListener(this);
         }

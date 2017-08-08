@@ -56,11 +56,6 @@ import com.google.firebase.database.ValueEventListener;
 public class SignInActivity extends AppCompatActivity {
 
     /**
-     * Tag for the logs
-     */
-    private static final String LOG_TAG = SignInActivity.class.getSimpleName();
-
-    /**
      * UI Element
      */
     private EditText passwordEditText, emailEditText;
@@ -100,27 +95,21 @@ public class SignInActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
 
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = emailEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-                AuthenticationUtilities.hideKeyboard(SignInActivity.this);
-                if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
-                    signIn(email, password);
-                } else {
-                    Toast.makeText(SignInActivity.this, R.string.error_message_failed_sign_in_no_network,
-                            Toast.LENGTH_SHORT).show();
-                }
+        signInButton.setOnClickListener(v -> {
+            String email = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            AuthenticationUtilities.hideKeyboard(SignInActivity.this);
+            if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
+                signIn(email, password);
+            } else {
+                Toast.makeText(SignInActivity.this, R.string.error_message_failed_sign_in_no_network,
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
-        forgetPasswordTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent resetPasswordIntent = new Intent(SignInActivity.this, ResetPasswordActivity.class);
-                startActivity(resetPasswordIntent);
-            }
+        forgetPasswordTextView.setOnClickListener(v -> {
+            Intent resetPasswordIntent = new Intent(SignInActivity.this, ResetPasswordActivity.class);
+            startActivity(resetPasswordIntent);
         });
     }
 
@@ -139,25 +128,19 @@ public class SignInActivity extends AppCompatActivity {
         showProgressDialog();
 
         mFirebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
 
-                            isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference()
-                                    .child(Constant.FIREBASE_USERS)
-                                    .child(task.getResult().getUser().getUid())
-                                    .child(Constant.FIREBASE_IS_VERIFIED_PHONE);
+                        isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference()
+                                .child(Constant.FIREBASE_USERS)
+                                .child(task.getResult().getUser().getUid())
+                                .child(Constant.FIREBASE_IS_VERIFIED_PHONE);
 
-                            getPhoneVerificationState();
-                        }
+                        getPhoneVerificationState();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                hideProgressDialog();
-                showErrorDialog(e.getLocalizedMessage());
-            }
+                }).addOnFailureListener(e -> {
+            hideProgressDialog();
+            showErrorDialog(e.getLocalizedMessage());
         });
     }
 
@@ -230,12 +213,9 @@ public class SignInActivity extends AppCompatActivity {
         builder.setMessage(error);
         builder.setTitle(R.string.error);
 
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            if (dialog != null) {
+                dialog.dismiss();
             }
         });
 
@@ -285,15 +265,15 @@ public class SignInActivity extends AppCompatActivity {
      * Link the layout element from XML to Java
      */
     private void initializeScreen() {
-        passwordEditText = (EditText) findViewById(R.id.password_editText_sign_in_activity);
-        emailEditText = (EditText) findViewById(R.id.email_editText_sign_in_activity);
+        passwordEditText = findViewById(R.id.password_editText_sign_in_activity);
+        emailEditText = findViewById(R.id.email_editText_sign_in_activity);
 
-        passwordWrapper = (TextInputLayout) findViewById(R.id.password_wrapper_sign_in_activity);
-        emailWrapper = (TextInputLayout) findViewById(R.id.email_wrapper_sign_in_activity);
+        passwordWrapper = findViewById(R.id.password_wrapper_sign_in_activity);
+        emailWrapper = findViewById(R.id.email_wrapper_sign_in_activity);
 
-        forgetPasswordTextView = (TextView) findViewById(R.id.forget_password_textView);
+        forgetPasswordTextView = findViewById(R.id.forget_password_textView);
 
-        signInButton = (Button) findViewById(R.id.sign_in_Button_sign_in_activity);
+        signInButton = findViewById(R.id.sign_in_Button_sign_in_activity);
     }
 
 }

@@ -58,19 +58,16 @@ public class SplashActivity extends AppCompatActivity {
         isUserAuth();
            /* New Handler to start the Menu-Activity
          * and close this Splash-Screen after some seconds.*/
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        new Handler().postDelayed(() -> {
 
-                if (isAuth) {
-                    Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
-                    startActivity(mainIntent);
-                    finish();
-                } else {
-                    Intent authIntent = new Intent(SplashActivity.this, NotAuthEntryActivity.class);
-                    startActivity(authIntent);
-                    finish();
-                }
+            if (isAuth) {
+                Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+                startActivity(mainIntent);
+                finish();
+            } else {
+                Intent authIntent = new Intent(SplashActivity.this, NotAuthEntryActivity.class);
+                startActivity(authIntent);
+                finish();
             }
         }, SPLASH_DISPLAY_LENGTH);
 
@@ -81,12 +78,9 @@ public class SplashActivity extends AppCompatActivity {
      */
     private void isUserAuth() {
         mFirebaseAuth = FirebaseAuth.getInstance();
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                isAuth = user != null;
-            }
+        mAuthStateListener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            isAuth = user != null;
         };
     }
 

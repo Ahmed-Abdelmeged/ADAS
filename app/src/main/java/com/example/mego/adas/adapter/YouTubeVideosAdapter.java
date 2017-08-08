@@ -109,12 +109,12 @@ public class YouTubeVideosAdapter extends RecyclerView.Adapter<YouTubeVideosAdap
         ImageView videoThumbnail;
 
 
-        public VideosViewHolder(View view) {
+        VideosViewHolder(View view) {
             super(view);
-            videoTitle = (TextView) view.findViewById(R.id.video_title_text_view);
-            videoTime = (TextView) view.findViewById(R.id.video_time_text_view);
-            videoThumbnail = (ImageView) view.findViewById(R.id.video_image_view);
-            videoDate = (TextView) view.findViewById(R.id.video_date_text_view);
+            videoTitle = view.findViewById(R.id.video_title_text_view);
+            videoTime = view.findViewById(R.id.video_time_text_view);
+            videoThumbnail = view.findViewById(R.id.video_image_view);
+            videoDate = view.findViewById(R.id.video_date_text_view);
 
             view.setOnClickListener(this);
         }

@@ -130,9 +130,9 @@ public class WatchVideoFragment extends Fragment {
      * Line the UI Element with the UI
      */
     private void initializeScreen(View view) {
-        videoDateTextView = (TextView) view.findViewById(R.id.video_date_text_view);
-        videoTimeTextView = (TextView) view.findViewById(R.id.video_time_text_view);
-        videoTitleTextView = (TextView) view.findViewById(R.id.video_title_text_view);
+        videoDateTextView = view.findViewById(R.id.video_date_text_view);
+        videoTimeTextView = view.findViewById(R.id.video_time_text_view);
+        videoTitleTextView = view.findViewById(R.id.video_title_text_view);
 
     }
 

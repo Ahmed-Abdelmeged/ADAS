@@ -48,11 +48,6 @@ import java.util.Map;
 public class ADASFirebaseMessageService extends FirebaseMessagingService {
 
     /**
-     * Tag for debugging
-     */
-    private static final String LOG_TAG = ADASFirebaseMessageService.class.getSimpleName();
-
-    /**
      * This pending intent id is used to uniquely reference the pending intent
      */
     private static final int ADAS_ACCIDENT_FCM_PENDING_INTENT_ID = 5368;
@@ -137,7 +132,7 @@ public class ADASFirebaseMessageService extends FirebaseMessagingService {
     private static PendingIntent contentIntent(Context context, double longitude, double latitude) {
         Intent startAccidentActivityIntent = new Intent(context, AccidentActivity.class);
         startAccidentActivityIntent.putExtra(Constant.FCM_LONGITUDE_EXTRA, longitude);
-        startAccidentActivityIntent.putExtra(Constant.FCM_LATITUDE_EXTRA, longitude);
+        startAccidentActivityIntent.putExtra(Constant.FCM_LATITUDE_EXTRA, latitude);
         return PendingIntent.getActivity(
                 context,
                 ADAS_ACCIDENT_FCM_PENDING_INTENT_ID,

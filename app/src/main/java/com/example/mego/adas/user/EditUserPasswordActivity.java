@@ -53,11 +53,6 @@ import com.google.firebase.auth.FirebaseUser;
 public class EditUserPasswordActivity extends AppCompatActivity {
 
     /**
-     * Tag for the logs
-     */
-    private static final String LOG_TAG = EditUserPasswordActivity.class.getSimpleName();
-
-    /**
      * UI Element
      */
     private EditText currentPasswordEditText, newPasswordEditText, reTypeNewPasswordEditText;
@@ -85,20 +80,17 @@ public class EditUserPasswordActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         currentUser = mFirebaseAuth.getCurrentUser();
 
-        updatePasswordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateForm()) {
-                    if (AuthenticationUtilities.isAvailableInternetConnection(EditUserPasswordActivity.this)) {
-                        if (currentUser != null) {
-                            showProgressDialog(getString(R.string.updating_password));
-                            updatePassword(currentUser.getEmail(),
-                                    currentPasswordEditText.getText().toString(),
-                                    newPasswordEditText.getText().toString());
-                        }
-                    } else {
-                        showToast(getString(R.string.no_internet_connection));
+        updatePasswordButton.setOnClickListener(v -> {
+            if (validateForm()) {
+                if (AuthenticationUtilities.isAvailableInternetConnection(EditUserPasswordActivity.this)) {
+                    if (currentUser != null) {
+                        showProgressDialog(getString(R.string.updating_password));
+                        updatePassword(currentUser.getEmail(),
+                                currentPasswordEditText.getText().toString(),
+                                newPasswordEditText.getText().toString());
                     }
+                } else {
+                    showToast(getString(R.string.no_internet_connection));
                 }
             }
         });
@@ -114,31 +106,18 @@ public class EditUserPasswordActivity extends AppCompatActivity {
 
         // Prompt the user to re-provide their sign-in credentials
         currentUser.reauthenticate(credential)
-                .addOnSuccessListener(EditUserPasswordActivity.this, new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        currentUser.updatePassword(newPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                hideProgressDialog();
-                                showErrorDialog(getString(R.string.update),
-                                        getString(R.string.password_updating_successfully));
-                                finish();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                hideProgressDialog();
-                                showErrorDialog(getString(R.string.error), e.getLocalizedMessage());
-                            }
-                        });
-                    }
-                }).addOnFailureListener(EditUserPasswordActivity.this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                hideProgressDialog();
-                showErrorDialog(getString(R.string.error), e.getLocalizedMessage());
-            }
+                .addOnSuccessListener(EditUserPasswordActivity.this, aVoid ->
+                        currentUser.updatePassword(newPassword).addOnSuccessListener(aVoid1 -> {
+                            hideProgressDialog();
+                            showErrorDialog(getString(R.string.update),
+                                    getString(R.string.password_updating_successfully));
+                            finish();
+                        }).addOnFailureListener(e -> {
+                            hideProgressDialog();
+                            showErrorDialog(getString(R.string.error), e.getLocalizedMessage());
+                        })).addOnFailureListener(EditUserPasswordActivity.this, e -> {
+            hideProgressDialog();
+            showErrorDialog(getString(R.string.error), e.getLocalizedMessage());
         });
     }
 
@@ -205,12 +184,9 @@ public class EditUserPasswordActivity extends AppCompatActivity {
         builder.setMessage(error);
         builder.setTitle(title);
 
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            if (dialog != null) {
+                dialog.dismiss();
             }
         });
 
@@ -274,7 +250,7 @@ public class EditUserPasswordActivity extends AppCompatActivity {
      */
     private void initializeScreen() {
         //to show white up button in the activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.edit_user_password_toolBar);
+        Toolbar toolbar = findViewById(R.id.edit_user_password_toolBar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Drawable drawable = toolbar.getNavigationIcon();
@@ -282,14 +258,14 @@ public class EditUserPasswordActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(drawable);
         getSupportActionBar().setTitle("");
 
-        currentPasswordEditText = (EditText) findViewById(R.id.current_password_editText_edit_password_activity);
-        newPasswordEditText = (EditText) findViewById(R.id.new_password_editText_edit_password_activity);
-        reTypeNewPasswordEditText = (EditText) findViewById(R.id.re_type_new_password_editText_edit_password_activity);
+        currentPasswordEditText = findViewById(R.id.current_password_editText_edit_password_activity);
+        newPasswordEditText = findViewById(R.id.new_password_editText_edit_password_activity);
+        reTypeNewPasswordEditText = findViewById(R.id.re_type_new_password_editText_edit_password_activity);
 
-        currentPasswordWrapper = (TextInputLayout) findViewById(R.id.current_password_wrapper_edit_password_activity);
-        newPasswordWrapper = (TextInputLayout) findViewById(R.id.new_password_wrapper_edit_password_activity);
-        reTypeNewPasswordWrapper = (TextInputLayout) findViewById(R.id.re_type_new_password_wrapper_edit_password_activity);
+        currentPasswordWrapper = findViewById(R.id.current_password_wrapper_edit_password_activity);
+        newPasswordWrapper = findViewById(R.id.new_password_wrapper_edit_password_activity);
+        reTypeNewPasswordWrapper = findViewById(R.id.re_type_new_password_wrapper_edit_password_activity);
 
-        updatePasswordButton = (Button) findViewById(R.id.update_password_button);
+        updatePasswordButton = findViewById(R.id.update_password_button);
     }
 }

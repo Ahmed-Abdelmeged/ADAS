@@ -148,11 +148,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
     public int onLocationChangedFlag = 0;
 
     /**
-     * Tag for the log (Debugging)
-     */
-    private static final String LOG_TAG = UserFragment.class.getSimpleName();
-
-    /**
      * Firebase objects
      * to specific part of the database
      */
@@ -526,24 +521,24 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
      * Link the layout element from XML to Java
      */
     private void initializeScreen(View view) {
-        tempSensorValueTextView = (TextView) view.findViewById(R.id.sensor1_value_temp_id_user);
-        lDRSensorValueTextView = (TextView) view.findViewById(R.id.sensor2_value_LDR_id_user);
-        potSensorValueTextView = (TextView) view.findViewById(R.id.sensor3_value_pot_id_user);
+        tempSensorValueTextView = view.findViewById(R.id.sensor1_value_temp_id_user);
+        lDRSensorValueTextView = view.findViewById(R.id.sensor2_value_LDR_id_user);
+        potSensorValueTextView = view.findViewById(R.id.sensor3_value_pot_id_user);
 
-        tempProgressBar = (ProgressBar) view.findViewById(R.id.temp_progress_bar_user);
-        ldrProgressBar = (ProgressBar) view.findViewById(R.id.ldr_progress_bar_user);
-        potProgressBar = (ProgressBar) view.findViewById(R.id.pot_progress_bar_user);
+        tempProgressBar = view.findViewById(R.id.temp_progress_bar_user);
+        ldrProgressBar = view.findViewById(R.id.ldr_progress_bar_user);
+        potProgressBar = view.findViewById(R.id.pot_progress_bar_user);
 
-        tempTextView = (TextView) view.findViewById(R.id.temp_text_view_user);
-        ldrTextView = (TextView) view.findViewById(R.id.LDR_text_view_user);
-        potTextView = (TextView) view.findViewById(R.id.pot_text_view_user);
+        tempTextView = view.findViewById(R.id.temp_text_view_user);
+        ldrTextView = view.findViewById(R.id.LDR_text_view_user);
+        potTextView = view.findViewById(R.id.pot_text_view_user);
 
-        userFragment = (LinearLayout) view.findViewById(R.id.user_fragment);
+        userFragment = view.findViewById(R.id.user_fragment);
 
-        startButton = (FloatingActionButton) view.findViewById(R.id.start_user_button);
-        lockButton = (FloatingActionButton) view.findViewById(R.id.lock_user_button);
-        lightsButton = (FloatingActionButton) view.findViewById(R.id.lights_on_button_user);
-        userLocationButton = (FloatingActionButton) view.findViewById(R.id.user_location_button);
+        startButton = view.findViewById(R.id.start_user_button);
+        lockButton = view.findViewById(R.id.lock_user_button);
+        lightsButton = view.findViewById(R.id.lights_on_button_user);
+        userLocationButton = view.findViewById(R.id.user_location_button);
     }
 
     /**
@@ -560,23 +555,21 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                 if (fragmentIsRunning) {
 
                     // Update the progress bar
-                    potProgressBarHandler.post(new Runnable() {
-                        public void run() {
-                            potProgressBar.setProgress((int) potSensorValue);
+                    potProgressBarHandler.post(() -> {
+                        potProgressBar.setProgress(potSensorValue);
 
-                            if (userFragments.isAdded()) {
-                                if (potSensorValue >= 800) {
-                                    potProgressBar.setProgressDrawable(getActivity().
-                                            getResources().getDrawable(R.drawable.progressbarred));
-                                    notificationPotFlag++;
-                                    if (notificationPotFlag == 1) {
-                                        NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_waring_high_pot));
-                                    }
-                                } else {
-                                    potProgressBar.setProgressDrawable(getActivity().
-                                            getResources().getDrawable(R.drawable.progressbarblue));
-                                    notificationPotFlag = 0;
+                        if (userFragments.isAdded()) {
+                            if (potSensorValue >= 800) {
+                                potProgressBar.setProgressDrawable(getActivity().
+                                        getResources().getDrawable(R.drawable.progressbarred));
+                                notificationPotFlag++;
+                                if (notificationPotFlag == 1) {
+                                    NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_waring_high_pot));
                                 }
+                            } else {
+                                potProgressBar.setProgressDrawable(getActivity().
+                                        getResources().getDrawable(R.drawable.progressbarblue));
+                                notificationPotFlag = 0;
                             }
                         }
                     });
@@ -605,22 +598,20 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
                 if (fragmentIsRunning) {
                     // Update the progress bar
-                    tempProgressBarHandler.post(new Runnable() {
-                        public void run() {
-                            tempProgressBar.setProgress((int) tempSensorValue);
-                            if (userFragments.isAdded()) {
-                                if (tempSensorValue >= 40) {
-                                    tempProgressBar.setProgressDrawable(getActivity().
-                                            getResources().getDrawable(R.drawable.progressbarred));
-                                    notificationTempFlag++;
-                                    if (notificationTempFlag == 1) {
-                                        NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_warning_high_temp));
-                                    }
-                                } else {
-                                    tempProgressBar.setProgressDrawable(getActivity().
-                                            getResources().getDrawable(R.drawable.progressbarblue));
-                                    notificationTempFlag = 0;
+                    tempProgressBarHandler.post(() -> {
+                        tempProgressBar.setProgress(tempSensorValue);
+                        if (userFragments.isAdded()) {
+                            if (tempSensorValue >= 40) {
+                                tempProgressBar.setProgressDrawable(getActivity().
+                                        getResources().getDrawable(R.drawable.progressbarred));
+                                notificationTempFlag++;
+                                if (notificationTempFlag == 1) {
+                                    NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_warning_high_temp));
                                 }
+                            } else {
+                                tempProgressBar.setProgressDrawable(getActivity().
+                                        getResources().getDrawable(R.drawable.progressbarblue));
+                                notificationTempFlag = 0;
                             }
                         }
                     });
@@ -650,22 +641,20 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
                 if (fragmentIsRunning) {
                     // Update the progress bar
-                    ldrProgressBarHandler.post(new Runnable() {
-                        public void run() {
-                            ldrProgressBar.setProgress((int) ldrSensorValue);
-                            if (userFragments.isAdded()) {
-                                if (ldrSensorValue >= 800) {
-                                    ldrProgressBar.setProgressDrawable(getActivity().
-                                            getResources().getDrawable(R.drawable.progressbarred));
-                                    notificationLdrFlag++;
-                                    if (notificationLdrFlag == 1) {
-                                        NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_warning_high_ldr));
-                                    }
-                                } else {
-                                    ldrProgressBar.setProgressDrawable(getActivity().
-                                            getResources().getDrawable(R.drawable.progressbarblue));
-                                    notificationLdrFlag = 0;
+                    ldrProgressBarHandler.post(() -> {
+                        ldrProgressBar.setProgress(ldrSensorValue);
+                        if (userFragments.isAdded()) {
+                            if (ldrSensorValue >= 800) {
+                                ldrProgressBar.setProgressDrawable(getActivity().
+                                        getResources().getDrawable(R.drawable.progressbarred));
+                                notificationLdrFlag++;
+                                if (notificationLdrFlag == 1) {
+                                    NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_warning_high_ldr));
                                 }
+                            } else {
+                                ldrProgressBar.setProgressDrawable(getActivity().
+                                        getResources().getDrawable(R.drawable.progressbarblue));
+                                notificationLdrFlag = 0;
                             }
                         }
                     });
@@ -1041,21 +1030,14 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         // for the positive and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage(R.string.an_accident_happen);
-        builder.setPositiveButton(R.string.call_emergency, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                AdasUtils.sendEmergencyToMessages(latitude, longitude, getContext());
-            }
-        });
+        builder.setPositiveButton(R.string.call_emergency, (dialog, which) ->
+                AdasUtils.sendEmergencyToMessages(latitude, longitude, getContext()));
 
-        builder.setNegativeButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // User clicked the "Cancel" button, so dismiss the dialog
-                // and continue in the BluetoothServerActivity
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+        builder.setNegativeButton(R.string.ok, (dialog, which) -> {
+            // User clicked the "Cancel" button, so dismiss the dialog
+            // and continue in the BluetoothServerActivity
+            if (dialog != null) {
+                dialog.dismiss();
             }
         });
 

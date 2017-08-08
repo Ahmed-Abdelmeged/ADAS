@@ -48,25 +48,19 @@ public class NotAuthEntryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_not_auth_entry);
 
         //link the Ui element to the java
-        signInTextView = (TextView) findViewById(R.id.sign_in_textView);
-        signUpButton = (Button) findViewById(R.id.sign_up_button);
+        signInTextView = findViewById(R.id.sign_in_textView);
+        signUpButton = findViewById(R.id.sign_up_button);
 
-        signInTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //open the sign in activity
-                Intent signInIntent = new Intent(NotAuthEntryActivity.this, SignInActivity.class);
-                startActivity(signInIntent);
-            }
+        signInTextView.setOnClickListener(v -> {
+            //open the sign in activity
+            Intent signInIntent = new Intent(NotAuthEntryActivity.this, SignInActivity.class);
+            startActivity(signInIntent);
         });
 
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //open the sign up activity
-                Intent signInIntent = new Intent(NotAuthEntryActivity.this, SignUpActivity.class);
-                startActivity(signInIntent);
-            }
+        signUpButton.setOnClickListener(v -> {
+            //open the sign up activity
+            Intent signInIntent = new Intent(NotAuthEntryActivity.this, SignUpActivity.class);
+            startActivity(signInIntent);
         });
     }
 }

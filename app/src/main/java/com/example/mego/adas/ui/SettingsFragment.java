@@ -57,7 +57,6 @@ public class SettingsFragment extends Fragment {
      */
     private FirebaseDatabase mFirebaseDatabase;
     static DatabaseReference playListIdDatabaseReference;
-    ValueEventListener playListIdValueEventListener;
 
 
     public SettingsFragment() {

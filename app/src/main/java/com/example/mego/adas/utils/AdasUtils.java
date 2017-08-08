@@ -160,10 +160,6 @@ public final class AdasUtils {
      */
     synchronized public static void setCurrentUserImagePath(Context context, String imagePath) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-
-        //get the current state for shared preference
-        String currentPath = preferences.getString(USER_IMAGE_PATH, USER_DEFAULT_IMAGE_PATH);
-
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(USER_IMAGE_PATH, imagePath);
         editor.apply();

@@ -86,9 +86,9 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepViewHolder
 
         private StepViewHolder(View view) {
             super(view);
-            instructionsTextView = (TextView) view.findViewById(R.id.instructions_textView);
-            distanceTextView = (TextView) view.findViewById(R.id.step_distance_textView);
-            directionImage = (ImageView) view.findViewById(R.id.step_imageView_dir);
+            instructionsTextView = view.findViewById(R.id.instructions_textView);
+            distanceTextView = view.findViewById(R.id.step_distance_textView);
+            directionImage = view.findViewById(R.id.step_imageView_dir);
         }
     }
 

@@ -24,6 +24,7 @@ package com.example.mego.adas.ui;
 
 
 import android.app.LoaderManager;
+import android.arch.lifecycle.LifecycleFragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
@@ -62,7 +63,7 @@ import java.util.ArrayList;
  * <p>
  * to show list of accidents
  */
-public class AccidentFragment extends Fragment implements
+public class AccidentFragment extends LifecycleFragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
@@ -77,11 +78,6 @@ public class AccidentFragment extends Fragment implements
      */
     private AccidentAdapter mAccidentAdapter;
     private AccidentFragment accidentFragment;
-
-    /**
-     * Tag for the log
-     */
-    private static final String LOG_TAG = AccidentFragment.class.getSimpleName();
 
     /**
      * Firebase objects
@@ -167,14 +163,11 @@ public class AccidentFragment extends Fragment implements
      * When an accident is pressed
      */
     private void startAccidentDetailFragment() {
-        accidentsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        accidentsListView.setOnItemClickListener((parent, view, position, id) -> {
 
-                //get the current accident
-                Accident currentAccident = mAccidentAdapter.getItem(position);
-                setAccidentDetails(currentAccident);
-            }
+            //get the current accident
+            Accident currentAccident = mAccidentAdapter.getItem(position);
+            setAccidentDetails(currentAccident);
         });
     }
 
@@ -182,25 +175,22 @@ public class AccidentFragment extends Fragment implements
      * Method to start accident details fragment with no internet connection
      */
     private void startAccidentDetailFragmentNoConnection() {
-        accidentsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AccidentDetailFragment accidentDetailFragment = new AccidentDetailFragment();
+        accidentsListView.setOnItemClickListener((parent, view, position, id) -> {
+            AccidentDetailFragment accidentDetailFragment = new AccidentDetailFragment();
 
-                //set the accident information to the next fragment
-                Bundle args = new Bundle();
-                Uri currentAccidentUri = ContentUris.withAppendedId(AccidentsEntry.CONTENT_URI, id);
+            //set the accident information to the next fragment
+            Bundle args = new Bundle();
+            Uri currentAccidentUri = ContentUris.withAppendedId(AccidentsEntry.CONTENT_URI, id);
 
-                args.putParcelable(Constant.ACCIDENT_URI_KEY, currentAccidentUri);
-                args.putString(Constant.ACCIDENT_START_MODE_KEY, Constant.ACCIDENT_MODE_OFFLINE);
+            args.putParcelable(Constant.ACCIDENT_URI_KEY, currentAccidentUri);
+            args.putString(Constant.ACCIDENT_START_MODE_KEY, Constant.ACCIDENT_MODE_OFFLINE);
 
-                accidentDetailFragment.setArguments(args);
+            accidentDetailFragment.setArguments(args);
 
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, accidentDetailFragment)
-                        .addToBackStack(null)
-                        .commit();
-            }
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, accidentDetailFragment)
+                    .addToBackStack(null)
+                    .commit();
         });
     }
 

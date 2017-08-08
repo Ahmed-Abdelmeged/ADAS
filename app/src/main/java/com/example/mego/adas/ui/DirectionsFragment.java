@@ -95,6 +95,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -120,12 +121,6 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
     private Toast toast;
     private RecyclerView stepsRecyclerView;
     private StepAdapter stepAdapter;
-
-
-    /**
-     * Tag fro the Log and debug
-     */
-    private static final String LOG_TAG = DirectionsFragment.class.getSimpleName();
 
     /**
      * Request code for location permission request.
@@ -539,7 +534,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
             @Override
             public void onFailure(Call<Direction> call, Throwable t) {
                 loadingbar.setVisibility(View.INVISIBLE);
-                Log.e(LOG_TAG, t.getLocalizedMessage());
+                Timber.e(t.getLocalizedMessage());
             }
         });
     }
@@ -623,12 +618,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
 
             locationEditText.setText(shortAddress);
             destinationTextView.setText(shortAddress);
-            locationEditText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startPlacePicker();
-                }
-            });
+            locationEditText.setOnClickListener(v -> startPlacePicker());
             if (place == null) {
                 return;
             }
@@ -696,25 +686,25 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      * Method used to initialize the UI element
      */
     private void initializeScreen(View view) {
-        addLocationButton = (FloatingActionButton) view.findViewById(R.id.add_new_location_fab);
+        addLocationButton = view.findViewById(R.id.add_new_location_fab);
 
-        locationEditText = (EditText) view.findViewById(R.id.location_edit_text);
+        locationEditText = view.findViewById(R.id.location_edit_text);
 
-        revealView = (LinearLayout) view.findViewById(R.id.edit_text_holder);
-        detailView = (LinearLayout) view.findViewById(R.id.detail_view);
+        revealView = view.findViewById(R.id.edit_text_holder);
+        detailView = view.findViewById(R.id.detail_view);
 
-        locationImageView = (ImageView) view.findViewById(R.id.locationImageView);
-        stepsListButton = (ImageView) view.findViewById(R.id.down_page_Image_View);
+        locationImageView = view.findViewById(R.id.locationImageView);
+        stepsListButton = view.findViewById(R.id.down_page_Image_View);
 
-        loadingbar = (ProgressBar) view.findViewById(R.id.loading_indicator_progress);
+        loadingbar = view.findViewById(R.id.loading_indicator_progress);
 
-        distanceTextView = (TextView) view.findViewById(R.id.distance_textView);
-        durationTextView = (TextView) view.findViewById(R.id.duration_textView);
-        destinationTextView = (TextView) view.findViewById(R.id.destination_textView);
+        distanceTextView = view.findViewById(R.id.distance_textView);
+        durationTextView = view.findViewById(R.id.duration_textView);
+        destinationTextView = view.findViewById(R.id.destination_textView);
 
-        stepsRecyclerView = (RecyclerView) view.findViewById(R.id.steps_recyclerView);
+        stepsRecyclerView = view.findViewById(R.id.steps_recyclerView);
 
-        mapView = (LinearLayout) view.findViewById(R.id.map_view);
+        mapView = view.findViewById(R.id.map_view);
     }
 
     /**

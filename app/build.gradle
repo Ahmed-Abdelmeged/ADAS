@@ -9,7 +9,6 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.1"
-        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         jackOptions {
             enabled true
@@ -32,29 +31,26 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.0.0'
-    compile 'com.android.support:design:26.0.0'
-    compile 'com.android.support:support-v4:26.0.0'
+    compile "com.android.support:appcompat-v7:$rootProject.support_version"
+    compile "com.android.support:design:$rootProject.support_version"
+    compile "com.android.support:support-v4:$rootProject.support_version"
     testCompile 'junit:junit:4.12'
 
     //Displaying and downloading images
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile "com.github.bumptech.glide:glide:$rootProject.glide_version"
 
     //google play services
-    compile 'com.google.android.gms:play-services-maps:11.0.1'
-    compile 'com.google.maps.android:android-maps-utils:0.4+'
-    compile 'com.google.android.gms:play-services-location:11.0.1'
-    compile 'com.google.android.gms:play-services-places:11.0.1'
+    compile "com.google.android.gms:play-services-maps:$rootProject.googleService_version"
+    compile "com.google.maps.android:android-maps-utils:$rootProject.mapUtil_version"
+    compile "com.google.android.gms:play-services-location:$rootProject.googleService_version"
+    compile "com.google.android.gms:play-services-places:$rootProject.googleService_version"
 
-    //to enable multidex
-    compile 'com.android.support:multidex:1.0.1'
-
-    //Firebase dependencies
-    compile 'com.google.firebase:firebase-database:11.0.1'
-    compile 'com.google.firebase:firebase-messaging:11.0.1'
-    compile group: 'com.google.firebase', name: 'firebase-auth', version: '11.0.1'
-    compile 'com.google.firebase:firebase-core:11.0.1'
-    compile 'com.google.firebase:firebase-storage:11.0.1'
+    //Firebase
+    compile "com.google.firebase:firebase-database:$rootProject.firebase_version"
+    compile "com.google.firebase:firebase-messaging:$rootProject.firebase_version"
+    compile "com.google.firebase:firebase-auth:$rootProject.firebase_version"
+    compile "com.google.firebase:firebase-core:$rootProject.firebase_version"
+    compile "com.google.firebase:firebase-storage:$rootProject.firebase_version"
 
     //convert ios8601 date format to date object
     compile files('libs/jackson-databind-2.8.6.jar')
@@ -63,38 +59,39 @@ dependencies {
     compile files('libs/YouTubeAndroidPlayerApi.jar')
 
     //to schedule jobs
-    compile 'com.firebase:firebase-jobdispatcher:0.5.2'
+    compile "com.firebase:firebase-jobdispatcher:$rootProject.firebaseJobdispatcher_version"
 
     //Circle Indicator
-    compile 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
+    compile "com.github.JakeWharton:ViewPagerIndicator:$rootProject.ViewPagerIndicator_version"
 
     //counter picker library
-    compile 'com.hbb20:ccp:1.8'
+    compile "com.hbb20:ccp:$rootProject.ccp_version"
 
     //pin code view library
-    compile 'com.alimuzaffar.lib:pinentryedittext:1.3.1'
+    compile "com.alimuzaffar.lib:pinentryedittext:$rootProject.pinentry_version"
 
     //butter knife
-    compile 'com.jakewharton:butterknife:8.7.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
+    compile "com.jakewharton:butterknife:$rootProject.butterKnife_version"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterKnife_version"
 
     //for circle images
-    compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile "de.hdodenhof:circleimageview:$rootProject.circleimage_version"
 
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    //Retrofit
+    compile "com.squareup.retrofit2:retrofit:$rootProject.retrofit_version"
+    compile "com.squareup.retrofit2:converter-gson:$rootProject.retrofit_version"
 
     //Android architecture-components
-    compile 'android.arch.lifecycle:runtime:1.0.0-alpha8'
-    compile 'android.arch.lifecycle:extensions:1.0.0-alpha8'
-    annotationProcessor 'android.arch.lifecycle:compiler:1.0.0-alpha8'
-    compile 'android.arch.persistence.room:runtime:1.0.0-alpha8'
+    compile "android.arch.lifecycle:runtime:$rootProject.arch_version"
+    compile "android.arch.lifecycle:extensions:$rootProject.arch_version"
+    compile "android.arch.persistence.room:runtime:$rootProject.arch_version"
+    annotationProcessor "android.arch.lifecycle:compiler:$rootProject.arch_version"
 
     //RX
-    compile "io.reactivex.rxjava2:rxandroid:2.0.1"
-    compile "io.reactivex.rxjava2:rxjava:2.1.0"
+    compile "io.reactivex.rxjava2:rxandroid:$rootProject.rxAndroid_version"
+    compile "io.reactivex.rxjava2:rxjava:$rootProject.rxJava_version"
 
     //Timber for log
-    compile "com.jakewharton.timber:timber:4.5.1"
+    compile "com.jakewharton.timber:timber:$rootProject.timber_version"
 }
 apply plugin: 'com.google.gms.google-services'

@@ -69,11 +69,6 @@ import butterknife.OnClick;
  */
 public class EditUserInfoActivity extends AppCompatActivity {
 
-    /**
-     * Tag for the log
-     */
-    private static final String LOG_TAG = EditUserInfoActivity.class.getSimpleName();
-
     private static final int RC_PHOTO_PICKER = 6934;
 
     /**
@@ -199,23 +194,20 @@ public class EditUserInfoActivity extends AppCompatActivity {
 
             userImagePath = selectedImageUri.getLastPathSegment();
 
-            photoRef.putFile(selectedImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            photoRef.putFile(selectedImageUri).addOnSuccessListener(taskSnapshot -> {
 
-                    //get the download url and display it
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                //get the download url and display it
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                    mUsersImageDatabaseReference.setValue(downloadUrl.toString());
+                mUsersImageDatabaseReference.setValue(downloadUrl.toString());
 
-                    //get the user bitmap and save it in internal storage to offline access
-                    //and save bandwidth
-                    new DownloadUserImageBitmap().execute(downloadUrl.toString());
+                //get the user bitmap and save it in internal storage to offline access
+                //and save bandwidth
+                new DownloadUserImageBitmap().execute(downloadUrl.toString());
 
-                    imageUploadingProgressBar.setVisibility(View.INVISIBLE);
-                    uploadingProgressTextView.setVisibility(View.INVISIBLE);
+                imageUploadingProgressBar.setVisibility(View.INVISIBLE);
+                uploadingProgressTextView.setVisibility(View.INVISIBLE);
 
-                }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
@@ -223,23 +215,20 @@ public class EditUserInfoActivity extends AppCompatActivity {
                     uploadingProgressTextView.setVisibility(View.INVISIBLE);
                     showToast(getString(R.string.failed_to_upload_photo_try_again));
                 }
-            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    imageUploadingProgressBar.setVisibility(View.VISIBLE);
-                    uploadingProgressTextView.setVisibility(View.VISIBLE);
+            }).addOnProgressListener(taskSnapshot -> {
+                imageUploadingProgressBar.setVisibility(View.VISIBLE);
+                uploadingProgressTextView.setVisibility(View.VISIBLE);
 
-                    //get the progress states and show it
-                    totalBytes = (int) taskSnapshot.getTotalByteCount();
-                    bytesTransferred = (int) taskSnapshot.getBytesTransferred();
+                //get the progress states and show it
+                totalBytes = (int) taskSnapshot.getTotalByteCount();
+                bytesTransferred = (int) taskSnapshot.getBytesTransferred();
 
-                    downloadingPercentage = ((double) bytesTransferred / (double) totalBytes) * 100;
+                downloadingPercentage = ((double) bytesTransferred / (double) totalBytes) * 100;
 
-                    uploadingProgressTextView.setText((int) downloadingPercentage + "%");
+                uploadingProgressTextView.setText((int) downloadingPercentage + "%");
 
-                    imageUploadingProgressBar.setMax(totalBytes);
-                    imageUploadingProgressBar.setProgress(bytesTransferred);
-                }
+                imageUploadingProgressBar.setMax(totalBytes);
+                imageUploadingProgressBar.setProgress(bytesTransferred);
             });
 
         }
@@ -325,18 +314,12 @@ public class EditUserInfoActivity extends AppCompatActivity {
         if (AuthenticationUtilities.isAvailableInternetConnection(EditUserInfoActivity.this)) {
             if (currentFirebaseUser != null) {
                 showVerifyProgressDialog(getString(R.string.sending_verification_email));
-                currentFirebaseUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        hideVerifyProgressDialog();
-                        showInfoDialog(getString(R.string.verification_is_sent));
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        hideVerifyProgressDialog();
-                        showInfoDialog(e.getLocalizedMessage());
-                    }
+                currentFirebaseUser.sendEmailVerification().addOnSuccessListener(aVoid -> {
+                    hideVerifyProgressDialog();
+                    showInfoDialog(getString(R.string.verification_is_sent));
+                }).addOnFailureListener(e -> {
+                    hideVerifyProgressDialog();
+                    showInfoDialog(e.getLocalizedMessage());
                 });
             }
         } else {
@@ -349,18 +332,15 @@ public class EditUserInfoActivity extends AppCompatActivity {
      * Method to check if the email is verified
      */
     private void verifyEmail() {
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-                if (currentUser != null) {
-                    if (!currentUser.isEmailVerified()) {
-                        editUserEmailLabelTextView.setText(getString(R.string.email_not_verified));
-                        editUserEmailLabelTextView.setTextColor(getResources().getColor(R.color.red));
-                    } else {
-                        editUserEmailLabelTextView.setText(getString(R.string.email));
-                        editUserEmailLabelTextView.setTextColor(getResources().getColor(R.color.colorPrimary));
-                    }
+        mAuthStateListener = firebaseAuth -> {
+            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+            if (currentUser != null) {
+                if (!currentUser.isEmailVerified()) {
+                    editUserEmailLabelTextView.setText(getString(R.string.email_not_verified));
+                    editUserEmailLabelTextView.setTextColor(getResources().getColor(R.color.red));
+                } else {
+                    editUserEmailLabelTextView.setText(getString(R.string.email));
+                    editUserEmailLabelTextView.setTextColor(getResources().getColor(R.color.colorPrimary));
                 }
             }
         };
@@ -481,12 +461,9 @@ public class EditUserInfoActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(EditUserInfoActivity.this);
         builder.setMessage(info);
 
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            if (dialog != null) {
+                dialog.dismiss();
             }
         });
 

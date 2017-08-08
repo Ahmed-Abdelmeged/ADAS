@@ -59,26 +59,14 @@ public class AboutFragment extends Fragment {
 
 
         //open the facebook account for the team member if the text view is pressed
-        projectLeaderTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFacebookIntent(Constant.FACEBOOK_URI_HUSSAM_MOSTAFA);
-            }
-        });
+        projectLeaderTextView.setOnClickListener(v ->
+                openFacebookIntent(Constant.FACEBOOK_URI_HUSSAM_MOSTAFA));
 
-        androidDeveloperTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFacebookIntent(Constant.FACEBOOK_URI_AHMED_ABD_ELMEGED);
-            }
-        });
+        androidDeveloperTextView.setOnClickListener(v ->
+                openFacebookIntent(Constant.FACEBOOK_URI_AHMED_ABD_ELMEGED));
 
-        computerVisionTextVeiw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFacebookIntent(Constant.FACEBOOK_URI_DOAA_ELSHAZLY);
-            }
-        });
+        computerVisionTextVeiw.setOnClickListener(v ->
+                openFacebookIntent(Constant.FACEBOOK_URI_DOAA_ELSHAZLY));
 
 
         // Inflate the layout for this fragment
@@ -89,9 +77,9 @@ public class AboutFragment extends Fragment {
      * Link the layout element from XML to Java
      */
     private void initializeScreen(View view) {
-        projectLeaderTextView = (TextView) view.findViewById(R.id.project_leader_textView);
-        androidDeveloperTextView = (TextView) view.findViewById(R.id.android_developer_textView);
-        computerVisionTextVeiw = (TextView) view.findViewById(R.id.computer_vision_textView);
+        projectLeaderTextView = view.findViewById(R.id.project_leader_textView);
+        androidDeveloperTextView = view.findViewById(R.id.android_developer_textView);
+        computerVisionTextVeiw = view.findViewById(R.id.computer_vision_textView);
     }
 
     /**

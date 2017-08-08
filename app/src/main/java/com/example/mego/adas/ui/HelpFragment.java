@@ -54,11 +54,11 @@ public class HelpFragment extends Fragment {
 
         //setup the page viewer and adapter
         HelpPageViewerAdapter adapter = new HelpPageViewerAdapter(getContext());
-        ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.helpViewpager);
+        ViewPager viewPager = rootView.findViewById(R.id.helpViewpager);
         viewPager.setAdapter(adapter);
 
         //Circle indicator for photos
-        CirclePageIndicator indicator = (CirclePageIndicator) rootView.findViewById(R.id.circle_indicator);
+        CirclePageIndicator indicator = rootView.findViewById(R.id.circle_indicator);
         indicator.setViewPager(viewPager);
 
         // Inflate the layout for this fragment

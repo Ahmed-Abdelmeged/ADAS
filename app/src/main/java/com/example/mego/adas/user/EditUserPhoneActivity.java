@@ -52,15 +52,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hbb20.CountryCodePicker;
 
+import timber.log.Timber;
+
 /**
  * Activity to edit user  phone number
  */
 public class EditUserPhoneActivity extends AppCompatActivity {
-
-    /**
-     * Tag for the logs
-     */
-    private static final String LOG_TAG = EditUserPhoneActivity.class.getSimpleName();
 
     /**
      * UI Element
@@ -108,33 +105,30 @@ public class EditUserPhoneActivity extends AppCompatActivity {
         isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference().child(Constant.FIREBASE_USERS)
                 .child(currentAuthUser.getUserUid()).child(Constant.FIREBASE_IS_VERIFIED_PHONE);
 
-        saveNumberPhoneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validatePhone()) {
-                    if (currentUser != null) {
-                        if (AuthenticationUtilities.isAvailableInternetConnection(EditUserPhoneActivity.this)) {
+        saveNumberPhoneButton.setOnClickListener(v -> {
+            if (validatePhone()) {
+                if (currentUser != null) {
+                    if (AuthenticationUtilities.isAvailableInternetConnection(EditUserPhoneActivity.this)) {
 
-                            String phoneNumber = phoneNumberEditText.getText().toString();
+                        String phoneNumber = phoneNumberEditText.getText().toString();
 
-                            unLinkUserPhoneNumber();
+                        unLinkUserPhoneNumber();
 
-                            mUsersPhoneNumberDatabaseReference.setValue("+" +
-                                    countryCodePicker.getSelectedCountryCode() + phoneNumber);
+                        mUsersPhoneNumberDatabaseReference.setValue("+" +
+                                countryCodePicker.getSelectedCountryCode() + phoneNumber);
 
-                            isPhoneAuthDatabaseReference.setValue(false);
+                        isPhoneAuthDatabaseReference.setValue(false);
 
-                            AuthenticationUtilities.setCurrentUserPhone(
-                                    EditUserPhoneActivity.this, phoneNumber);
+                        AuthenticationUtilities.setCurrentUserPhone(
+                                EditUserPhoneActivity.this, phoneNumber);
 
-                            Intent mainIntent = new Intent(EditUserPhoneActivity.this, VerifyPhoneNumberActivity.class);
-                            //clear the application stack (clear all  former the activities)
-                            mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(mainIntent);
-                            finish();
-                        } else {
-                            showToast(getString(R.string.no_internet_connection));
-                        }
+                        Intent mainIntent = new Intent(EditUserPhoneActivity.this, VerifyPhoneNumberActivity.class);
+                        //clear the application stack (clear all  former the activities)
+                        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(mainIntent);
+                        finish();
+                    } else {
+                        showToast(getString(R.string.no_internet_connection));
                     }
                 }
             }
@@ -146,18 +140,8 @@ public class EditUserPhoneActivity extends AppCompatActivity {
      */
     private void unLinkUserPhoneNumber() {
         currentUser.unlink(PhoneAuthProvider.PROVIDER_ID)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        Log.e(LOG_TAG, "unlink successful");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(LOG_TAG, "unlink failed");
-                    }
-                });
+                .addOnSuccessListener(authResult -> Timber.e("unlink successful"))
+                .addOnFailureListener(e -> Timber.e("unlink failed"));
     }
 
     /**
@@ -165,7 +149,7 @@ public class EditUserPhoneActivity extends AppCompatActivity {
      */
     private void initializeScreen() {
         //to show white up button in the activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.edit_user_phone_toolBar);
+        Toolbar toolbar = findViewById(R.id.edit_user_phone_toolBar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Drawable drawable = toolbar.getNavigationIcon();
@@ -173,13 +157,13 @@ public class EditUserPhoneActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(drawable);
         getSupportActionBar().setTitle("");
 
-        phoneNumberEditText = (EditText) findViewById(R.id.phone_number_editText_edit_phone_number_activity);
+        phoneNumberEditText = findViewById(R.id.phone_number_editText_edit_phone_number_activity);
 
-        phoneNumberWrapper = (TextInputLayout) findViewById(R.id.phone_number_wrapper_edit_phone_number_activity);
+        phoneNumberWrapper = findViewById(R.id.phone_number_wrapper_edit_phone_number_activity);
 
-        saveNumberPhoneButton = (Button) findViewById(R.id.save_new_phone_number_button);
+        saveNumberPhoneButton = findViewById(R.id.save_new_phone_number_button);
 
-        countryCodePicker = (CountryCodePicker) findViewById(R.id.edit_phone_number_country_code_picker);
+        countryCodePicker = findViewById(R.id.edit_phone_number_country_code_picker);
     }
 
     /**

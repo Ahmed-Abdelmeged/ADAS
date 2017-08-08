@@ -80,6 +80,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 /**
  * Accident activity open form FCM notification to show user
@@ -100,12 +101,6 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
     private LinearLayout mapView;
     private RecyclerView stepsRecyclerView;
     private Toast toast;
-
-
-    /**
-     * Tag fro the Log and debug
-     */
-    private static final String LOG_TAG = AccidentActivity.class.getSimpleName();
 
     /**
      * Accident location
@@ -420,24 +415,24 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
      * Method used to initialize the UI element
      */
     private void initializeScreen() {
-        directionLocationButton = (FloatingActionButton) findViewById(R.id.location_directions_fab_accident_activity);
-        myLocationButton = (FloatingActionButton) findViewById(R.id.my_location_fab_accident_activity);
-        accidentLocationButton = (FloatingActionButton) findViewById(R.id.accident_location_fab_accident_activity);
+        directionLocationButton = findViewById(R.id.location_directions_fab_accident_activity);
+        myLocationButton = findViewById(R.id.my_location_fab_accident_activity);
+        accidentLocationButton = findViewById(R.id.accident_location_fab_accident_activity);
 
-        detailView = (LinearLayout) findViewById(R.id.detail_view_accident_activity);
+        detailView = findViewById(R.id.detail_view_accident_activity);
 
-        locationImageView = (ImageView) findViewById(R.id.locationImageView_accident_activity);
-        stepsListButton = (ImageView) findViewById(R.id.down_page_Image_View_accident_activity);
+        locationImageView = findViewById(R.id.locationImageView_accident_activity);
+        stepsListButton = findViewById(R.id.down_page_Image_View_accident_activity);
 
-        loadingbar = (ProgressBar) findViewById(R.id.loading_indicator_progress_accident_activity);
+        loadingbar = findViewById(R.id.loading_indicator_progress_accident_activity);
 
-        distanceTextView = (TextView) findViewById(R.id.distance_textView_accident_activity);
-        durationTextView = (TextView) findViewById(R.id.duration_textView_accident_activity);
-        destinationTextView = (TextView) findViewById(R.id.destination_textView_accident_activity);
+        distanceTextView = findViewById(R.id.distance_textView_accident_activity);
+        durationTextView = findViewById(R.id.duration_textView_accident_activity);
+        destinationTextView = findViewById(R.id.destination_textView_accident_activity);
 
-        stepsRecyclerView = (RecyclerView) findViewById(R.id.steps_recyclerView_accident_activity);
+        stepsRecyclerView = findViewById(R.id.steps_recyclerView_accident_activity);
 
-        mapView = (LinearLayout) findViewById(R.id.map_view_accident_activity);
+        mapView = findViewById(R.id.map_view_accident_activity);
     }
 
     /**
@@ -542,7 +537,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onFailure(Call<Direction> call, Throwable t) {
                 loadingbar.setVisibility(View.INVISIBLE);
-                Log.e(LOG_TAG, t.getLocalizedMessage());
+                Timber.e(t.getLocalizedMessage());
             }
         });
     }

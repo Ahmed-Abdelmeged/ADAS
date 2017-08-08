@@ -45,8 +45,6 @@ import java.util.List;
  */
 public final class DirectionsApiUtilities {
 
-    private static final String LOG_TAG = DirectionsApiUtilities.class.getSimpleName();
-
     /**
      * helper method to check the response code form the direction API Response State
      */
