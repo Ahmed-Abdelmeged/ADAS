@@ -122,7 +122,7 @@ camera and upload to the app to display and any authorized user can watch this l
 ## Accidents
 This an log for the accident history you can show the all the car accident location, data and time. all the accident saved offline in the app SQLite database in case for no internet connection and updated when the app online you can show all the accident and show accident details when select a specific accident
 
-![Accidents](http://i.imgur.com/XhCnTbZ.png?)
+![Accidents](http://i.imgur.com/Ta6bes5.png?1)
 
 Accident details
 
