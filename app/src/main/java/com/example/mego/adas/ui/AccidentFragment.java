@@ -46,8 +46,8 @@ import com.example.mego.adas.adapter.AccidentAdapter;
 import com.example.mego.adas.adapter.AccidentCursorAdapter;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
-import com.example.mego.adas.data.AccidentsContract.AccidentsEntry;
-import com.example.mego.adas.model.Accident;
+import com.example.mego.adas.db.AccidentsContract.AccidentsEntry;
+import com.example.mego.adas.db.entity.Accident;
 import com.example.mego.adas.utils.Constant;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -99,11 +99,6 @@ public class AccidentFragment extends Fragment implements
     private static final int ACCIDENT_LOADER_ID = 2698;
 
     private AccidentCursorAdapter mCursorAdapter;
-
-    /**
-     * Content URI for accident
-     */
-    private Uri mCurrentAccidentUri;
 
 
     public AccidentFragment() {
@@ -162,9 +157,9 @@ public class AccidentFragment extends Fragment implements
      * Link the UI Element with XML
      */
     private void initializeScreen(View view) {
-        accidentsListView = (ListView) view.findViewById(R.id.accident_listView);
-        loadingBar = (ProgressBar) view.findViewById(R.id.loading_bar_accident);
-        emptyText = (TextView) view.findViewById(R.id.empty_text_accident);
+        accidentsListView = view.findViewById(R.id.accident_listView);
+        loadingBar = view.findViewById(R.id.loading_bar_accident);
+        emptyText = view.findViewById(R.id.empty_text_accident);
     }
 
     /**
@@ -308,17 +303,16 @@ public class AccidentFragment extends Fragment implements
         values.put(AccidentsEntry.COLUMN_ACCIDENT_TIME, accidentTime);
         values.put(AccidentsEntry.COLUMN_ACCIDENT_ID, accidentID);
 
-        if (mCurrentAccidentUri == null) {
-            // This is a NEW accident, so insert a new accident into the provider,
-            // returning the content URI for the new accident.
-            if (accidentFragment.isAdded()) {
-                Uri newUri = getActivity().getContentResolver().insert(AccidentsEntry.CONTENT_URI, values);
-                if (newUri == null) {
-                    Toast.makeText(getContext(), "Error with saving accidents",
-                            Toast.LENGTH_SHORT).show();
-                }
+        // This is a NEW accident, so insert a new accident into the provider,
+        // returning the content URI for the new accident.
+        if (accidentFragment.isAdded()) {
+            Uri newUri = getActivity().getContentResolver().insert(AccidentsEntry.CONTENT_URI, values);
+            if (newUri == null) {
+                Toast.makeText(getContext(), "Error with saving accidents",
+                        Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 
 

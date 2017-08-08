@@ -30,8 +30,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.example.mego.adas.data.AccidentsContract;
-import com.example.mego.adas.data.AccidentsDbHelper;
+import com.example.mego.adas.db.AccidentsContract;
+import com.example.mego.adas.db.AccidentsDbHelper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 
 import java.lang.reflect.Field;
 
-import static com.example.mego.adas.data.AccidentsContract.AccidentsEntry.TABLE_NAME;
+import static com.example.mego.adas.db.AccidentsContract.AccidentsEntry.TABLE_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;

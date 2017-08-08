@@ -31,7 +31,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.model.Accident;
+import com.example.mego.adas.db.entity.Accident;
 
 import java.util.ArrayList;
 
@@ -59,10 +59,10 @@ public class AccidentAdapter extends ArrayAdapter<Accident> {
 
         //get a instance from the viewHolder class
         ViewHolder holder = new ViewHolder();
-        holder.dateTextView = (TextView) listView.findViewById(R.id.accident_date_text_view);
-        holder.timeTextView = (TextView) listView.findViewById(R.id.accident_time_text_view);
-        holder.accidentTitleTextView = (TextView) listView.findViewById(R.id.accident_name_textView);
-        holder.accidentPositionTextView = (TextView) listView.findViewById(R.id.accident_position_textView);
+        holder.dateTextView = listView.findViewById(R.id.accident_date_text_view);
+        holder.timeTextView = listView.findViewById(R.id.accident_time_text_view);
+        holder.accidentTitleTextView = listView.findViewById(R.id.accident_name_textView);
+        holder.accidentPositionTextView = listView.findViewById(R.id.accident_position_textView);
         listView.setTag(holder);
 
 

@@ -75,7 +75,7 @@ public class BluetoothDevicesAdapter extends RecyclerView.Adapter<BluetoothDevic
 
         private BluetoothAdapterViewHolder(View view) {
             super(view);
-            deviceName = (TextView) view.findViewById(R.id.device_name_textView);
+            deviceName = view.findViewById(R.id.device_name_textView);
             view.setOnClickListener(this);
         }
 

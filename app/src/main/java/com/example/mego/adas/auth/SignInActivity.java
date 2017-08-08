@@ -36,7 +36,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.mego.adas.application.MainActivity;
+import com.example.mego.adas.ui.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.tasks.OnCompleteListener;

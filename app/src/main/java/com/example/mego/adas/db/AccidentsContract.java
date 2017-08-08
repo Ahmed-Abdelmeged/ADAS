@@ -19,7 +19,7 @@
  * limitations under the License.
  */
 
-package com.example.mego.adas.data;
+package com.example.mego.adas.db;
 
 import android.content.ContentResolver;
 import android.net.Uri;

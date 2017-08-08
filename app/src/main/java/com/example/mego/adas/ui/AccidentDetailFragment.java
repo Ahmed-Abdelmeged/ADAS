@@ -39,7 +39,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.data.AccidentsContract.AccidentsEntry;
+import com.example.mego.adas.db.AccidentsContract.AccidentsEntry;
 import com.example.mego.adas.utils.Constant;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -220,10 +220,10 @@ public class AccidentDetailFragment extends Fragment implements
      * Line the UI Element with the UI
      */
     private void initializeScreen(View view) {
-        accidentDateTextView = (TextView) view.findViewById(R.id.accident_date_detail_text_view);
-        accidentPositionTextView = (TextView) view.findViewById(R.id.accident_position_detail_textView);
-        accidentTimeTextView = (TextView) view.findViewById(R.id.accident_time_detail_text_view);
-        accidentTitleTextView = (TextView) view.findViewById(R.id.accident_name_detail_textView);
+        accidentDateTextView = view.findViewById(R.id.accident_date_detail_text_view);
+        accidentPositionTextView = view.findViewById(R.id.accident_position_detail_textView);
+        accidentTimeTextView = view.findViewById(R.id.accident_time_detail_text_view);
+        accidentTitleTextView = view.findViewById(R.id.accident_name_detail_textView);
     }
 
     /**

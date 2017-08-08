@@ -19,19 +19,30 @@
  * limitations under the License.
  */
 
-package com.example.mego.adas.model;
+package com.example.mego.adas.db.entity;
 
+
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
 /**
  * Define the Data structure for accident  information
  */
+@Entity(tableName = "accidents")
 public class Accident {
+
+    @PrimaryKey
+    private String accidentId;
 
     private String date;
     private String time;
 
+    @ColumnInfo(name = "accident_title")
     private String accidentTitle;
+    @ColumnInfo(name = "accident_longitude")
     private double accidentLongitude;
+    @ColumnInfo(name = "accident_latitude")
     private double accidentLatitude;
 
     /**
@@ -77,5 +88,13 @@ public class Accident {
 
     public double getAccidentLatitude() {
         return accidentLatitude;
+    }
+
+    public String getAccidentId() {
+        return accidentId;
+    }
+
+    public void setAccidentId(String accidentId) {
+        this.accidentId = accidentId;
     }
 }

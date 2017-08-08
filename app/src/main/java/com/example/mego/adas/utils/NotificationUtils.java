@@ -34,7 +34,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
-import com.example.mego.adas.application.MainActivity;
+import com.example.mego.adas.ui.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.sync.AdasSyncTasks;
 import com.example.mego.adas.sync.CarAdviceAssistantIntentService;

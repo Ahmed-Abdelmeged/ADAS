@@ -19,13 +19,13 @@
  * limitations under the License.
  */
 
-package com.example.mego.adas.data;
+package com.example.mego.adas.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.mego.adas.data.AccidentsContract.AccidentsEntry;
+import com.example.mego.adas.db.AccidentsContract.AccidentsEntry;
 
 
 /**

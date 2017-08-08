@@ -20,7 +20,7 @@
  */
 
 
-package com.example.mego.adas.data;
+package com.example.mego.adas.db;
 
 
 import android.content.ContentProvider;
@@ -34,7 +34,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.example.mego.adas.data.AccidentsContract.AccidentsEntry;
+import com.example.mego.adas.db.AccidentsContract.AccidentsEntry;
 
 /**
  * {@link ContentProvider} for ADAS app

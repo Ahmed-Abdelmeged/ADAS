@@ -30,7 +30,7 @@ import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.data.AccidentsContract.AccidentsEntry;
+import com.example.mego.adas.db.AccidentsContract.AccidentsEntry;
 
 /**
  * Cursor adapter to load the accident data from SQLite database when the there is no internet connection

@@ -25,7 +25,7 @@ package com.example.mego.adas;
 
 import android.provider.BaseColumns;
 
-import com.example.mego.adas.data.AccidentsContract;
+import com.example.mego.adas.db.AccidentsContract;
 
 import org.junit.Test;
 

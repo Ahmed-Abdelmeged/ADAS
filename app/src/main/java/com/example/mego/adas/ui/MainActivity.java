@@ -20,7 +20,7 @@
  */
 
 
-package com.example.mego.adas.application;
+package com.example.mego.adas.ui;
 
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -57,19 +57,8 @@ import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.NotAuthEntryActivity;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.auth.VerifyPhoneNumberActivity;
-import com.example.mego.adas.data.AccidentsDbHelper;
-import com.example.mego.adas.fcm.AccidentActivity;
+import com.example.mego.adas.db.AccidentsDbHelper;
 import com.example.mego.adas.sync.AdasSyncUtils;
-import com.example.mego.adas.ui.AboutFragment;
-import com.example.mego.adas.ui.AccidentFragment;
-import com.example.mego.adas.ui.CarFragment;
-import com.example.mego.adas.ui.ConnectFragment;
-import com.example.mego.adas.ui.DirectionsFragment;
-import com.example.mego.adas.ui.HelpFragment;
-import com.example.mego.adas.ui.LiveStreamingFragment;
-import com.example.mego.adas.ui.SettingsFragment;
-import com.example.mego.adas.ui.UserFragment;
-import com.example.mego.adas.ui.VideosFragments;
 import com.example.mego.adas.user.EditUserInfoActivity;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Communicator;

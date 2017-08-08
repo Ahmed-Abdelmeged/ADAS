@@ -27,7 +27,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.mego.adas.application.MainActivity;
+import com.example.mego.adas.ui.MainActivity;
 import com.example.mego.adas.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

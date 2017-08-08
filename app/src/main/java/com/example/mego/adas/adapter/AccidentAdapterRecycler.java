@@ -29,7 +29,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mego.adas.R;
-import com.example.mego.adas.model.Accident;
+import com.example.mego.adas.db.entity.Accident;
 
 import java.util.ArrayList;
 

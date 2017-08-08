@@ -46,7 +46,7 @@ import android.widget.Toast;
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
-import com.example.mego.adas.model.Accident;
+import com.example.mego.adas.db.entity.Accident;
 import com.example.mego.adas.model.MappingServices;
 import com.example.mego.adas.model.SensorsValues;
 import com.example.mego.adas.utils.AdasUtils;
@@ -79,9 +79,9 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.example.mego.adas.application.MainActivity.bluetoothHandler;
-import static com.example.mego.adas.application.MainActivity.connected;
-import static com.example.mego.adas.application.MainActivity.mConnectedThread;
+import static com.example.mego.adas.ui.MainActivity.bluetoothHandler;
+import static com.example.mego.adas.ui.MainActivity.connected;
+import static com.example.mego.adas.ui.MainActivity.mConnectedThread;
 
 
 /**

@@ -40,7 +40,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,11 +48,10 @@ import com.example.mego.adas.adapter.StepAdapter;
 import com.example.mego.adas.api.directions.DirectionsApiClient;
 import com.example.mego.adas.api.directions.DirectionsApiInterface;
 import com.example.mego.adas.api.directions.model.Direction;
-import com.example.mego.adas.application.MainActivity;
+import com.example.mego.adas.ui.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.api.directions.DirectionsApiConstants;
 import com.example.mego.adas.auth.AuthenticationUtilities;
-import com.example.mego.adas.api.directions.model.Step;
 import com.example.mego.adas.utils.Constant;
 import com.example.mego.adas.api.directions.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
@@ -77,7 +75,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
