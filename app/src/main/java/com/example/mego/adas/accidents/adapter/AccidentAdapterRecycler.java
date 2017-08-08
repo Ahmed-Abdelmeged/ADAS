@@ -42,20 +42,13 @@ public class AccidentAdapterRecycler extends RecyclerView.Adapter<AccidentAdapte
      * An on-click handler that we've defined to make it easy for an Activity to interface with
      * our RecyclerView
      */
-    final private ListItemClickListener mOnClickListener;
+    final private AccidentClickCallBacks mOnClickListener;
 
     /**
      * List to hold accidents object
      */
-    private ArrayList<Accident> accidentList;
+    private ArrayList<Accident> accidentList = new ArrayList<>();
 
-
-    /**
-     * The interface that receives onClick messages.
-     */
-    public interface ListItemClickListener {
-        void onListItemClick(int clickedItemIndex);
-    }
 
     /**
      * Constructor for GreenAdapter that accepts a number of items to display and the specification
@@ -63,8 +56,7 @@ public class AccidentAdapterRecycler extends RecyclerView.Adapter<AccidentAdapte
      *
      * @param listener Listener for list item clicks
      */
-    public AccidentAdapterRecycler(ListItemClickListener listener) {
-
+    public AccidentAdapterRecycler(AccidentClickCallBacks listener) {
         mOnClickListener = listener;
     }
 
@@ -77,10 +69,8 @@ public class AccidentAdapterRecycler extends RecyclerView.Adapter<AccidentAdapte
         boolean shouldAttachToParentImmediately = false;
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
-        AccidentViewHolder viewHolder = new AccidentViewHolder(view);
 
-        return viewHolder;
-
+        return new AccidentViewHolder(view);
     }
 
     @Override
@@ -148,14 +138,24 @@ public class AccidentAdapterRecycler extends RecyclerView.Adapter<AccidentAdapte
          */
         @Override
         public void onClick(View v) {
-            int clickedPosition = getAdapterPosition();
-            mOnClickListener.onListItemClick(clickedPosition);
+            mOnClickListener.onAccidentClick(
+                    accidentList.get(getAdapterPosition()).getAccidentId());
         }
     }
 
 
     public void setAccidents(ArrayList<Accident> accidents) {
-        accidentList = accidents;
+        accidentList.addAll(accidents);
+        notifyDataSetChanged();
+    }
+
+    public void clearAccidents() {
+        accidentList.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addAccident(Accident accident) {
+        accidentList.add(accident);
         notifyDataSetChanged();
     }
 
