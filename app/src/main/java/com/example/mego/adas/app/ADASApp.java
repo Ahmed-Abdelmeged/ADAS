@@ -2,7 +2,8 @@ package com.example.mego.adas.app;
 
 import android.app.Application;
 
-import timber.log.BuildConfig;
+import com.example.mego.adas.BuildConfig;
+
 import timber.log.Timber;
 
 /**
