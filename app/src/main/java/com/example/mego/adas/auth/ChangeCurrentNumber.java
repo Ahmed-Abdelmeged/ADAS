@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.utils.Constants;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -89,7 +90,7 @@ public class ChangeCurrentNumber extends AppCompatActivity {
         isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference().child(Constants.FIREBASE_USERS)
                 .child(currentAuthUser.getUserUid()).child(Constants.FIREBASE_IS_VERIFIED_PHONE);
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(ChangeCurrentNumber.this)) {
+        if (NetworkUtil.isAvailableInternetConnection(ChangeCurrentNumber.this)) {
             saveNumberPhoneButton.setOnClickListener(v -> {
                 if (validatePhone()) {
                     if (currentUser != null) {

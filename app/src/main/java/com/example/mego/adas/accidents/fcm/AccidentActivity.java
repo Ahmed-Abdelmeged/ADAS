@@ -54,6 +54,7 @@ import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.utils.Constants;
 import com.example.mego.adas.directions.api.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -183,7 +184,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
         stepAdapter = new StepAdapter();
         stepsRecyclerView.setAdapter(stepAdapter);
 
-        if (!AuthenticationUtilities.isAvailableInternetConnection(this)) {
+        if (!NetworkUtil.isAvailableInternetConnection(this)) {
             showToast(getString(R.string.no_internet_connection));
         }
 
@@ -245,13 +246,13 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
 
         //check the internet connection
         //if the internet is work start the loader if not show toast message
-        if (AuthenticationUtilities.isAvailableInternetConnection(this)) {
+        if (NetworkUtil.isAvailableInternetConnection(this)) {
             buildGoogleApiClient();
         } else {
             Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
         }
         LocationUtilities.enableSetLocation(this, mMap);
-        if (AuthenticationUtilities.isAvailableInternetConnection(this)) {
+        if (NetworkUtil.isAvailableInternetConnection(this)) {
             mGoogleApiClient.connect();
         }
     }
@@ -453,7 +454,7 @@ public class AccidentActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        if (AuthenticationUtilities.isAvailableInternetConnection(this)) {
+        if (NetworkUtil.isAvailableInternetConnection(this)) {
             switch (v.getId()) {
                 case R.id.my_location_fab_accident_activity:
                     atAccidentLocation = false;

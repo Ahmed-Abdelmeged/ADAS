@@ -39,6 +39,7 @@ import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.auth.VerifyPhoneNumberActivity;
 import com.example.mego.adas.utils.Constants;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -102,7 +103,7 @@ public class EditUserPhoneActivity extends AppCompatActivity {
         saveNumberPhoneButton.setOnClickListener(v -> {
             if (validatePhone()) {
                 if (currentUser != null) {
-                    if (AuthenticationUtilities.isAvailableInternetConnection(EditUserPhoneActivity.this)) {
+                    if (NetworkUtil.isAvailableInternetConnection(EditUserPhoneActivity.this)) {
 
                         String phoneNumber = phoneNumberEditText.getText().toString();
 

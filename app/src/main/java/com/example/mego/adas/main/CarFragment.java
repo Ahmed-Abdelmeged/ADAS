@@ -54,6 +54,7 @@ import com.example.mego.adas.utils.Constants;
 import com.example.mego.adas.directions.api.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.example.mego.adas.utils.NotificationUtils;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -260,7 +261,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         getFirebaseObjectReferences(uid);
 
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             buildGoogleApiClient();
             connectionStateDatabaseReference.setValue(1);
         }
@@ -274,12 +275,12 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
         if (connected) {
             connectionState = 1;
-            if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+            if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                 connectionStateDatabaseReference.setValue(connectionState);
             }
         } else if (!connected) {
             connectionState = 0;
-            if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+            if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                 connectionStateDatabaseReference.setValue(connectionState);
             }
         }
@@ -323,7 +324,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         disconnectButton.setOnClickListener(this);
         startButton.setOnClickListener(this);
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext()) && connected) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext()) && connected) {
             actionResolver();
         }
         //setup the map fragment
@@ -372,7 +373,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         recDataString.delete(0, recDataString.length());
         //send data to Firebase
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             onConnectedFlag = 0;
             onLocationChangedFlag = 0;
             connectionState = 0;
@@ -426,7 +427,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                     }
                     //send the state of the lights to the firebase
                     lightsState = 1;
-                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                    if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                         lightsStateDatabaseReference.setValue(lightsState);
                     }
 
@@ -439,7 +440,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                     }
                     //send the state of the lights to the firebase
                     lightsState = 0;
-                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                    if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                         lightsStateDatabaseReference.setValue(lightsState);
                     }
                 }
@@ -457,7 +458,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
                     //send the state of the lock to the firebase
                     lockState = 1;
-                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                    if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                         lockStateDatabaseReference.setValue(lockState);
                     }
 
@@ -474,7 +475,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
                     //send the state of the lock to the firebase
                     lockState = 0;
-                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                    if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                         lockStateDatabaseReference.setValue(lockState);
                     }
                 }
@@ -492,7 +493,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
                     //send the state of the start to the firebase
                     startState = 1;
-                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                    if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                         startStateStateDatabaseReference.setValue(startState);
                     }
                 } else if (startState == 1) {
@@ -506,7 +507,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
                     //send the state of the start to the firebase
                     startState = 0;
-                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                    if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                         startStateStateDatabaseReference.setValue(startState);
                     }
                 }
@@ -533,7 +534,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
     public void onStart() {
         super.onStart();
         //check the internet connection
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             mGoogleApiClient.connect();
         }
     }
@@ -542,7 +543,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
     public void onStop() {
         super.onStop();
         //check the internet connection
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             if (mGoogleApiClient != null) {
                 mGoogleApiClient.disconnect();
             }
@@ -633,7 +634,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         LocationUtilities.enableSetLocation(getActivity(), mMap);
         //check the internet connection
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             mGoogleApiClient.connect();
         }
 
@@ -700,7 +701,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
             mappingServices.setOnLocationChangedFlag(onLocationChangedFlag);
 
             //send data to Firebase
-            if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+            if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                 MappingServices mappingServicesSend = new MappingServices(longitude, latitude, onConnectedFlag, onLocationChangedFlag);
                 mappingServicesDatabaseReference.setValue(mappingServicesSend);
                 DirectionsApiUtilities.AnimateMarker(marker, accidentPlace, false, mMap);
@@ -757,13 +758,13 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
                     accidentState = (Integer.parseInt(sensorsValueList.get(3)));
 
-                    if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                    if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                         accidentStateDatabaseReference.setValue(accidentState);
                     }
 
                     if (accidentState == 1) {
                         accidentNotificationFlag++;
-                        if (accidentNotificationFlag == 1 && !AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                        if (accidentNotificationFlag == 1 && !NetworkUtil.isAvailableInternetConnection(getContext())) {
                             NotificationUtils.showAccidentNotification(getContext());
                         }
                         if (accidentNotificationFlag == 1) {
@@ -772,7 +773,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                             String currentTime = DateFormat.getTimeInstance().format(new Date());
                             Accident accident = new Accident(currentDate, currentTime,
                                     "Accident", longitude, latitude, null);
-                            if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                            if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                                 accidentsDatabaseReference.push().setValue(accident);
                             }
                         }
@@ -790,7 +791,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
 
                 }
-                if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                     //send data to Firebase
                     SensorsValues sensorsValuesSend = new SensorsValues(tempSensorValue, ldrSensorValue, potSensorValue);
                     sensorsValuesDatabaseReference.setValue(sensorsValuesSend);
@@ -1078,7 +1079,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
             disconnectButton.setBackgroundTintList(ColorStateList.
                     valueOf(getResources().getColor(R.color.colorPrimary)));
             communicator.disconnectListener(connectionState);
-            if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+            if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                 connectionStateDatabaseReference.setValue(startState);
             }
         });

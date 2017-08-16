@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -77,7 +78,7 @@ public class EditUserPasswordActivity extends AppCompatActivity {
 
         updatePasswordButton.setOnClickListener(v -> {
             if (validateForm()) {
-                if (AuthenticationUtilities.isAvailableInternetConnection(EditUserPasswordActivity.this)) {
+                if (NetworkUtil.isAvailableInternetConnection(EditUserPasswordActivity.this)) {
                     if (currentUser != null) {
                         showProgressDialog(getString(R.string.updating_password));
                         updatePassword(currentUser.getEmail(),

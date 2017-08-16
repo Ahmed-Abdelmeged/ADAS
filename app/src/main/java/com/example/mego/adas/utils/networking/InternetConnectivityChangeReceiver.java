@@ -20,30 +20,26 @@
  */
 
 
+package com.example.mego.adas.utils.networking;
 
-package com.example.mego.adas.accidents.db;
-
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-
-import com.example.mego.adas.accidents.db.dao.AccidentDao;
-import com.example.mego.adas.accidents.db.entity.Accident;
+import android.content.Intent;
 
 
-@Database(entities = {Accident.class}, version = 1)
-public abstract class AppDatabase extends RoomDatabase {
+public class InternetConnectivityChangeReceiver extends BroadcastReceiver {
+    private InternetConnectionsCallbacks internetConnectionsCallbacks;
 
-    private static AppDatabase INSATNCE;
-
-    public static AppDatabase getDatabase(Context context) {
-        if (INSATNCE == null) {
-            INSATNCE = Room.databaseBuilder(context.getApplicationContext(),
-                    AppDatabase.class, "accidents.db").build();
-        }
-        return INSATNCE;
+    public InternetConnectivityChangeReceiver(InternetConnectionsCallbacks internetConnectionsCallbacks) {
+        this.internetConnectionsCallbacks = internetConnectionsCallbacks;
     }
 
-    public abstract AccidentDao accidentDao();
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (NetworkUtil.isAvailableInternetConnection(context)) {
+            internetConnectionsCallbacks.onInternetConnected();
+        } else {
+            internetConnectionsCallbacks.onInternetDisconnected();
+        }
+    }
 }

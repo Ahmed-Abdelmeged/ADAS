@@ -22,7 +22,9 @@
 
 package com.example.mego.adas.videos.ui;
 
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -37,26 +39,28 @@ import android.widget.Toast;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.utils.Constants;
-import com.example.mego.adas.videos.adapter.YouTubeVideosAdapter;
+import com.example.mego.adas.utils.networking.InternetConnectionsCallbacks;
+import com.example.mego.adas.utils.networking.InternetConnectivityChangeReceiver;
 import com.example.mego.adas.videos.api.YouTubeApiClient;
 import com.example.mego.adas.videos.api.YouTubeApiInterface;
 import com.example.mego.adas.videos.api.YouTubeApiUtilities;
 import com.example.mego.adas.videos.api.model.Item;
 import com.example.mego.adas.videos.api.model.YouTubeVideo;
-import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.utils.EndlessRecyclerViewScrollListener;
+import com.example.mego.adas.videos.adapter.YouTubeVideosAdapter;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 /**
  * A simple {@link Fragment} subclass.
  * <p>
  * to show list of videos
  */
-public class VideosFragments extends Fragment implements YouTubeVideosAdapter.YouTubeVideosAdapterOnClickHandler {
-
+public class VideosFragments extends Fragment implements
+        YouTubeVideosAdapter.YouTubeVideosAdapterOnClickHandler, InternetConnectionsCallbacks {
 
     /**
      * UI Elements
@@ -71,11 +75,17 @@ public class VideosFragments extends Fragment implements YouTubeVideosAdapter.Yo
     private YouTubeVideosAdapter youTubeVideosAdapter;
 
     private YouTubeApiInterface youTubeApiInterface;
-    private EndlessRecyclerViewScrollListener scrollListener;
     private String playlistId;
 
     private String nextPageToken = null;
 
+    private LinearLayoutManager layoutManager;
+
+    /**
+     * For monitor internet connection states
+     */
+    private IntentFilter intentFilter = new IntentFilter();
+    private InternetConnectivityChangeReceiver internetConnectivityChangeReceiver;
 
     public VideosFragments() {
         // Required empty public constructor
@@ -85,12 +95,13 @@ public class VideosFragments extends Fragment implements YouTubeVideosAdapter.Yo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.fragment_videos, container, false);
         initializeScreen(rootView);
 
+        internetConnectivityChangeReceiver = new InternetConnectivityChangeReceiver(this);
+
         //setup the adapter
-        LinearLayoutManager layoutManager =
+        layoutManager =
                 new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
         videosRecycler.setLayoutManager(layoutManager);
@@ -99,37 +110,16 @@ public class VideosFragments extends Fragment implements YouTubeVideosAdapter.Yo
         youTubeVideosAdapter = new YouTubeVideosAdapter(this);
         videosRecycler.setAdapter(youTubeVideosAdapter);
 
-        //if the internet is work start the loader if not show toast message
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
-            loadingBar.setVisibility(View.VISIBLE);
-            emptyText.setVisibility(View.INVISIBLE);
+        youTubeApiInterface = YouTubeApiClient.getYoutubeApiClient()
+                .create(YouTubeApiInterface.class);
 
-            //get the current settings for the video settings
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        //get the current settings for the video settings
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-            //extract  the playlist value
-            playlistId = sharedPreferences.getString(
-                    getString(R.string.settings_playlist_id_key),
-                    getString(R.string.settings_playlist_id_default));
-
-
-            youTubeApiInterface = YouTubeApiClient.getYoutubeApiClient()
-                    .create(YouTubeApiInterface.class);
-
-            fetchVideosData();
-
-            scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
-                @Override
-                public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                    loadNextVideosPage(page);
-                }
-            };
-            videosRecycler.addOnScrollListener(scrollListener);
-        } else {
-            Toast.makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
-            emptyText.setVisibility(View.VISIBLE);
-            emptyText.setText(getString(R.string.no_videos));
-        }
+        //extract  the playlist value
+        playlistId = sharedPreferences.getString(
+                getString(R.string.settings_playlist_id_key),
+                getString(R.string.settings_playlist_id_default));
 
         // Inflate the layout for this fragment
         return rootView;
@@ -168,6 +158,8 @@ public class VideosFragments extends Fragment implements YouTubeVideosAdapter.Yo
 
             @Override
             public void onFailure(Call<YouTubeVideo> call, Throwable t) {
+                Timber.e(t.getMessage());
+                Timber.e(call.request().url().toString());
                 loadingBar.setVisibility(View.INVISIBLE);
                 emptyText.setVisibility(View.VISIBLE);
                 emptyText.setText(getString(R.string.no_videos));
@@ -195,10 +187,25 @@ public class VideosFragments extends Fragment implements YouTubeVideosAdapter.Yo
         }
     }
 
+    private void loadAndDisplayVideos() {
+        loadingBar.setVisibility(View.VISIBLE);
+        emptyText.setVisibility(View.INVISIBLE);
+
+        fetchVideosData();
+
+        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadNextVideosPage(page);
+            }
+        };
+        videosRecycler.addOnScrollListener(scrollListener);
+    }
+
+
     @Override
     public void onCLick(Item item) {
         //get the current video
-
         WatchVideoFragment watchVideoFragment = new WatchVideoFragment();
 
         //set the video information to the next fragment
@@ -210,5 +217,32 @@ public class VideosFragments extends Fragment implements YouTubeVideosAdapter.Yo
                 .replace(R.id.fragment_container, watchVideoFragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        getActivity().registerReceiver(internetConnectivityChangeReceiver, intentFilter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(internetConnectivityChangeReceiver);
+    }
+
+    @Override
+    public void onInternetConnected() {
+        loadAndDisplayVideos();
+    }
+
+    @Override
+    public void onInternetDisconnected() {
+        Toast.makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+        if (youTubeVideosAdapter.getItemCount() == 0) {
+            emptyText.setVisibility(View.VISIBLE);
+            emptyText.setText(getString(R.string.no_videos));
+        }
     }
 }

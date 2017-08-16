@@ -54,6 +54,7 @@ import com.example.mego.adas.utils.Constants;
 import com.example.mego.adas.directions.api.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.example.mego.adas.utils.NotificationUtils;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -237,7 +238,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         //the main child for the directions services
         getFirebaseObjectReferences(uid);
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             //show a progress dialog in the BluetoothServerActivity
             //progressDialog = ProgressDialog.show(getContext(),
             //    "Connecting...", "Please wait!!!");
@@ -269,7 +270,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         userLocationButton.setOnClickListener(this);
         startButton.setOnClickListener(this);
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             if (userFragments.isAdded()) {
                 actionResolver();
             }
@@ -288,8 +289,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
     public void onStart() {
         super.onStart();
         //check the internet connection
-
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             mGoogleApiClient.connect();
         }
 
@@ -299,8 +299,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
     public void onStop() {
         super.onStop();
         //check the internet connection
-
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             if (mGoogleApiClient != null) {
                 mGoogleApiClient.disconnect();
             }
@@ -400,7 +399,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
      */
     @Override
     public void onClick(View v) {
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
 
             switch (v.getId()) {
                 case R.id.lights_on_button_user:
@@ -941,7 +940,7 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         LocationUtilities.enableSetLocation(getActivity(), mMap);
 
         //check the internet connection
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             mGoogleApiClient.connect();
         }
     }

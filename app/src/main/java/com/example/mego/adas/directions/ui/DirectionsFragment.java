@@ -62,6 +62,7 @@ import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Constants;
 import com.example.mego.adas.directions.api.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -225,7 +226,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         stepAdapter = new StepAdapter();
         stepsRecyclerView.setAdapter(stepAdapter);
 
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             //set up the firebase
             mFirebaseDatabase = FirebaseDatabase.getInstance();
 
@@ -278,13 +279,13 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
         mMap = googleMap;
         //check the internet connection
         //if the internet is work start the loader if not show toast message
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             buildGoogleApiClient();
         } else {
             Toast.makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
         }
         LocationUtilities.enableSetLocation(getActivity(), mMap);
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             mGoogleApiClient.connect();
         }
     }
@@ -410,7 +411,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
      */
     @Override
     public void onClick(View v) {
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             switch (v.getId()) {
                 case R.id.add_new_location_fab:
                     if (!isEditTextVisible) {
@@ -449,7 +450,7 @@ public class DirectionsFragment extends Fragment implements View.OnClickListener
                         //check for the internet connection if is ok init the loader
                         loadingbar.setVisibility(View.VISIBLE);
 
-                        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+                        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
                             fetchDirectionsData();
                         } else {
                             showToast(getString(R.string.no_internet_connection));

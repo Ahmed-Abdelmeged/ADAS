@@ -65,6 +65,7 @@ import com.example.mego.adas.user_info.EditUserInfoActivity;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Communicator;
 import com.example.mego.adas.utils.Constants;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.example.mego.adas.videos.ui.LiveStreamingFragment;
 import com.example.mego.adas.videos.ui.VideosFragments;
 import com.google.android.gms.maps.MapFragment;
@@ -706,7 +707,7 @@ public class MainActivity extends AppCompatActivity
                     mUsersImageDatabaseReference = mFirebaseDatabase.getReference().child(FIREBASE_USERS)
                             .child(uid).child(Constants.FIREBASE_USER_IMAGE);
 
-                    if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
+                    if (NetworkUtil.isAvailableInternetConnection(getApplicationContext())) {
                         getUserData(uid);
                         if (AdasUtils.getCurrentUserImagePath(MainActivity.this) == null) {
                             getUserImageUrl();

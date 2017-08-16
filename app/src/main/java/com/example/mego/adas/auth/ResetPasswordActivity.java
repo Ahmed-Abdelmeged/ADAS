@@ -35,6 +35,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.mego.adas.R;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -73,7 +74,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         sendNewPasswordButtton.setOnClickListener(v -> {
             String email = emailEditText.getText().toString();
             AuthenticationUtilities.hideKeyboard(ResetPasswordActivity.this);
-            if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
+            if (NetworkUtil.isAvailableInternetConnection(getApplicationContext())) {
                 resetPassword(email);
             } else {
                 Toast.makeText(ResetPasswordActivity.this, R.string.error_message_failed_sign_in_no_network,

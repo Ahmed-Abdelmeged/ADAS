@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.utils.Constants;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -107,7 +108,7 @@ public class SignUpActivity extends AppCompatActivity {
             String email = emailEditText.getText().toString();
             String password = passwordEditText.getText().toString();
             AuthenticationUtilities.hideKeyboard(SignUpActivity.this);
-            if (AuthenticationUtilities.isAvailableInternetConnection(getApplicationContext())) {
+            if (NetworkUtil.isAvailableInternetConnection(getApplicationContext())) {
                 createAccount(email, password);
             } else {
                 Toast.makeText(SignUpActivity.this, R.string.error_message_failed_sign_in_no_network,

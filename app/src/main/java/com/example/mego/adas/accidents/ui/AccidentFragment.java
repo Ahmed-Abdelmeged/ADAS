@@ -43,6 +43,7 @@ import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.accidents.db.entity.Accident;
 import com.example.mego.adas.utils.Constants;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -119,7 +120,7 @@ public class AccidentFragment extends LifecycleFragment implements
                 .child(uid).child(Constants.FIREBASE_USER_INFO).child(Constants.FIREBASE_ACCIDENTS);
 
         //if the internet is work start the loader if not show toast message
-        if (AuthenticationUtilities.isAvailableInternetConnection(getContext())) {
+        if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             if (accidentFragment.isAdded()) {
                 getAccidentsFromFromFirebase();
             }

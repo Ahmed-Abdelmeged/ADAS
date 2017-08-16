@@ -34,6 +34,7 @@ import com.alimuzaffar.lib.pin.PinEntryEditText;
 import com.example.mego.adas.main.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.utils.Constants;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuth;
@@ -344,7 +345,7 @@ public class VerifyPhoneNumberActivity extends AppCompatActivity {
             } else {
                 uid = firebaseUser.getUid();
                 startChangeCurrentNumber();
-                if (AuthenticationUtilities.isAvailableInternetConnection(VerifyPhoneNumberActivity.this)) {
+                if (NetworkUtil.isAvailableInternetConnection(VerifyPhoneNumberActivity.this)) {
                     if (uid != null) {
                         isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference().child(Constants.FIREBASE_USERS)
                                 .child(uid).child(Constants.FIREBASE_IS_VERIFIED_PHONE);

@@ -42,6 +42,7 @@ import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.utils.AdasUtils;
 import com.example.mego.adas.utils.Constants;
+import com.example.mego.adas.utils.networking.NetworkUtil;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -271,7 +272,7 @@ public class EditUserInfoActivity extends AppCompatActivity {
 
     @OnClick(R.id.edit_user_image)
     public void imagePressed() {
-        if (AuthenticationUtilities.isAvailableInternetConnection(EditUserInfoActivity.this)) {
+        if (NetworkUtil.isAvailableInternetConnection(EditUserInfoActivity.this)) {
             Intent getImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
             getImageIntent.setType("image/*");
             getImageIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
@@ -307,7 +308,7 @@ public class EditUserInfoActivity extends AppCompatActivity {
      * Method to send verification email
      */
     private void sendVerificationEmail() {
-        if (AuthenticationUtilities.isAvailableInternetConnection(EditUserInfoActivity.this)) {
+        if (NetworkUtil.isAvailableInternetConnection(EditUserInfoActivity.this)) {
             if (currentFirebaseUser != null) {
                 showVerifyProgressDialog(getString(R.string.sending_verification_email));
                 currentFirebaseUser.sendEmailVerification().addOnSuccessListener(aVoid -> {

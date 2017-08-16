@@ -25,7 +25,7 @@ package com.example.mego.adas.accidents.repository;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
 
-import com.example.mego.adas.accidents.db.AppDatabase;
+import com.example.mego.adas.app.AppDatabase;
 import com.example.mego.adas.accidents.db.entity.Accident;
 
 import java.util.List;

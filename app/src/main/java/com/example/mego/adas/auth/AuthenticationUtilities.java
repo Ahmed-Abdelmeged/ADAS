@@ -94,16 +94,6 @@ public class AuthenticationUtilities {
     }
 
     /**
-     * Helper method to check the internet connection isAvailableInternetConnection
-     */
-    public static boolean isAvailableInternetConnection(Context context) {
-
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
-    }
-
-    /**
      * Helper Method to hide the keyboard
      */
     public static void hideKeyboard(Activity activity) {
