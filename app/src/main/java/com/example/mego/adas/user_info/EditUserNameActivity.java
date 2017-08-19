@@ -122,7 +122,7 @@ public class EditUserNameActivity extends AppCompatActivity {
      */
     private boolean validateName() {
         String name = nameEditText.getText().toString();
-        if (TextUtils.isEmpty(name) || !AuthenticationUtilities.isUserNameValid(name)) {
+        if (TextUtils.isEmpty(name) ) {
             nameWrapper.setError(getString(R.string.error_message_required));
             return false;
         } else {

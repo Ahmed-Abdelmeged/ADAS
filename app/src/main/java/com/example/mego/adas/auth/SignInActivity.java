@@ -165,20 +165,19 @@ public class SignInActivity extends AppCompatActivity {
                 emailChangeObservable,
                 passwordChangeObservable,
                 (email, password) -> {
+
+                    //Check email
                     boolean emailNotEmpty = !TextUtils.isEmpty(email);
+                    boolean emailValid = AuthenticationUtilities.isEmailValid(email);
                     if (!emailNotEmpty) {
                         emailWrapper.setError(getString(R.string.error_message_required));
-                    } else {
-                        emailWrapper.setError(null);
-                    }
-
-                    boolean emailValid = AuthenticationUtilities.isEmailValid(email);
-                    if (!emailValid) {
+                    } else if (!emailValid) {
                         emailWrapper.setError(getString(R.string.error_message_valid_email));
                     } else {
                         emailWrapper.setError(null);
                     }
 
+                    //Check password
                     boolean passwordNotEmpty = !TextUtils.isEmpty(password);
                     if (!passwordNotEmpty) {
                         passwordWrapper.setError(getString(R.string.error_message_required));

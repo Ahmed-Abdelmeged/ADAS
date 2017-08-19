@@ -141,7 +141,7 @@ public class ChangeCurrentNumber extends AppCompatActivity {
      */
     private boolean validatePhone() {
         String phoneNumber = phoneNumberEditText.getText().toString();
-        if (TextUtils.isEmpty(phoneNumber) || !AuthenticationUtilities.isUserNameValid(phoneNumber)) {
+        if (TextUtils.isEmpty(phoneNumber)) {
             phoneNumberWrapper.setError(getString(R.string.error_message_required));
             return false;
         } else if (!AuthenticationUtilities.isPhoneNumberValid(phoneNumber)) {

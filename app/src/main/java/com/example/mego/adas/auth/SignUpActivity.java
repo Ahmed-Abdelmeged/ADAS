@@ -46,8 +46,16 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.hbb20.CountryCodePicker;
+import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import java.util.HashMap;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.subscribers.DisposableSubscriber;
+import timber.log.Timber;
 
 /**
  * Activity used for signing in
@@ -60,22 +68,51 @@ public class SignUpActivity extends AppCompatActivity {
     private static final String USERS = "users";
     public static final String FIREBASE_PROPERTY_TIMESTAMP = "timestamp";
 
-
     /**
      * User information
      */
-    private String fullName, email, password, phoneNumber, location;
+    private String fullName, email, phoneNumber, location;
 
+    @BindView(R.id.terms_conditions_textView_sign_up_activity)
+    TextView termsAndConditionTextView;
 
-    /**
-     * UI Element
-     */
-    private TextView termsAndConditionTextView;
-    private Button signUpButton;
-    private EditText fullNameEditText, emailEditText, passwordEditText, phoneNumberEditText, locationEditText;
-    private TextInputLayout fullNameWrapper, emailWrapper, passwordWrapper, phoneNumberWrapper, locationWrapper;
+    @BindView(R.id.sign_up_Button_sign_up_activity)
+    Button signUpButton;
+
+    @BindView(R.id.full_name_editText_sign_up_activity)
+    EditText fullNameEditText;
+
+    @BindView(R.id.email_editText_sign_up_activity)
+    EditText emailEditText;
+
+    @BindView(R.id.password_editText_sign_up_activity)
+    EditText passwordEditText;
+
+    @BindView(R.id.phone_number_editText_sign_up_activity)
+    EditText phoneNumberEditText;
+
+    @BindView(R.id.location_editText_sign_up_activity)
+    EditText locationEditText;
+
+    @BindView(R.id.full_name_wrapper_sign_up_activity)
+    TextInputLayout fullNameWrapper;
+
+    @BindView(R.id.email_wrapper_sign_up_activity)
+    TextInputLayout emailWrapper;
+
+    @BindView(R.id.password_wrapper_sign_up_activity)
+    TextInputLayout passwordWrapper;
+
+    @BindView(R.id.phone_number_wrapper_sign_up_activity)
+    TextInputLayout phoneNumberWrapper;
+
+    @BindView(R.id.location_wrapper_sign_up_activity)
+    TextInputLayout locationWrapper;
+
+    @BindView(R.id.country_code_picker)
+    CountryCodePicker countryCodePicker;
+
     private ProgressDialog mProgressDialog;
-    private CountryCodePicker countryCodePicker;
 
     /**
      * Firebase Authentication
@@ -89,13 +126,20 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mUsersDatabaseReference;
 
+    private DisposableSubscriber<Boolean> disposableObserver = null;
+    private Flowable<CharSequence> nameChangeObservable;
+    private Flowable<CharSequence> emailChangeObservable;
+    private Flowable<CharSequence> passwordChangeObservable;
+    private Flowable<CharSequence> phoneNumberChangeObservable;
+    private Flowable<CharSequence> locationChangeObservable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_sign_up);
 
-        initializeScreen();
+        ButterKnife.bind(this);
 
         //initialize the Firebase auth object
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -103,6 +147,22 @@ public class SignUpActivity extends AppCompatActivity {
         //set up the firebase
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
+        nameChangeObservable = RxTextView.textChanges(fullNameEditText)
+                .skip(1).toFlowable(BackpressureStrategy.LATEST);
+
+        emailChangeObservable = RxTextView.textChanges(emailEditText)
+                .skip(1).toFlowable(BackpressureStrategy.LATEST);
+
+        passwordChangeObservable = RxTextView.textChanges(passwordEditText)
+                .skip(1).toFlowable(BackpressureStrategy.LATEST);
+
+        phoneNumberChangeObservable = RxTextView.textChanges(phoneNumberEditText)
+                .skip(1).toFlowable(BackpressureStrategy.LATEST);
+
+        locationChangeObservable = RxTextView.textChanges(locationEditText)
+                .skip(1).toFlowable(BackpressureStrategy.LATEST);
+
+        validateFormFields();
 
         signUpButton.setOnClickListener(v -> {
             String email = emailEditText.getText().toString();
@@ -122,17 +182,10 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-
     /**
      * Helper method to make the sign up process
-     *
-     * @param email
-     * @param password
      */
     private void createAccount(final String email, final String password) {
-        if (!validateForm()) {
-            return;
-        }
         showProgressDialog();
 
         mFirebaseAuth.createUserWithEmailAndPassword(email, password)
@@ -186,9 +239,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     /**
      * Helper Method to sign the user up after creating an account
-     *
-     * @param email
-     * @param password
      */
     private void signIn(String email, String password) {
         mFirebaseAuth.signInWithEmailAndPassword(email, password)
@@ -205,65 +255,92 @@ public class SignUpActivity extends AppCompatActivity {
                 }).addOnFailureListener(e -> showErrorDialog(e.getLocalizedMessage()));
     }
 
-
     /**
      * Helper method to validate the data from the edit text
-     *
-     * @return boolean to indicate form validation
      */
-    private boolean validateForm() {
-        boolean valid = true;
+    private void validateFormFields() {
+        disposableObserver = new DisposableSubscriber<Boolean>() {
+            @Override
+            public void onNext(Boolean formValid) {
+                if (formValid) {
+                    signUpButton.setEnabled(true);
+                } else {
+                    signUpButton.setEnabled(false);
+                }
+            }
 
-        String email = emailEditText.getText().toString();
-        if (TextUtils.isEmpty(email)) {
-            emailWrapper.setError(getString(R.string.error_message_required));
-            valid = false;
-        } else if (!AuthenticationUtilities.isEmailValid(email)) {
-            emailWrapper.setError(getString(R.string.error_message_valid_email));
-            valid = false;
-        } else {
-            emailWrapper.setError(null);
-        }
+            @Override
+            public void onError(Throwable t) {
+                Timber.e("error sign up validate");
+            }
 
-        String password = passwordEditText.getText().toString();
-        if (TextUtils.isEmpty(password)) {
-            passwordWrapper.setError(getString(R.string.error_message_required));
-            valid = false;
-        } else if (!AuthenticationUtilities.isPasswordValid(password)) {
-            passwordWrapper.setError(getString(R.string.password_not_strong));
-            valid = false;
-        } else {
-            passwordWrapper.setError(null);
-        }
+            @Override
+            public void onComplete() {
+                Timber.e("complete sign up validate");
+            }
+        };
 
-        String fullName = fullNameEditText.getText().toString();
-        if (TextUtils.isEmpty(fullName) || !AuthenticationUtilities.isUserNameValid(fullName)) {
-            fullNameWrapper.setError(getString(R.string.error_message_required));
-            valid = false;
-        } else {
-            fullNameWrapper.setError(null);
-        }
+        Flowable.combineLatest(
+                nameChangeObservable,
+                emailChangeObservable,
+                passwordChangeObservable,
+                phoneNumberChangeObservable,
+                locationChangeObservable,
+                (lName, lEmail, lPassword, lPhoneNumber, lLocation) -> {
 
-        String location = locationEditText.getText().toString();
-        if (TextUtils.isEmpty(location) || !AuthenticationUtilities.isUserNameValid(location)) {
-            locationWrapper.setError(getString(R.string.error_message_required));
-            valid = false;
-        } else {
-            locationWrapper.setError(null);
-        }
+                    //Check name
+                    boolean nameNotEmpty = !TextUtils.isEmpty(lName);
+                    if (!nameNotEmpty) {
+                        fullNameWrapper.setError(getString(R.string.error_message_required));
+                    } else {
+                        fullNameWrapper.setError(null);
+                    }
 
-        String phoneNumber = phoneNumberEditText.getText().toString();
-        if (TextUtils.isEmpty(phoneNumber) || !AuthenticationUtilities.isUserNameValid(phoneNumber)) {
-            phoneNumberWrapper.setError(getString(R.string.error_message_required));
-            valid = false;
-        } else if (!AuthenticationUtilities.isPhoneNumberValid(phoneNumber)) {
-            phoneNumberWrapper.setError(getString(R.string.error_message_valid_number));
-            valid = false;
-        } else {
-            phoneNumberWrapper.setError(null);
-        }
+                    //Check email
+                    boolean emailNotEmpty = !TextUtils.isEmpty(lEmail);
+                    boolean emailValid = AuthenticationUtilities.isEmailValid(lEmail);
+                    if (!emailNotEmpty) {
+                        emailWrapper.setError(getString(R.string.error_message_required));
+                    } else if (!emailValid) {
+                        emailWrapper.setError(getString(R.string.error_message_valid_email));
+                    } else {
+                        emailWrapper.setError(null);
+                    }
 
-        return valid;
+                    //Check password
+                    boolean passwordNotEmpty = !TextUtils.isEmpty(lPassword);
+                    boolean passwordValid = AuthenticationUtilities.isPasswordValid(lPassword);
+                    if (!passwordNotEmpty) {
+                        passwordWrapper.setError(getString(R.string.error_message_required));
+                    } else if (!passwordValid) {
+                        passwordWrapper.setError(getString(R.string.password_not_strong));
+                    } else {
+                        passwordWrapper.setError(null);
+                    }
+
+                    //Check location
+                    boolean locationNotEmpty = !TextUtils.isEmpty(lLocation);
+                    if (!locationNotEmpty) {
+                        locationWrapper.setError(getString(R.string.error_message_required));
+                    } else {
+                        locationWrapper.setError(null);
+                    }
+
+                    //Check phone number
+                    boolean phoneNumberNotEmpty = !TextUtils.isEmpty(lPhoneNumber);
+                    boolean phoneNumberValid = AuthenticationUtilities.isPhoneNumberValid(lPhoneNumber);
+                    if (!phoneNumberNotEmpty) {
+                        phoneNumberWrapper.setError(getString(R.string.error_message_required));
+                    } else if (!phoneNumberValid) {
+                        phoneNumberWrapper.setError(getString(R.string.error_message_valid_number));
+                    } else {
+                        phoneNumberWrapper.setError(null);
+                    }
+
+                    return emailNotEmpty && emailValid && nameNotEmpty && passwordNotEmpty &&
+                            passwordValid && locationNotEmpty && phoneNumberNotEmpty && phoneNumberValid;
+                }
+        ).subscribe(disposableObserver);
     }
 
     /**
@@ -285,7 +362,6 @@ public class SignUpActivity extends AppCompatActivity {
     private void getUserInfo() {
         fullName = fullNameEditText.getText().toString();
         email = emailEditText.getText().toString();
-        password = passwordEditText.getText().toString();
         phoneNumber = phoneNumberEditText.getText().toString();
         location = locationEditText.getText().toString();
     }
@@ -327,26 +403,9 @@ public class SignUpActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    /**
-     * Link the layout element from XML to Java
-     */
-    private void initializeScreen() {
-        termsAndConditionTextView = findViewById(R.id.terms_conditions_textView_sign_up_activity);
-
-        signUpButton = findViewById(R.id.sign_up_Button_sign_up_activity);
-
-        fullNameEditText = findViewById(R.id.full_name_editText_sign_up_activity);
-        emailEditText = findViewById(R.id.email_editText_sign_up_activity);
-        passwordEditText = findViewById(R.id.password_editText_sign_up_activity);
-        phoneNumberEditText = findViewById(R.id.phone_number_editText_sign_up_activity);
-        locationEditText = findViewById(R.id.location_editText_sign_up_activity);
-
-        fullNameWrapper = findViewById(R.id.full_name_wrapper_sign_up_activity);
-        emailWrapper = findViewById(R.id.email_wrapper_sign_up_activity);
-        passwordWrapper = findViewById(R.id.password_wrapper_sign_up_activity);
-        phoneNumberWrapper = findViewById(R.id.phone_number_wrapper_sign_up_activity);
-        locationWrapper = findViewById(R.id.location_wrapper_sign_up_activity);
-
-        countryCodePicker = findViewById(R.id.country_code_picker);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposableObserver.dispose();
     }
 }

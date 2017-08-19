@@ -100,7 +100,7 @@ public class EditUserLocationActivity extends AppCompatActivity {
      */
     private boolean validateLocation() {
         String location = locationEditText.getText().toString();
-        if (TextUtils.isEmpty(location) || !AuthenticationUtilities.isUserNameValid(location)) {
+        if (TextUtils.isEmpty(location)) {
             locationWrapper.setError(getString(R.string.error_message_required));
             return false;
         } else {
@@ -114,7 +114,7 @@ public class EditUserLocationActivity extends AppCompatActivity {
      */
     private void initializeScreen() {
         //to show white up button in the activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.edit_user_location_toolBar);
+        Toolbar toolbar = findViewById(R.id.edit_user_location_toolBar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Drawable drawable = toolbar.getNavigationIcon();

@@ -67,21 +67,14 @@ public class AuthenticationUtilities {
     /**
      * Helper method to validate the password
      */
-    public static boolean isPasswordValid(String password) {
+    public static boolean isPasswordValid(CharSequence password) {
         return password.length() >= 6;
-    }
-
-    /**
-     * Helper method to validate the userName
-     */
-    public static boolean isUserNameValid(String userName) {
-        return !userName.equals("");
     }
 
     /**
      * Helper method to validate the phone number
      */
-    public static boolean isPhoneNumberValid(String phoneNumber) {
+    public static boolean isPhoneNumberValid(CharSequence phoneNumber) {
         boolean isGoodPhone = false;
         if (!Pattern.matches("[a-zA-Z]+", phoneNumber)) {
             isGoodPhone = !(phoneNumber.length() < 5 || phoneNumber.length() > 14);
