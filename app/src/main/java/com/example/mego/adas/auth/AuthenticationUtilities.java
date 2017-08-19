@@ -60,10 +60,8 @@ public class AuthenticationUtilities {
     /**
      * Helper method to validate the email
      */
-    public static boolean isEmailValid(String email) {
-        boolean isGoodEmail = false;
-        isGoodEmail = (email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches());
-        return isGoodEmail;
+    public static boolean isEmailValid(CharSequence email) {
+        return (email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches());
     }
 
     /**

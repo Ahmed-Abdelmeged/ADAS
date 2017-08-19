@@ -43,19 +43,39 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jakewharton.rxbinding2.widget.RxTextView;
+
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.subscribers.DisposableSubscriber;
+import timber.log.Timber;
 
 /**
  * Activity used for signing in
  */
 public class SignInActivity extends AppCompatActivity {
 
-    /**
-     * UI Element
-     */
-    private EditText passwordEditText, emailEditText;
-    private TextInputLayout passwordWrapper, emailWrapper;
-    private TextView forgetPasswordTextView;
-    private Button signInButton;
+    @BindView(R.id.password_editText_sign_in_activity)
+    EditText passwordEditText;
+
+    @BindView(R.id.email_editText_sign_in_activity)
+    EditText emailEditText;
+
+    @BindView(R.id.password_wrapper_sign_in_activity)
+    TextInputLayout passwordWrapper;
+
+    @BindView(R.id.email_wrapper_sign_in_activity)
+    TextInputLayout emailWrapper;
+
+    @BindView(R.id.forget_password_textView)
+    TextView forgetPasswordTextView;
+
+    @BindView(R.id.sign_in_Button_sign_in_activity)
+    Button signInButton;
+
     private ProgressDialog mProgressDialog;
 
     /**
@@ -63,7 +83,6 @@ public class SignInActivity extends AppCompatActivity {
      */
     private FirebaseAuth mFirebaseAuth;
     private boolean isPhoneVerified = false;
-
 
     /**
      * Firebase objects
@@ -73,6 +92,9 @@ public class SignInActivity extends AppCompatActivity {
     private DatabaseReference isPhoneAuthDatabaseReference;
     private ValueEventListener isPhoneAuthValueEventListener;
 
+    private DisposableSubscriber<Boolean> disposableObserver = null;
+    private Flowable<CharSequence> emailChangeObservable;
+    private Flowable<CharSequence> passwordChangeObservable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +102,7 @@ public class SignInActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_sign_in);
 
-        initializeScreen();
+        ButterKnife.bind(this);
 
         //initialize the Firebase auth object
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -88,6 +110,13 @@ public class SignInActivity extends AppCompatActivity {
         //set up the firebase
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
+        emailChangeObservable = RxTextView.textChanges(emailEditText)
+                .skip(1).toFlowable(BackpressureStrategy.LATEST);
+
+        passwordChangeObservable = RxTextView.textChanges(passwordEditText)
+                .skip(1).toFlowable(BackpressureStrategy.LATEST);
+
+        validateFormFields();
 
         signInButton.setOnClickListener(v -> {
             String email = emailEditText.getText().toString();
@@ -108,17 +137,64 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     /**
+     * Helper method to validate the data from the edit text
+     */
+    private void validateFormFields() {
+        disposableObserver = new DisposableSubscriber<Boolean>() {
+            @Override
+            public void onNext(Boolean formValid) {
+                if (formValid) {
+                    signInButton.setEnabled(true);
+                } else {
+                    signInButton.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                Timber.e("error sign in validate");
+            }
+
+            @Override
+            public void onComplete() {
+                Timber.e("complete sign in validate");
+            }
+        };
+
+        Flowable.combineLatest(
+                emailChangeObservable,
+                passwordChangeObservable,
+                (email, password) -> {
+                    boolean emailNotEmpty = !TextUtils.isEmpty(email);
+                    if (!emailNotEmpty) {
+                        emailWrapper.setError(getString(R.string.error_message_required));
+                    } else {
+                        emailWrapper.setError(null);
+                    }
+
+                    boolean emailValid = AuthenticationUtilities.isEmailValid(email);
+                    if (!emailValid) {
+                        emailWrapper.setError(getString(R.string.error_message_valid_email));
+                    } else {
+                        emailWrapper.setError(null);
+                    }
+
+                    boolean passwordNotEmpty = !TextUtils.isEmpty(password);
+                    if (!passwordNotEmpty) {
+                        passwordWrapper.setError(getString(R.string.error_message_required));
+                    } else {
+                        passwordWrapper.setError(null);
+                    }
+
+                    return emailNotEmpty && emailValid && passwordNotEmpty;
+                }
+        ).subscribe(disposableObserver);
+    }
+
+    /**
      * To preform the sign in operation
-     *
-     * @param email
-     * @param password
      */
     private void signIn(String email, String password) {
-
-        //validate the input data
-        if (!validateForm()) {
-            return;
-        }
         showProgressDialog();
 
         mFirebaseAuth.signInWithEmailAndPassword(email, password)
@@ -138,36 +214,6 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
-
-    /**
-     * Helper method to validate the data from the edit text
-     *
-     * @return
-     */
-    private boolean validateForm() {
-        boolean valid = true;
-
-        String email = emailEditText.getText().toString();
-        if (TextUtils.isEmpty(email)) {
-            emailWrapper.setError(getString(R.string.error_message_required));
-            valid = false;
-        } else if (!AuthenticationUtilities.isEmailValid(email)) {
-            emailWrapper.setError(getString(R.string.error_message_valid_email));
-            valid = false;
-        } else {
-            emailWrapper.setError(null);
-        }
-
-        String password = passwordEditText.getText().toString();
-        if (TextUtils.isEmpty(password)) {
-            passwordWrapper.setError(getString(R.string.error_message_required));
-            valid = false;
-        } else {
-            passwordWrapper.setError(null);
-        }
-
-        return valid;
-    }
 
     /**
      * Helper method to show progress dialog
@@ -255,19 +301,9 @@ public class SignInActivity extends AppCompatActivity {
         isPhoneAuthDatabaseReference.addValueEventListener(isPhoneAuthValueEventListener);
     }
 
-    /**
-     * Link the layout element from XML to Java
-     */
-    private void initializeScreen() {
-        passwordEditText = findViewById(R.id.password_editText_sign_in_activity);
-        emailEditText = findViewById(R.id.email_editText_sign_in_activity);
-
-        passwordWrapper = findViewById(R.id.password_wrapper_sign_in_activity);
-        emailWrapper = findViewById(R.id.email_wrapper_sign_in_activity);
-
-        forgetPasswordTextView = findViewById(R.id.forget_password_textView);
-
-        signInButton = findViewById(R.id.sign_in_Button_sign_in_activity);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposableObserver.dispose();
     }
-
 }

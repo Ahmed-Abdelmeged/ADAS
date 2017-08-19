@@ -13,6 +13,7 @@ android {
         jackOptions {
             enabled true
         }
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -91,6 +92,7 @@ dependencies {
     //RX
     compile "io.reactivex.rxjava2:rxandroid:$rootProject.rxAndroid_version"
     compile "io.reactivex.rxjava2:rxjava:$rootProject.rxJava_version"
+    compile "com.jakewharton.rxbinding2:rxbinding:$rootProject.rxBinding_version"
 
     //Timber for log
     compile "com.jakewharton.timber:timber:$rootProject.timber_version"
