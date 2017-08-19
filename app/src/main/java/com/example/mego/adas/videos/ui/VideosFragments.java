@@ -22,9 +22,8 @@
 
 package com.example.mego.adas.videos.ui;
 
-import android.content.IntentFilter;
+import android.arch.lifecycle.LifecycleFragment;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -37,10 +36,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.abdelmeged.ahmed.networkito.ConnectionType;
+import com.abdelmeged.ahmed.networkito.ConnectivityChangeListener;
+import com.abdelmeged.ahmed.networkito.Networkito;
 import com.example.mego.adas.R;
 import com.example.mego.adas.utils.Constants;
-import com.example.mego.adas.utils.networking.InternetConnectionsCallbacks;
-import com.example.mego.adas.utils.networking.InternetConnectivityChangeReceiver;
 import com.example.mego.adas.videos.api.YouTubeApiClient;
 import com.example.mego.adas.videos.api.YouTubeApiInterface;
 import com.example.mego.adas.videos.api.YouTubeApiUtilities;
@@ -59,8 +59,8 @@ import timber.log.Timber;
  * <p>
  * to show list of videos
  */
-public class VideosFragments extends Fragment implements
-        YouTubeVideosAdapter.YouTubeVideosAdapterOnClickHandler, InternetConnectionsCallbacks {
+public class VideosFragments extends LifecycleFragment implements
+        YouTubeVideosAdapter.YouTubeVideosAdapterOnClickHandler, ConnectivityChangeListener {
 
     /**
      * UI Elements
@@ -81,11 +81,6 @@ public class VideosFragments extends Fragment implements
 
     private LinearLayoutManager layoutManager;
 
-    /**
-     * For monitor internet connection states
-     */
-    private IntentFilter intentFilter = new IntentFilter();
-    private InternetConnectivityChangeReceiver internetConnectivityChangeReceiver;
 
     public VideosFragments() {
         // Required empty public constructor
@@ -98,7 +93,8 @@ public class VideosFragments extends Fragment implements
         View rootView = inflater.inflate(R.layout.fragment_videos, container, false);
         initializeScreen(rootView);
 
-        internetConnectivityChangeReceiver = new InternetConnectivityChangeReceiver(this);
+        //For monitor internet connection states
+        new Networkito(getContext(), this, this);
 
         //setup the adapter
         layoutManager =
@@ -219,21 +215,9 @@ public class VideosFragments extends Fragment implements
                 .commit();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        getActivity().registerReceiver(internetConnectivityChangeReceiver, intentFilter);
-    }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        getActivity().unregisterReceiver(internetConnectivityChangeReceiver);
-    }
-
-    @Override
-    public void onInternetConnected() {
+    public void onInternetConnected(ConnectionType connectionType) {
         loadAndDisplayVideos();
     }
 

@@ -54,7 +54,7 @@ import com.example.mego.adas.utils.Constants;
 import com.example.mego.adas.directions.api.DirectionsApiUtilities;
 import com.example.mego.adas.utils.LocationUtilities;
 import com.example.mego.adas.utils.NotificationUtils;
-import com.example.mego.adas.utils.networking.NetworkUtil;
+import com.example.mego.adas.utils.NetworkUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;

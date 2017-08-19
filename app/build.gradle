@@ -94,5 +94,8 @@ dependencies {
 
     //Timber for log
     compile "com.jakewharton.timber:timber:$rootProject.timber_version"
+
+    //For monitor internet change states
+    compile "com.ahmedabdelmeged:networkito:$rootProject.networkito_version"
 }
 apply plugin: 'com.google.gms.google-services'

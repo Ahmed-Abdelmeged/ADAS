@@ -43,7 +43,7 @@ import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.accidents.db.entity.Accident;
 import com.example.mego.adas.utils.Constants;
-import com.example.mego.adas.utils.networking.NetworkUtil;
+import com.example.mego.adas.utils.NetworkUtil;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

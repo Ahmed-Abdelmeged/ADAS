@@ -37,7 +37,7 @@ import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.utils.Constants;
-import com.example.mego.adas.utils.networking.NetworkUtil;
+import com.example.mego.adas.utils.NetworkUtil;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 

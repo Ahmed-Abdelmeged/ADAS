@@ -37,7 +37,7 @@ import android.widget.Toast;
 
 import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
-import com.example.mego.adas.utils.networking.NetworkUtil;
+import com.example.mego.adas.utils.NetworkUtil;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;

@@ -36,7 +36,7 @@ import android.widget.Toast;
 import com.example.mego.adas.main.MainActivity;
 import com.example.mego.adas.R;
 import com.example.mego.adas.utils.Constants;
-import com.example.mego.adas.utils.networking.NetworkUtil;
+import com.example.mego.adas.utils.NetworkUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

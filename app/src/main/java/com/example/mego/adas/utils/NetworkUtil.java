@@ -20,26 +20,21 @@
  */
 
 
-package com.example.mego.adas.utils.networking;
+package com.example.mego.adas.utils;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 
-public class InternetConnectivityChangeReceiver extends BroadcastReceiver {
-    private InternetConnectionsCallbacks internetConnectionsCallbacks;
-
-    public InternetConnectivityChangeReceiver(InternetConnectionsCallbacks internetConnectionsCallbacks) {
-        this.internetConnectionsCallbacks = internetConnectionsCallbacks;
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        if (NetworkUtil.isAvailableInternetConnection(context)) {
-            internetConnectionsCallbacks.onInternetConnected();
-        } else {
-            internetConnectionsCallbacks.onInternetDisconnected();
-        }
+public class NetworkUtil {
+    /**
+     * Helper method to check the internet connection isAvailableInternetConnection
+     */
+    public static boolean isAvailableInternetConnection(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 }

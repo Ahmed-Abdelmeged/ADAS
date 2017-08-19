@@ -39,7 +39,7 @@ import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.auth.VerifyPhoneNumberActivity;
 import com.example.mego.adas.utils.Constants;
-import com.example.mego.adas.utils.networking.NetworkUtil;
+import com.example.mego.adas.utils.NetworkUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthProvider;
