@@ -27,7 +27,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
@@ -35,7 +34,6 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -86,8 +84,10 @@ import java.util.concurrent.ExecutionException;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
@@ -176,6 +176,8 @@ public class MainActivity extends AppCompatActivity
 
     private String userImagePath = null;
     private String deviceToken = null;
+
+    private Disposable disposable = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -507,6 +509,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Helper method to bluetooth connect with the device
+     */
     private void connectBluetooth() {
         //show a progress dialog in the BluetoothServerActivity
         progressDialog = ProgressDialog.show(MainActivity.this,
@@ -628,40 +633,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Show a dialog that warns the user there are will lose the connection
-     * if they continue leaving the app.
-     */
-    private void showLoseConnectionDialog(
-            final String message
-    ) {
-        // Create an AlertDialog.Builder and set the message, and click listeners
-        // for the positive and negative buttons on the dialog.
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(message);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // User clicked the "Cancel" button, so dismiss the dialog
-                // and continue in the BluetoothServerActivity
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
-            }
-        });
-
-        //create and show the alert dialog
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
-    /**
      * Helper method to show progress dialog
      */
     public void showProgressDialog(String message) {
@@ -728,7 +699,7 @@ public class MainActivity extends AppCompatActivity
                                 userImagePath = userImageUrl.substring(i - 6, i);
                             }
                         }
-                        new DownloadUserImageBitmap().execute(userImageUrl);
+                        downloadUserImageBitmap(userImageUrl);
                     }
                 }
             }
@@ -742,16 +713,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * AsyncTask to download image
+     * Download user image and display it
+     *
+     * @param userImageUrl the path of the image in firebase storage
      */
-    private class DownloadUserImageBitmap extends AsyncTask<String, Void, Bitmap> {
-        Bitmap bitmap;
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
+    private void downloadUserImageBitmap(final String userImageUrl) {
+        Single<Bitmap> bitmapSingleObservable = Single.create(emitter -> {
             try {
-                bitmap = Glide.with(MainActivity.this)
-                        .load(params[0])
+                Bitmap bitmap = Glide.with(MainActivity.this)
+                        .load(userImageUrl)
                         .asBitmap()
                         .into(-1, -1)
                         .get();
@@ -763,21 +733,30 @@ public class MainActivity extends AppCompatActivity
 
                     AdasUtils.setCurrentUserImagePath(MainActivity.this
                             , savedPath + "/" + userImagePath);
+                    emitter.onSuccess(bitmap);
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                emitter.onError(e);
             } catch (ExecutionException e) {
-                e.printStackTrace();
+                emitter.onError(e);
             }
-            return bitmap;
-        }
+        });
 
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-            //display the image after save it
-            userImageView.setImageBitmap(bitmap);
-        }
+        disposable = bitmapSingleObservable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<Bitmap>() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap) {
+                        //display the image after save it
+                        userImageView.setImageBitmap(bitmap);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e("error download user image");
+                    }
+                });
     }
 
     /**
@@ -881,6 +860,9 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
         if (toast != null) {
             toast.cancel();
+        }
+        if (disposable != null) {
+            disposable.dispose();
         }
     }
 }
