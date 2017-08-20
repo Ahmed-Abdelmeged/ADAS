@@ -96,5 +96,8 @@ dependencies {
 
     //For monitor internet change states
     compile "com.ahmedabdelmeged:networkito:$rootProject.networkito_version"
+
+    //Event bus fot send components across the app
+    compile "org.greenrobot:eventbus:$rootProject.eventbus_version"
 }
 apply plugin: 'com.google.gms.google-services'

@@ -897,16 +897,16 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
     public void refreshUI() {
 
         lDRSensorValueTextView.setText(String.format(
-                getString(R.string.current_progress_bar_update), ldrSensorValue));
+                getString(R.string.current_progress_bar_update), ldrSensorValue + ""));
         if (isFahrenheit) {
             tempSensorValueTextView.setText(String.format(
-                    getString(R.string.current_progress_bar_update), tempSensorInFahrenheit));
+                    getString(R.string.current_progress_bar_update), tempSensorInFahrenheit + ""));
         } else {
             tempSensorValueTextView.setText(String.format(
-                    getString(R.string.current_progress_bar_update), tempSensorValue));
+                    getString(R.string.current_progress_bar_update), tempSensorValue + ""));
         }
         potSensorValueTextView.setText(String.format(
-                getString(R.string.current_progress_bar_update), potSensorValue));
+                getString(R.string.current_progress_bar_update), potSensorValue + ""));
 
         if (userFragments.isAdded()) {
             if (tempSensorValue >= 40) {

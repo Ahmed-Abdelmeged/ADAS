@@ -29,7 +29,6 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -52,6 +51,8 @@ import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.NotAuthEntryActivity;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.auth.VerifyPhoneNumberActivity;
+import com.example.mego.adas.bluetooth.BluetoothReadMessageEvent;
+import com.example.mego.adas.bluetooth.BluetoothWriteMessageEvent;
 import com.example.mego.adas.bluetooth.ConnectFragment;
 import com.example.mego.adas.directions.ui.DirectionsFragment;
 import com.example.mego.adas.car_advice_assistant.AdasSyncUtils;
@@ -71,6 +72,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -120,8 +125,6 @@ public class MainActivity extends AppCompatActivity
      */
     private String address_key = "address_key";
 
-    public static StringBuilder recDataString = new StringBuilder();
-
     /**
      * Bluetooth services
      */
@@ -133,17 +136,7 @@ public class MainActivity extends AppCompatActivity
     //This the SPP for the arduino(AVR)
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    /**
-     * Handler to get the DataSend from thr thread and drive it to the UI
-     */
-    public static Handler bluetoothHandler;
-
-    /**
-     * used to identify handler message
-     */
-    final int handlerState = 0;
-
-    public static ConnectedThread mConnectedThread;
+    private ConnectedThread mConnectedThread;
 
     CarFragment carFragment;
 
@@ -255,20 +248,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             showToast(getString(R.string.no_internet_connection));
         }
-
-        bluetoothHandler = new Handler() {
-            public void handleMessage(android.os.Message msg) {
-                //if message is what we want
-                if (msg.what == handlerState) {
-                    // msg.arg1 = bytes from connect thread
-                    String readMessage = (String) msg.obj;
-
-                    //keep appending to string until ~ char
-                    recDataString.append(readMessage);
-                    Timber.e(readMessage);
-                }
-            }
-        };
         displayUserData();
         verifyUserData();
         AdasSyncUtils.scheduleAdvices(this);
@@ -316,12 +295,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
+        EventBus.getDefault().unregister(this);
         super.onStop();
         Disconnect();
-        recDataString.delete(0, recDataString.length());
         hideProgressDialog();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
     @Override
     protected void onResume() {
@@ -569,10 +553,8 @@ public class MainActivity extends AppCompatActivity
 
         //Create the connect thread
         ConnectedThread(BluetoothSocket socket) {
-
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
-
             try {
                 //create I/O stream for the connection
                 tmpIn = socket.getInputStream();
@@ -581,7 +563,6 @@ public class MainActivity extends AppCompatActivity
             }
             mmInputStream = tmpIn;
             mmOutputStream = tmpOut;
-
         }
 
         public void run() {
@@ -595,8 +576,8 @@ public class MainActivity extends AppCompatActivity
                     bytes = mmInputStream.read(buffer);
                     String readMessage = new String(buffer, 0, bytes);
 
-                    // Send the obtained bytes to the UI Activity via handler
-                    bluetoothHandler.obtainMessage(handlerState, bytes, -1, readMessage).sendToTarget();
+                    //Send the value to the car fragment
+                    EventBus.getDefault().post(new BluetoothReadMessageEvent(readMessage));
                 } catch (IOException e) {
                     break;
                 }
@@ -612,10 +593,14 @@ public class MainActivity extends AppCompatActivity
             try {
                 mmOutputStream.write(msgBuffer);
             } catch (IOException e) {
-                //if you can't write show a Toast message that obtain that
-                //Toast.makeText(BluetoothServerActivity.this, "Connection Failure", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBlueoothWriteMessageEvent(BluetoothWriteMessageEvent event) {
+        Timber.e(event.getWriteMessage());
+        mConnectedThread.write(event.getWriteMessage());
     }
 
     /**

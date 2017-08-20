@@ -28,7 +28,6 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -46,6 +45,8 @@ import com.example.mego.adas.R;
 import com.example.mego.adas.auth.AuthenticationUtilities;
 import com.example.mego.adas.auth.User;
 import com.example.mego.adas.accidents.db.entity.Accident;
+import com.example.mego.adas.bluetooth.BluetoothReadMessageEvent;
+import com.example.mego.adas.bluetooth.BluetoothWriteMessageEvent;
 import com.example.mego.adas.main.model.MappingServices;
 import com.example.mego.adas.main.model.SensorsValues;
 import com.example.mego.adas.utils.AdasUtils;
@@ -75,24 +76,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.operators.observable.ObservableCreate;
-import io.reactivex.observers.DefaultObserver;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.processors.PublishProcessor;
 import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
 
-import static com.example.mego.adas.main.MainActivity.bluetoothHandler;
 import static com.example.mego.adas.main.MainActivity.connected;
-import static com.example.mego.adas.main.MainActivity.mConnectedThread;
 
 
 /**
@@ -161,11 +159,6 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
      * flag to determine to the client that the location is changed
      */
     public int onLocationChangedFlag = 0;
-
-    /**
-     * used to identify handler message
-     */
-    final int handlerState = 0;
 
     /**
      * Firebase objects
@@ -292,27 +285,6 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
             }
         }
 
-        //get the date from the connected thread
-        bluetoothHandler = new Handler() {
-            public void handleMessage(android.os.Message msg) {
-                //if message is what we want
-                if (msg.what == handlerState) {
-                    // msg.arg1 = bytes from connect thread
-                    String readMessage = (String) msg.obj;
-
-                    //keep appending to string until ~ char
-                    recDataString.append(readMessage);
-
-                    //determine the end of the line
-                    endOfLineIndex = recDataString.indexOf("~");
-                    if (fragmentIsRunning) {
-                        refreshUI();
-                    }
-
-                }
-            }
-        };
-
         fragmentIsRunning = true;
         showSensorsProgress();
 
@@ -329,9 +301,23 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         MapFragment mapFragment = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.my_location_fragment_car);
         mapFragment.getMapAsync(this);
 
-
         // Inflate the layout for this fragment
         return rootView;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBluetoothReadMessageEvent(BluetoothReadMessageEvent event) {
+        //keep appending to string until ~ char
+        recDataString.append(event.getReadMessage());
+        //determine the end of the line
+        endOfLineIndex = recDataString.indexOf("~");
+        if (fragmentIsRunning) {
+            refreshUI();
+        }
+    }
+
+    private void sendBluetoothCommand(String command) {
+        EventBus.getDefault().post(new BluetoothWriteMessageEvent(command));
     }
 
     /**
@@ -417,7 +403,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                     lightsButton.setBackgroundTintList(ColorStateList.
                             valueOf(getResources().getColor(R.color.off)));
                     if (connected) {
-                        mConnectedThread.write("o");
+                        sendBluetoothCommand("o");
                     }
                     //send the state of the lights to the firebase
                     lightsState = 1;
@@ -430,7 +416,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                     lightsButton.setBackgroundTintList(ColorStateList.
                             valueOf(getResources().getColor(R.color.colorPrimary)));
                     if (connected) {
-                        mConnectedThread.write("f");
+                        sendBluetoothCommand("f");
                     }
                     //send the state of the lights to the firebase
                     lightsState = 0;
@@ -445,7 +431,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                     lockButton.setBackgroundTintList(ColorStateList.
                             valueOf(getResources().getColor(R.color.off)));
                     if (connected) {
-                        mConnectedThread.write("r");
+                        sendBluetoothCommand("r");
                     }
 
                     lockButton.setImageResource(R.drawable.lock_outline);
@@ -462,7 +448,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                             valueOf(getResources().getColor(R.color.colorPrimary)));
 
                     if (connected) {
-                        mConnectedThread.write("v");
+                        sendBluetoothCommand("v");
                     }
 
                     lockButton.setImageResource(R.drawable.lock_open_outline);
@@ -482,7 +468,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                             valueOf(getResources().getColor(R.color.off)));
 
                     if (connected) {
-                        mConnectedThread.write("p");
+                        sendBluetoothCommand("p");
                     }
 
                     //send the state of the start to the firebase
@@ -496,7 +482,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                             valueOf(getResources().getColor(R.color.colorPrimary)));
 
                     if (connected) {
-                        mConnectedThread.write("t");
+                        sendBluetoothCommand("t");
                     }
 
                     //send the state of the start to the firebase
@@ -531,10 +517,12 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
         if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             mGoogleApiClient.connect();
         }
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
+        EventBus.getDefault().unregister(this);
         super.onStop();
         //check the internet connection
         if (NetworkUtil.isAvailableInternetConnection(getContext())) {
@@ -765,16 +753,16 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                     }
 
                     lDRSensorValueTextView.setText(String.format(
-                            getString(R.string.current_progress_bar_update), ldrSensorValue));
+                            getString(R.string.current_progress_bar_update), ldrSensorValue + ""));
                     if (isFahrenheit) {
                         tempSensorValueTextView.setText(String.format(
-                                getString(R.string.current_progress_bar_update), tempSensorInFahrenheit));
+                                getString(R.string.current_progress_bar_update), tempSensorInFahrenheit + ""));
                     } else {
                         tempSensorValueTextView.setText(String.format(
-                                getString(R.string.current_progress_bar_update), tempSensorValue));
+                                getString(R.string.current_progress_bar_update), tempSensorValue + ""));
                     }
                     potSensorValueTextView.setText(String.format(
-                            getString(R.string.current_progress_bar_update), potSensorValue));
+                            getString(R.string.current_progress_bar_update), potSensorValue + ""));
                 }
 
                 if (NetworkUtil.isAvailableInternetConnection(getContext())) {
@@ -902,14 +890,14 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                 if (dataSnapshot.exists()) {
                     startState = (long) dataSnapshot.getValue();
                     if (startState == 1) {
-                        mConnectedThread.write("p");
+                        sendBluetoothCommand("p");
                         if (carFragments.isAdded()) {
                             //change the button color to the accent color when it's on
                             startButton.setBackgroundTintList(ColorStateList.
                                     valueOf(getResources().getColor(R.color.off)));
                         }
                     } else if (startState == 0) {
-                        mConnectedThread.write("t");
+                        sendBluetoothCommand("t");
                         if (carFragments.isAdded()) {
                             //change the button color to the accent color when it's on
                             startButton.setBackgroundTintList(ColorStateList.
@@ -931,14 +919,14 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                 if (dataSnapshot.exists()) {
                     lockState = (long) dataSnapshot.getValue();
                     if (lockState == 1) {
-                        mConnectedThread.write("r");
+                        sendBluetoothCommand("r");
                         if (carFragments.isAdded()) {
                             //change the button color to the accent color when it's on
                             lockButton.setBackgroundTintList(ColorStateList.
                                     valueOf(getResources().getColor(R.color.off)));
                         }
                     } else if (lockState == 0) {
-                        mConnectedThread.write("v");
+                        sendBluetoothCommand("v");
                         if (carFragments.isAdded()) {
                             //change the button color to the accent color when it's on
                             lockButton.setBackgroundTintList(ColorStateList.
@@ -962,7 +950,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
 
                     if (lightsState == 1) {
                         if (connected) {
-                            mConnectedThread.write("o");
+                            sendBluetoothCommand("o");
                         }
                         //change the button color to the accent color when it's on
                         if (carFragments.isAdded()) {
@@ -971,7 +959,7 @@ public class CarFragment extends Fragment implements GoogleApiClient.ConnectionC
                         }
                     } else if (lightsState == 0) {
                         if (connected) {
-                            mConnectedThread.write("f");
+                            sendBluetoothCommand("f");
                         }
                         if (carFragments.isAdded()) {
                             //change the button color to the accent color when it's on
