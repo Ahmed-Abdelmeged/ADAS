@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity
     private ImageView backgroundImageView, userImageView;
     private Toast toast;
 
-
     /**
      * The adapter to get all bluetooth services
      */
@@ -142,14 +141,12 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean connected = false;
 
-
     /**
      * Firebase Authentication
      */
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private boolean isPhoneVerified = false;
-
 
     /**
      * Firebase objects
@@ -599,7 +596,6 @@ public class MainActivity extends AppCompatActivity
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBlueoothWriteMessageEvent(BluetoothWriteMessageEvent event) {
-        Timber.e(event.getWriteMessage());
         mConnectedThread.write(event.getWriteMessage());
     }
 

@@ -41,11 +41,9 @@ import com.viewpagerindicator.CirclePageIndicator;
  */
 public class HelpFragment extends Fragment {
 
-
     public HelpFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
