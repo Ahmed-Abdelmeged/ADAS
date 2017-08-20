@@ -198,6 +198,7 @@
     <!-- Main Activity -->
     <string name="load_user_data">Loading user data</string>
     <string name="accessibility_logo">App Logo</string>
+    <string name="current_progress_bar_update">%1$s</string>
 
     <!-- Verify phone number activity -->
     <string name="verify_phone_number_label">Verify Phone</string>

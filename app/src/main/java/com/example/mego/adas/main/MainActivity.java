@@ -26,20 +26,16 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -91,7 +87,6 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
-import static android.widget.Toast.makeText;
 import static com.example.mego.adas.utils.Constants.FIREBASE_USERS;
 
 public class MainActivity extends AppCompatActivity
@@ -248,14 +243,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         newConnectionFlag++;
-
-        //check the internet connection
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-        if (networkInfo != null && networkInfo.isConnected()) {
-
+        if (NetworkUtil.isAvailableInternetConnection(this)) {
             if (mFirebaseAuth.getCurrentUser().getUid() != null) {
                 isPhoneAuthDatabaseReference = mFirebaseDatabase.getReference()
                         .child(FIREBASE_USERS)
@@ -265,7 +253,7 @@ public class MainActivity extends AppCompatActivity
                 getPhoneVerificationState();
             }
         } else {
-            makeText(MainActivity.this, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.no_internet_connection));
         }
 
         bluetoothHandler = new Handler() {
@@ -277,7 +265,7 @@ public class MainActivity extends AppCompatActivity
 
                     //keep appending to string until ~ char
                     recDataString.append(readMessage);
-
+                    Timber.e(readMessage);
                 }
             }
         };
@@ -285,7 +273,6 @@ public class MainActivity extends AppCompatActivity
         verifyUserData();
         AdasSyncUtils.scheduleAdvices(this);
     }
-
 
     /**
      * Link the UI Element with XML
@@ -326,7 +313,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-
 
     @Override
     protected void onStop() {
@@ -404,7 +390,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
