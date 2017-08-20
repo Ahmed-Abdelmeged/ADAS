@@ -77,6 +77,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.processors.PublishProcessor;
+import io.reactivex.schedulers.Schedulers;
+
 import static android.widget.Toast.makeText;
 
 /**
@@ -86,7 +92,6 @@ import static android.widget.Toast.makeText;
  */
 public class UserFragment extends Fragment implements OnMapReadyCallback, View.OnClickListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-
 
     /**
      * Request code for location permission request.
@@ -117,12 +122,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
     private ProgressBar tempProgressBar, potProgressBar, ldrProgressBar;
     private FloatingActionButton lightsButton, startButton, lockButton, userLocationButton;
     private Toast toast;
-
-    /**
-     * Handler to set the progressbar progress
-     */
-    private Handler tempProgressBarHandler = new Handler(), ldrProgressBarHandler = new Handler(), potProgressBarHandler = new Handler();
-
 
     /**
      * command state
@@ -171,20 +170,9 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
      */
     double userLongitude, userLatitude;
 
-    /**
-     * Thread for handle the progress
-     */
-    Thread potThread, tempThread, ldrThread;
-
     boolean fragmentIsRunning = false;
 
-
     UserFragment userFragments;
-
-    /**
-     * progress bar to load the data from the cloud
-     */
-    private ProgressDialog progressDialog;
 
     /**
      * camera settings
@@ -200,11 +188,17 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
     int accidentNotificationFlag = 0;
 
+    /**
+     * To update sensors progress bar
+     */
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private PublishProcessor<Integer> ldrPublishProcessor;
+    private PublishProcessor<Integer> tempPublishProcessor;
+    private PublishProcessor<Integer> potPublishProcessor;
 
     public UserFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -238,6 +232,11 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         //the main child for the directions services
         getFirebaseObjectReferences(uid);
 
+        //Set the publish processor to update progress bar
+        ldrPublishProcessor = PublishProcessor.create();
+        tempPublishProcessor = PublishProcessor.create();
+        potPublishProcessor = PublishProcessor.create();
+
         if (NetworkUtil.isAvailableInternetConnection(getContext())) {
             //show a progress dialog in the BluetoothServerActivity
             //progressDialog = ProgressDialog.show(getContext(),
@@ -253,16 +252,8 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
             }
         }
 
-        //setup ans start the threads
-        potThread = new Thread(new PotProgressThread());
-        tempThread = new Thread(new TemperatureProgressThread());
-        ldrThread = new Thread(new LdrProgressThread());
-
-
         fragmentIsRunning = true;
-        potThread.start();
-        tempThread.start();
-        ldrThread.start();
+        showSensorsProgress();
 
         //set the buttons listener
         lightsButton.setOnClickListener(this);
@@ -279,7 +270,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         //setup the map fragment
         MapFragment mapFragment = (MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.my_location_fragment_user);
         mapFragment.getMapAsync(this);
-
 
         // Inflate the layout for this fragment
         return rootView;
@@ -308,7 +298,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
     @Override
     public void onLocationChanged(Location location) {
-
         accidentPlace = new LatLng(location.getLatitude(), location.getLongitude());
 
         //get the current user location
@@ -332,7 +321,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
             userLatitude = location.getLatitude();
 
             userConnected = 1;
-
         }
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(5000);
@@ -353,18 +341,14 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
                 return;
             }
-
             // other 'case' lines to check for other
             // permissions this app might request
         }
@@ -372,14 +356,10 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
     @Override
     public void onDestroyView() {
-
         super.onDestroyView();
 
         //stop the threads
         fragmentIsRunning = false;
-        potThread.interrupt();
-        ldrThread.interrupt();
-        tempThread.interrupt();
 
         //remove google map fragment
         //because it not destroy when switch between fragments
@@ -539,136 +519,85 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         userLocationButton = view.findViewById(R.id.user_location_button);
     }
 
-    /**
-     * background thread to show the progress of the pot sensor in the progress bar
-     */
-    private class PotProgressThread implements Runnable {
-
-        int notificationPotFlag = 0;
-
-        @Override
-        public void run() {
-            while (potSensorValue <= 1025 && fragmentIsRunning) {
-
-                if (fragmentIsRunning) {
-
-                    // Update the progress bar
-                    potProgressBarHandler.post(() -> {
-                        potProgressBar.setProgress(potSensorValue);
-
-                        if (userFragments.isAdded()) {
-                            if (potSensorValue >= 800) {
-                                potProgressBar.setProgressDrawable(getActivity().
-                                        getResources().getDrawable(R.drawable.progressbarred));
-                                notificationPotFlag++;
-                                if (notificationPotFlag == 1) {
-                                    NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_waring_high_pot));
-                                }
-                            } else {
-                                potProgressBar.setProgressDrawable(getActivity().
-                                        getResources().getDrawable(R.drawable.progressbarblue));
-                                notificationPotFlag = 0;
+    private void showSensorsProgress() {
+        //Update ldr progress bar
+        final int[] notificationLdrFlag = {0};
+        Disposable ldrDisposable = ldrPublishProcessor
+                .startWith(0)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(ldrProgress -> {
+                    ldrProgressBar.setProgress(ldrProgress);
+                    if (userFragments.isAdded()) {
+                        if (ldrProgress >= 800) {
+                            ldrProgressBar.setProgressDrawable(getActivity().
+                                    getResources().getDrawable(R.drawable.progressbarred));
+                            notificationLdrFlag[0]++;
+                            if (notificationLdrFlag[0] == 1) {
+                                NotificationUtils.showWarningNotification(getContext(),
+                                        getString(R.string.car_warning_high_ldr));
                             }
+                        } else {
+                            ldrProgressBar.setProgressDrawable(getActivity().
+                                    getResources().getDrawable(R.drawable.progressbarblue));
+                            notificationLdrFlag[0] = 0;
                         }
-                    });
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
-                } else {
-                    break;
-                }
-            }
-        }
-    }
+                });
+        compositeDisposable.add(ldrDisposable);
 
-    /**
-     * background thread to show the progress of the temp sensor in the progress bar
-     */
-    private class TemperatureProgressThread implements Runnable {
-
-        int notificationTempFlag = 0;
-
-        @Override
-        public void run() {
-            while (tempSensorValue <= 200 & fragmentIsRunning) {
-
-                if (fragmentIsRunning) {
-                    // Update the progress bar
-                    tempProgressBarHandler.post(() -> {
-                        tempProgressBar.setProgress(tempSensorValue);
-                        if (userFragments.isAdded()) {
-                            if (tempSensorValue >= 40) {
-                                tempProgressBar.setProgressDrawable(getActivity().
-                                        getResources().getDrawable(R.drawable.progressbarred));
-                                notificationTempFlag++;
-                                if (notificationTempFlag == 1) {
-                                    NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_warning_high_temp));
-                                }
-                            } else {
-                                tempProgressBar.setProgressDrawable(getActivity().
-                                        getResources().getDrawable(R.drawable.progressbarblue));
-                                notificationTempFlag = 0;
+        //Update temp progress bar
+        final int[] notificationTempFlag = {0};
+        Disposable tempDisposable = tempPublishProcessor
+                .startWith(0)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(tempProgress -> {
+                    tempProgressBar.setProgress(tempProgress);
+                    if (userFragments.isAdded()) {
+                        if (tempProgress >= 40) {
+                            tempProgressBar.setProgressDrawable(getActivity().
+                                    getResources().getDrawable(R.drawable.progressbarred));
+                            notificationTempFlag[0]++;
+                            if (notificationTempFlag[0] == 1) {
+                                NotificationUtils.showWarningNotification(getContext(),
+                                        getString(R.string.car_warning_high_temp));
                             }
+                        } else {
+                            tempProgressBar.setProgressDrawable(getActivity().
+                                    getResources().getDrawable(R.drawable.progressbarblue));
+                            notificationTempFlag[0] = 0;
                         }
-                    });
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
-                } else {
-                    break;
-                }
-            }
-        }
-    }
+                });
+        compositeDisposable.add(tempDisposable);
 
-    /**
-     * background thread to show the progress of the ldr sensor in the progress bar
-     */
-    private class LdrProgressThread implements Runnable {
-
-        int notificationLdrFlag = 0;
-
-        @Override
-        public void run() {
-
-            while (ldrSensorValue <= 1025 && fragmentIsRunning) {
-
-                if (fragmentIsRunning) {
-                    // Update the progress bar
-                    ldrProgressBarHandler.post(() -> {
-                        ldrProgressBar.setProgress(ldrSensorValue);
-                        if (userFragments.isAdded()) {
-                            if (ldrSensorValue >= 800) {
-                                ldrProgressBar.setProgressDrawable(getActivity().
-                                        getResources().getDrawable(R.drawable.progressbarred));
-                                notificationLdrFlag++;
-                                if (notificationLdrFlag == 1) {
-                                    NotificationUtils.showWarningNotification(getContext(), getString(R.string.car_warning_high_ldr));
-                                }
-                            } else {
-                                ldrProgressBar.setProgressDrawable(getActivity().
-                                        getResources().getDrawable(R.drawable.progressbarblue));
-                                notificationLdrFlag = 0;
+        //Update pot progress bar
+        final int[] notificationPotFlag = {0};
+        Disposable potDisposable = potPublishProcessor
+                .startWith(0)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(potProgress -> {
+                    potProgressBar.setProgress(potProgress);
+                    if (userFragments.isAdded()) {
+                        if (potProgress >= 800) {
+                            potProgressBar.setProgressDrawable(getActivity().
+                                    getResources().getDrawable(R.drawable.progressbarred));
+                            notificationPotFlag[0]++;
+                            if (notificationPotFlag[0] == 1) {
+                                NotificationUtils.showWarningNotification(getContext(),
+                                        getString(R.string.car_waring_high_pot));
                             }
+                        } else {
+                            potProgressBar.setProgressDrawable(getActivity().
+                                    getResources().getDrawable(R.drawable.progressbarblue));
+                            notificationPotFlag[0] = 0;
                         }
-                    });
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
-                } else {
-                    break;
-                }
-            }
-
-        }
+                });
+        compositeDisposable.add(potDisposable);
     }
-
 
     /**
      * call when the connection with google api client Suspended
@@ -676,7 +605,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
     @Override
     public void onConnectionSuspended(int i) {
         showToast(getString(R.string.connection_maps_suspend));
-
     }
 
     /**
@@ -686,7 +614,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
     public void onConnectionFailed(@Nullable ConnectionResult connectionResult) {
         showToast(getString(R.string.connection_maps_failed));
     }
-
 
     /**
      * method to get the data from the firebase and take action based on it
@@ -783,12 +710,16 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
 
                     //get the data from the firebase
                     tempSensorValue = sensorsValues.getTemperatureSensorValue();
+                    tempPublishProcessor.onNext(tempSensorValue);
 
                     //Temperature in Fahrenheit
                     tempSensorInFahrenheit = (int) AdasUtils.celsiusToFahrenheit(tempSensorValue);
 
                     ldrSensorValue = sensorsValues.getLdrSensorValue();
+                    ldrPublishProcessor.onNext(ldrSensorValue);
+
                     potSensorValue = sensorsValues.getPotSensorValue();
+                    potPublishProcessor.onNext(potSensorValue);
 
                     refreshUI();
                 } else {
@@ -803,7 +734,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
             }
 
         };
-
 
         mappingServicesEventListener = new ValueEventListener() {
             @Override
@@ -835,7 +765,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                                 .position(new LatLng(latitude, longitude))
                                 .title("Car Place")
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker));
-
 
                         if (onConnectedFlag == 1) {
                             marker = mMap.addMarker(carPlace);
@@ -926,7 +855,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         lockStateDatabaseReference.addValueEventListener(lockStateEventListener);
         lightsStateDatabaseReference.addValueEventListener(lightsStateEventListener);
         connectionStateDatabaseReference.addValueEventListener(connectionStateEventListener);
-
     }
 
     /**
@@ -944,7 +872,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
             mGoogleApiClient.connect();
         }
     }
-
 
     /**
      * buildGoogleApiClient to access the api
@@ -969,13 +896,17 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
      */
     public void refreshUI() {
 
-        lDRSensorValueTextView.setText(ldrSensorValue + "");
+        lDRSensorValueTextView.setText(String.format(
+                getString(R.string.current_progress_bar_update), ldrSensorValue));
         if (isFahrenheit) {
-            tempSensorValueTextView.setText(tempSensorInFahrenheit + "");
+            tempSensorValueTextView.setText(String.format(
+                    getString(R.string.current_progress_bar_update), tempSensorInFahrenheit));
         } else {
-            tempSensorValueTextView.setText(tempSensorValue + "");
+            tempSensorValueTextView.setText(String.format(
+                    getString(R.string.current_progress_bar_update), tempSensorValue));
         }
-        potSensorValueTextView.setText(potSensorValue + "");
+        potSensorValueTextView.setText(String.format(
+                getString(R.string.current_progress_bar_update), potSensorValue));
 
         if (userFragments.isAdded()) {
             if (tempSensorValue >= 40) {
@@ -1000,7 +931,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                 potTextView.setTextColor(getResources().getColor(R.color.colorPrimary));
             }
         }
-
     }
 
     /**
@@ -1016,14 +946,12 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
         }
     }
 
-
     /**
      * Show a dialog that warns the user that an accident happen
      * if press ok the accident state will still 1 and if choose call
      * the
      */
-    private void showAccidentHappenDialog(
-    ) {
+    private void showAccidentHappenDialog() {
         // Create an AlertDialog.Builder and set the message, and click listeners
         // for the positive and negative buttons on the dialog.
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -1088,7 +1016,6 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                 .child(Constants.FIREBASE_USERS)
                 .child(uid).child(Constants.FIREBASE_USER_INFO)
                 .child(Constants.FIREBASE_CAR).child(Constants.FIREBASE_SENSORES_VALUES);
-
     }
 
     /**
@@ -1108,6 +1035,3 @@ public class UserFragment extends Fragment implements OnMapReadyCallback, View.O
                 getString(R.string.settings_map_tilt_default)));
     }
 }
-
-
-
