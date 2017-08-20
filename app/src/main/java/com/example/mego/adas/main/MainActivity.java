@@ -84,6 +84,13 @@ import java.io.OutputStream;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
+
 import static android.widget.Toast.makeText;
 import static com.example.mego.adas.utils.Constants.FIREBASE_USERS;
 
@@ -333,7 +340,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         if (address != null) {
             if (newConnectionFlag == 1) {
-                new ConnectBT().execute();
+                connectBluetooth();
             }
         }
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
@@ -348,7 +355,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -486,7 +493,7 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -500,69 +507,55 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void connectBluetooth() {
+        //show a progress dialog in the BluetoothServerActivity
+        progressDialog = ProgressDialog.show(MainActivity.this,
+                getString(R.string.bluetooth_connecting), getString(R.string.bluetooth_please_wait));
 
-    /**
-     * An AysncTask to connect to Bluetooth socket
-     */
-    private class ConnectBT extends AsyncTask<Void, Void, Void> {
-        private boolean connectSuccess = true;
+        Completable.fromAction(() -> {
+            if (btSocket == null || !isBtConnected) {
+                //get the mobile bluetooth device
+                myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        @Override
-        protected void onPreExecute() {
+                //connects to the device's address and checks if it's available
+                BluetoothDevice bluetoothDevice = myBluetoothAdapter.getRemoteDevice(address);
 
-            //show a progress dialog in the BluetoothServerActivity
-            progressDialog = ProgressDialog.show(MainActivity.this,
-                    getString(R.string.bluetooth_connecting), getString(R.string.bluetooth_please_wait));
-        }
+                //create a RFCOMM (SPP) connection
+                btSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(myUUID);
+                BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
 
-        //while the progress dialog is shown, the connection is done in background
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            try {
-                if (btSocket == null || !isBtConnected) {
-                    //get the mobile bluetooth device
-                    myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-                    //connects to the device's address and checks if it's available
-                    BluetoothDevice bluetoothDevice = myBluetoothAdapter.getRemoteDevice(address);
-
-                    //create a RFCOMM (SPP) connection
-                    btSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(myUUID);
-                    BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-
-                    //start connection
-                    btSocket.connect();
-                }
-
-            } catch (IOException e) {
-                //if the try failed, you can check the exception here
-                connectSuccess = false;
+                //start connection
+                btSocket.connect();
             }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-            return null;
-        }
+                    }
 
-        //after the doInBackground, it checks if everything went fine
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (!connectSuccess) {
-                showToast(getString(R.string.bluetooth_connection_failed));
-                finish();
-            } else {
-                showToast(getString(R.string.bluetooth_connected));
-                connected = true;
+                    @Override
+                    public void onComplete() {
+                        showToast(getString(R.string.bluetooth_connected));
+                        connected = true;
 
-                isBtConnected = true;
-                progressDialog.dismiss();
-                mConnectedThread = new ConnectedThread(btSocket);
-                mConnectedThread.start();
-                mConnectedThread.write("o");
-            }
+                        isBtConnected = true;
+                        progressDialog.dismiss();
+                        mConnectedThread = new ConnectedThread(btSocket);
+                        mConnectedThread.start();
+                        mConnectedThread.write("o");
+                    }
 
-        }
+                    @Override
+                    public void onError(Throwable e) {
+                        progressDialog.dismiss();
+                        showToast(getString(R.string.bluetooth_connection_failed));
+                        finish();
+                    }
+                });
     }
+
 
     /**
      * Fast way to call Toast
@@ -584,7 +577,7 @@ public class MainActivity extends AppCompatActivity
         private final OutputStream mmOutputStream;
 
         //Create the connect thread
-        public ConnectedThread(BluetoothSocket socket) {
+        ConnectedThread(BluetoothSocket socket) {
 
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -620,7 +613,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         //write method
-        public void write(String input) {
+        void write(String input) {
             //converted entered string into bytes
             byte[] msgBuffer = input.getBytes();
 
@@ -695,30 +688,27 @@ public class MainActivity extends AppCompatActivity
      * Helper method Verify authentication and display user data
      */
     private void verifyUserData() {
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-                if (currentUser != null) {
-                    String uid = currentUser.getUid();
-                    mUsersDatabaseReference = mFirebaseDatabase.getReference().
-                            child(FIREBASE_USERS).child(uid);
+        mAuthStateListener = firebaseAuth -> {
+            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+            if (currentUser != null) {
+                String uid = currentUser.getUid();
+                mUsersDatabaseReference = mFirebaseDatabase.getReference().
+                        child(FIREBASE_USERS).child(uid);
 
-                    mUsersImageDatabaseReference = mFirebaseDatabase.getReference().child(FIREBASE_USERS)
-                            .child(uid).child(Constants.FIREBASE_USER_IMAGE);
+                mUsersImageDatabaseReference = mFirebaseDatabase.getReference().child(FIREBASE_USERS)
+                        .child(uid).child(Constants.FIREBASE_USER_IMAGE);
 
-                    if (NetworkUtil.isAvailableInternetConnection(getApplicationContext())) {
-                        getUserData(uid);
-                        if (AdasUtils.getCurrentUserImagePath(MainActivity.this) == null) {
-                            getUserImageUrl();
-                        }
+                if (NetworkUtil.isAvailableInternetConnection(getApplicationContext())) {
+                    getUserData(uid);
+                    if (AdasUtils.getCurrentUserImagePath(MainActivity.this) == null) {
+                        getUserImageUrl();
                     }
-
-                } else {
-                    Intent authIntent = new Intent(MainActivity.this, NotAuthEntryActivity.class);
-                    startActivity(authIntent);
-                    finish();
                 }
+
+            } else {
+                Intent authIntent = new Intent(MainActivity.this, NotAuthEntryActivity.class);
+                startActivity(authIntent);
+                finish();
             }
         };
     }
