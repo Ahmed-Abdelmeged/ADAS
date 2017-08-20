@@ -155,7 +155,6 @@ public class VideosFragments extends LifecycleFragment implements
             @Override
             public void onFailure(Call<YouTubeVideo> call, Throwable t) {
                 Timber.e(t.getMessage());
-                Timber.e(call.request().url().toString());
                 loadingBar.setVisibility(View.INVISIBLE);
                 emptyText.setVisibility(View.VISIBLE);
                 emptyText.setText(getString(R.string.no_videos));

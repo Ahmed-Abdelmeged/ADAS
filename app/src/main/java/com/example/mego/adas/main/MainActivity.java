@@ -622,7 +622,6 @@ public class MainActivity extends AppCompatActivity
      * Helper method to show progress dialog
      */
     public void showProgressDialog(String message) {
-
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setMessage(message);
@@ -639,7 +638,6 @@ public class MainActivity extends AppCompatActivity
             mProgressDialog.dismiss();
         }
     }
-
 
     /**
      * Helper method Verify authentication and display user data
