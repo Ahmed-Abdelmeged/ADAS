@@ -53,7 +53,6 @@ public class YouTubeVideosAdapter extends RecyclerView.Adapter<YouTubeVideosAdap
         mClickHandler = youTubeVideosAdapterOnClickHandler;
     }
 
-
     @Override
     public VideosViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
@@ -74,10 +73,8 @@ public class YouTubeVideosAdapter extends RecyclerView.Adapter<YouTubeVideosAdap
         String title = YouTubeApiUtilities.getVideoTitle(currentVideo);
         holder.videoTitle.setText(title);
 
-
         //get the publish date and convert it to date object
         Date dateObject = YouTubeApiUtilities.fromISO8601(YouTubeApiUtilities.getVideoPublishTime(currentVideo));
-
 
         //set the current video date
         String date = YouTubeApiUtilities.formatDate(dateObject);
@@ -91,7 +88,6 @@ public class YouTubeVideosAdapter extends RecyclerView.Adapter<YouTubeVideosAdap
         Glide.with(holder.videoThumbnail.getContext())
                 .load(YouTubeApiUtilities.getVideoImageUrl(currentVideo))
                 .into(holder.videoThumbnail);
-
     }
 
 
@@ -107,7 +103,6 @@ public class YouTubeVideosAdapter extends RecyclerView.Adapter<YouTubeVideosAdap
         TextView videoDate;
         TextView videoTime;
         ImageView videoThumbnail;
-
 
         VideosViewHolder(View view) {
             super(view);
