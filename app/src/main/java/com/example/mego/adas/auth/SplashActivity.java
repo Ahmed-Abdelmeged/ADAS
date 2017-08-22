@@ -31,6 +31,10 @@ import com.example.mego.adas.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Completable;
+
 /**
  * Splash activity and check if the user is authenticate or not
  */
@@ -43,11 +47,6 @@ public class SplashActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private boolean isAuth = false;
 
-    /**
-     * Duration of wait
-     */
-    private final int SPLASH_DISPLAY_LENGTH = 1000;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,21 +54,22 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         isUserAuth();
-           /* New Handler to start the Menu-Activity
-         * and close this Splash-Screen after some seconds.*/
-        new Handler().postDelayed(() -> {
 
-            if (isAuth) {
-                Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
-                startActivity(mainIntent);
-                finish();
-            } else {
-                Intent authIntent = new Intent(SplashActivity.this, NotAuthEntryActivity.class);
-                startActivity(authIntent);
-                finish();
-            }
-        }, SPLASH_DISPLAY_LENGTH);
-
+        //delay for 2 seconds and start the home activity
+        Completable.complete()
+                .delay(1, TimeUnit.SECONDS)
+                .doOnComplete(() -> {
+                    if (isAuth) {
+                        Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+                        startActivity(mainIntent);
+                        finish();
+                    } else {
+                        Intent authIntent = new Intent(SplashActivity.this, NotAuthEntryActivity.class);
+                        startActivity(authIntent);
+                        finish();
+                    }
+                })
+                .subscribe();
     }
 
     /**
